@@ -1,0 +1,60 @@
+<!-- wp:template-part {"slug":"header","tagName":"header","className":"tz-sticky-header"} /-->
+
+<!-- wp:group {"tagName":"main","align":"wide","className":"tz-shell","style":{"spacing":{"padding":{"top":"var:preset|spacing|60","bottom":"var:preset|spacing|60"}}},"layout":{"type":"default"}} -->
+<main class="wp-block-group alignwide tz-shell" style="padding-top:var(--wp--preset--spacing--60);padding-bottom:var(--wp--preset--spacing--60)">
+	<!-- wp:group {"className":"tz-rule","layout":{"type":"constrained"}} -->
+	<div class="wp-block-group tz-rule">
+		<!-- wp:paragraph {"className":"tz-section-kicker"} -->
+		<p class="tz-section-kicker">Search Techzei</p>
+		<!-- /wp:paragraph -->
+		<!-- wp:query-title {"type":"search","className":"tz-page-title"} /-->
+		<!-- wp:search {"label":"Search","showLabel":false,"placeholder":"Search Techzei…","buttonText":"Search"} /-->
+	</div>
+	<!-- /wp:group -->
+
+	<!-- wp:columns {"className":"tz-content-grid","style":{"spacing":{"margin":{"top":"var:preset|spacing|60"}}}} -->
+	<div class="wp-block-columns tz-content-grid" style="margin-top:var(--wp--preset--spacing--60)">
+		<!-- wp:column -->
+		<div class="wp-block-column">
+			<!-- wp:query {"queryId":23,"query":{"perPage":10,"pages":0,"offset":0,"postType":"post","order":"desc","orderBy":"date","inherit":true},"className":"tz-feed"} -->
+			<div class="wp-block-query tz-feed">
+				<!-- wp:post-template -->
+					<!-- wp:group {"className":"tz-feed-card","layout":{"type":"default"}} -->
+					<div class="wp-block-group tz-feed-card">
+						<!-- wp:post-featured-image {"isLink":true,"aspectRatio":"3/2","sizeSlug":"techzei-feed"} /-->
+						<!-- wp:group {"layout":{"type":"constrained"}} -->
+						<div class="wp-block-group">
+							<!-- wp:post-terms {"term":"category","className":"tz-section-kicker"} /-->
+							<!-- wp:post-title {"isLink":true,"level":2} /-->
+							<!-- wp:post-excerpt {"moreText":""} /-->
+							<!-- wp:post-date {"className":"tz-meta"} /-->
+						</div>
+						<!-- /wp:group -->
+					</div>
+					<!-- /wp:group -->
+				<!-- /wp:post-template -->
+				<!-- wp:query-pagination {"className":"tz-pagination","layout":{"type":"flex","justifyContent":"space-between"}} -->
+					<!-- wp:query-pagination-previous /-->
+					<!-- wp:query-pagination-numbers /-->
+					<!-- wp:query-pagination-next /-->
+				<!-- /wp:query-pagination -->
+				<!-- wp:query-no-results -->
+					<!-- wp:paragraph -->
+					<p>Nothing matched that search. Try a different term.</p>
+					<!-- /wp:paragraph -->
+				<!-- /wp:query-no-results -->
+			</div>
+			<!-- /wp:query -->
+		</div>
+		<!-- /wp:column -->
+		<!-- wp:column -->
+		<div class="wp-block-column">
+			<!-- wp:template-part {"slug":"discovery-sidebar"} /-->
+		</div>
+		<!-- /wp:column -->
+	</div>
+	<!-- /wp:columns -->
+</main>
+<!-- /wp:group -->
+
+<!-- wp:template-part {"slug":"footer","tagName":"footer"} /-->
