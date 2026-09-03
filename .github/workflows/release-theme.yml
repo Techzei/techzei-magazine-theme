@@ -1,0 +1,63 @@
+name: Build WordPress release asset
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  package-theme:
+    name: Build and attach theme ZIP
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the release tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - name: Validate release version
+        shell: bash
+        run: |
+          set -euo pipefail
+          release_version="${{ github.event.release.tag_name }}"
+          release_version="${release_version#v}"
+          theme_version="$(awk -F ': ' '/^Version:/ { print $2; exit }' style.css)"
+
+          test -n "$theme_version"
+          test "$release_version" = "$theme_version"
+
+      - name: Build WordPress upload ZIP
+        id: package
+        shell: bash
+        run: |
+          set -euo pipefail
+          theme_dir="techzei-magazine-theme"
+          release_version="${{ github.event.release.tag_name }}"
+          release_version="${release_version#v}"
+          asset_name="${theme_dir}-${release_version}.zip"
+
+          mkdir -p "dist/${theme_dir}"
+          rsync -a --delete \
+            --exclude '.git' \
+            --exclude '.github' \
+            --exclude 'dist' \
+            --exclude '*.zip' \
+            --exclude '.DS_Store' \
+            ./ "dist/${theme_dir}/"
+
+          (
+            cd dist
+            zip -qr "../${asset_name}" "${theme_dir}"
+          )
+
+          unzip -tq "${asset_name}"
+          unzip -Z1 "${asset_name}" | grep -qx "${theme_dir}/style.css"
+          echo "asset_name=${asset_name}" >> "$GITHUB_OUTPUT"
+
+      - name: Attach package to the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ github.event.release.tag_name }}" "${{ steps.package.outputs.asset_name }}" --clobber

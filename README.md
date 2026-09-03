@@ -97,6 +97,12 @@ Before publishing a release:
 4. Verify the ZIP contents and test it on a staging site with Twenty Twenty-Five installed.
 5. Check the homepage, a current post, a legacy-shortcode post, an archive, search, 404, desktop navigation, and mobile navigation/search.
 
+### GitHub Releases
+
+Publishing a GitHub Release automatically runs the release workflow. It checks out the release tag, confirms that the tag matches the `Version` field in `style.css`, builds a clean WordPress upload ZIP, verifies its structure, and attaches it to the release.
+
+Use matching version tags, for example `v3.0.0` for theme version `3.0.0`. The resulting release asset is named `techzei-magazine-theme-3.0.0.zip` and contains exactly one top-level `techzei-magazine-theme/` folder.
+
 ## License
 
 GPL-2.0-or-later. See [LICENSE.txt](LICENSE.txt).
