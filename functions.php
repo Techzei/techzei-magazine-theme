@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require get_theme_file_path( 'inc/setup.php' );
+require get_theme_file_path( 'inc/settings.php' );
 require get_theme_file_path( 'inc/editorial.php' );
 require get_theme_file_path( 'inc/legacy-shortcodes.php' );
 require get_theme_file_path( 'inc/seo.php' );

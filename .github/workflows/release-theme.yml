@@ -29,6 +29,15 @@ jobs:
           test -n "$theme_version"
           test "$release_version" = "$theme_version"
 
+      - name: Run theme validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          find . -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+          node --check assets/js/navigation-fallback.js
+          php scripts/validate-theme.php
+          ! grep -R --line-number --fixed-strings 'setInterval' assets/js inc
+
       - name: Build WordPress upload ZIP
         id: package
         shell: bash

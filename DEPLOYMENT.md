@@ -12,7 +12,7 @@ Use this checklist when moving Techzei to a new release.
 
 1. Go to **Appearance → Themes → Add New → Upload Theme**.
 2. Upload the release ZIP and activate **Techzei Magazine Theme**.
-3. Go to **Appearance → Editor → Patterns** and check Header, Footer, Newsletter, Topic navigation, and the article template parts.
+3. Go to **Appearance → Editor → Patterns** and check Header, Footer, Topic navigation, and the article template parts.
 4. Set the Site Logo and update the primary navigation links if needed.
 
 ## Clear inherited editor overrides
@@ -23,6 +23,7 @@ The old Valenti home-page assignment and Site Editor customizations can override
 2. For Home, Front Page, Single Posts, and Archive templates, open the options menu and choose **Clear customizations** when it is available.
 3. Edit the existing Home page and select the **Default** template.
 4. Verify that the primary navigation contains only one row. Topic shortcuts should appear in the content rail, not under the header.
+5. Open **Appearance → Techzei Settings** and review the behaviour defaults. The Restore action resets only Techzei’s option, not Site Editor customisations.
 
 ## Performance and visual checks
 

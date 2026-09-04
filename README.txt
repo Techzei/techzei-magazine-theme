@@ -2,7 +2,7 @@
 Requires at least: 6.7
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 3.0.0
+Stable tag: 3.1.1
 License: GPLv2 or later
 
 == Required Parent Theme ==
@@ -12,11 +12,22 @@ This is a child theme of Twenty Twenty-Five. Install the official Twenty Twenty-
 1. In Appearance > Themes, install Twenty Twenty-Five from WordPress.org.
 2. Upload techzei-magazine-theme.zip and activate it.
 3. Open Appearance > Editor to set the real Site Logo and edit navigation.
-4. Review the Header, Footer, and Newsletter template parts in the Site Editor.
+4. Review the Header, Footer, Topic navigation, and article template parts in the Site Editor.
 5. Regenerate thumbnails once for older Media Library images.
 6. Clear all WordPress, host, and CDN caches.
 
-== Version 2.6.0 ==
+== Version 3.1.1 ==
+
+* Rebuild the 404 page as a focused editorial recovery experience with branded visual treatment, accessible search, and a clear return-home action.
+
+== Version 3.1.0 ==
+
+* Add Appearance > Techzei Settings for theme behaviour defaults, with scoped reset and native Site Editor ownership.
+* Add selectable Article with sidebar and Article without sidebar templates.
+* Improve mobile logo/search behaviour, sticky-header controls, ticker pause/reduced-motion handling, and editor/frontend style parity.
+* Consolidate responsive image priority, safe alt handling, editorial module settings, and legacy shortcode compatibility.
+
+== Version 3.0.0 ==
 
 * Improve thumbnail loading with accurate responsive sizes and lazy loading for non-hero cards.
 * Keep only the primary hero image eager-loaded.
@@ -123,7 +134,7 @@ This is a child theme of Twenty Twenty-Five. Install the official Twenty Twenty-
 * Restored the homepage topic navigation rail after the 2.0 template cleanup.
 
 == Version 2.0.0 ==
-This is a cohesive editorial rebuild rather than an incremental patch. It reorganizes the theme into setup and editorial PHP modules, replaces compressed CSS with a documented responsive layout system, redesigns the header, footer, newsletter, archives, search pages, discovery sidebar, and article components, and retains public /topics/ URLs, category labels, breadcrumbs, related stories, reading time, and server-rendered sharing.
+This is a cohesive editorial rebuild rather than an incremental patch. It reorganizes the theme into setup and editorial PHP modules, replaces compressed CSS with a documented responsive layout system, and unifies the header, footer, archives, search pages, discovery sidebar, and article components.
 
 After updating, visit Appearance > Editor > Templates. If the Home template does not change, open the template options menu and choose Clear customizations so WordPress uses the updated theme template. Also edit the existing Home page and set its Template to Default; this removes the legacy Valenti Builder assignment left in the database.
 
@@ -135,7 +146,7 @@ The homepage uses native Query, Latest Posts, Featured Image, Navigation, Search
 == Editing ==
 Use Appearance > Editor to change templates visually. Changes saved in the Site Editor override files in this child theme; use the Editor’s Clear customizations option if a future theme update does not appear.
 
-The Newsletter template part intentionally contains instructions rather than a fake form. Replace that paragraph with the Form or Shortcode block supplied by your newsletter provider.
+The theme does not include a newsletter placeholder. Add a provider Form or Shortcode block in the Site Editor only when a real signup service is configured.
 
 == Updating ==
 Update Twenty Twenty-Five normally through WordPress. Techzei-specific layout changes remain in this child theme. Back up Site Editor customizations before major redesigns.

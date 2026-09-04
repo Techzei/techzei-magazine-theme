@@ -14,6 +14,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Render nested legacy content once and pass it through the post HTML
+ * allowlist. Shortcode handlers must not create an HTML escape hatch around
+ * content that was authored before this theme existed.
+ *
+ * @param string $content Shortcode content.
+ * @return string
+ */
+function techzei_tt5_legacy_render_content( $content ) {
+	return wp_kses_post( do_shortcode( shortcode_unautop( (string) $content ) ) );
+}
+
+/**
  * Render a legacy two-column content block.
  *
  * @param array|string $atts    Shortcode attributes.
@@ -45,7 +57,7 @@ function techzei_tt5_legacy_column( $atts, $content = '' ) {
 	return sprintf(
 		'<div class="%1$s">%2$s</div>',
 		esc_attr( $classes ),
-		do_shortcode( shortcode_unautop( $content ) )
+		techzei_tt5_legacy_render_content( $content )
 	);
 }
 
@@ -65,7 +77,7 @@ function techzei_tt5_legacy_alert( $atts, $content = '' ) {
 	return sprintf(
 		'<aside class="tz-legacy-alert is-%1$s" role="note">%2$s</aside>',
 		esc_attr( $type_class ),
-		do_shortcode( shortcode_unautop( $content ) )
+		techzei_tt5_legacy_render_content( $content )
 	);
 }
 
@@ -90,12 +102,14 @@ function techzei_tt5_legacy_button( $atts, $content = '' ) {
 
 	$url = esc_url( $atts['link'] );
 	if ( empty( $url ) ) {
-		return do_shortcode( shortcode_unautop( $content ) );
+		return techzei_tt5_legacy_render_content( $content );
 	}
 
 	$style = sanitize_key( $atts['style'] );
 	$size  = sanitize_key( $atts['size'] );
-	$classes = trim( 'tz-legacy-button is-' . ( $style ? $style : 'dark' ) . ( 'large' === $size ? ' is-large' : '' ) );
+	$allowed_styles = array( 'dark', 'light', 'primary' );
+	$style          = in_array( $style, $allowed_styles, true ) ? $style : 'dark';
+	$classes        = trim( 'tz-legacy-button is-' . $style . ( 'large' === $size ? ' is-large' : '' ) );
 	$target = '_blank' === $atts['target'] ? ' target="_blank" rel="noopener noreferrer"' : '';
 
 	return sprintf(
@@ -103,7 +117,7 @@ function techzei_tt5_legacy_button( $atts, $content = '' ) {
 		esc_attr( $classes ),
 		$url,
 		$target,
-		wp_kses_post( do_shortcode( shortcode_unautop( $content ) ) )
+		techzei_tt5_legacy_render_content( $content )
 	);
 }
 
@@ -122,7 +136,7 @@ function techzei_tt5_legacy_pullquote( $atts, $content = '' ) {
 	return sprintf(
 		'<blockquote class="tz-legacy-pullquote %1$s">%2$s</blockquote>',
 		esc_attr( $align_class ),
-		do_shortcode( shortcode_unautop( $content ) )
+		techzei_tt5_legacy_render_content( $content )
 	);
 }
 
@@ -144,8 +158,9 @@ function techzei_tt5_legacy_hr() {
  */
 function techzei_tt5_legacy_attention( $atts, $content = '' ) {
 	return sprintf(
-		'<aside class="tz-legacy-attention" role="note"><strong>Attention</strong><div>%s</div></aside>',
-		do_shortcode( shortcode_unautop( $content ) )
+		'<aside class="tz-legacy-attention" role="note"><strong>%1$s</strong><div>%2$s</div></aside>',
+		esc_html__( 'Attention', 'techzei-magazine-theme' ),
+		techzei_tt5_legacy_render_content( $content )
 	);
 }
 

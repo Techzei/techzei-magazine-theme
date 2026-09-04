@@ -45,6 +45,12 @@ Open **Appearance → Editor** after activation and review these items:
 4. **Homepage** — if a legacy page-builder assignment remains on the Home page, set that page’s template to **Default**.
 5. **SEO** — keep Yoast SEO active and configure titles, descriptions, social images, and the organization profile there.
 
+## Techzei Settings
+
+Use **Appearance → Techzei Settings** for theme behaviour: sticky header modes, header search and Topics visibility, homepage feature/feed/headline behaviour, default article layout, article metadata/share/related controls, and article-sidebar discovery counts/categories. The page uses one namespaced option and its reset action changes only that option.
+
+Use **Appearance → Editor → Styles** for colours, font families, typography, content/wide widths, and spacing. Keep the Site Editor as the owner of the logo, menus, footer copy, India mark, template composition, and section labels. Use the post editor’s **Template** control for a one-off article layout. See [the settings reference](docs/3.1.0-settings.md) for the full inventory and precedence rules.
+
 ## Legacy article support
 
 Older Techzei posts created with Valenti shortcode content remain readable without modifying their database content. The theme supports:
@@ -58,7 +64,7 @@ Older Techzei posts created with Valenti shortcode content remain readable witho
 | `[hr]` | Horizontal divider |
 | `[attention]` | Highlighted attention notice |
 
-Posts published before 2024, or posts containing these shortcodes, automatically use the denser legacy article layout with a sidebar. Current stories use the more open contemporary article layout.
+Posts published before 2024, or posts containing these shortcodes, automatically use the denser legacy article treatment when Automatic legacy styling is enabled. Editors can choose **Article with sidebar** or **Article without sidebar** for individual posts; explicit post templates take precedence over the site default.
 
 ## Image performance
 
@@ -85,6 +91,8 @@ techzei-magazine-theme/
 └── theme.json          # Editor palette, spacing, typography, template parts
 ```
 
+The unused newsletter template part is not shipped. The theme retains the original India PNG at `assets/images/india-techzei.png` and the public `techzei_tt5_*` integration names.
+
 ## Development and releases
 
 The source folder must keep this exact name: `techzei-magazine-theme`. WordPress expects the folder at the root of the upload ZIP, alongside `style.css`.
@@ -101,7 +109,7 @@ Before publishing a release:
 
 Publishing a GitHub Release automatically runs the release workflow. It checks out the release tag, confirms that the tag matches the `Version` field in `style.css`, builds a clean WordPress upload ZIP, verifies its structure, and attaches it to the release.
 
-Use matching version tags, for example `v3.0.0` for theme version `3.0.0`. The resulting release asset is named `techzei-magazine-theme-3.0.0.zip` and contains exactly one top-level `techzei-magazine-theme/` folder.
+Use matching version tags, for example `v3.1.1` for theme version `3.1.1`. The resulting release asset is named `techzei-magazine-theme-3.1.1.zip` and contains exactly one top-level `techzei-magazine-theme/` folder.
 
 ## License
 

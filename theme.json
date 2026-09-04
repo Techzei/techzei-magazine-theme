@@ -9,6 +9,15 @@
       "margin": true,
       "padding": true,
       "units": [ "px", "em", "rem", "%", "vw", "vh" ],
+      "spacingSizes": [
+        { "slug": "10", "name": "2XS", "size": "0.35rem" },
+        { "slug": "20", "name": "XS", "size": "0.6rem" },
+        { "slug": "30", "name": "SM", "size": "1rem" },
+        { "slug": "40", "name": "MD", "size": "1.5rem" },
+        { "slug": "50", "name": "LG", "size": "2.25rem" },
+        { "slug": "60", "name": "XL", "size": "3.5rem" },
+        { "slug": "70", "name": "2XL", "size": "5rem" }
+      ],
       "spacingScale": { "operator": "pow", "increment": 1.5, "steps": 7, "mediumStep": 1.5, "unit": "rem" }
     },
     "typography": {
@@ -47,15 +56,29 @@
     { "name": "author-profile", "title": "Author profile", "area": "uncategorized" },
     { "name": "share", "title": "Share links", "area": "uncategorized" },
     { "name": "related-stories", "title": "Related stories", "area": "uncategorized" },
-    { "name": "discovery-sidebar", "title": "Discovery sidebar", "area": "uncategorized" }
+    { "name": "discovery-sidebar", "title": "Discovery sidebar", "area": "uncategorized" },
+    { "name": "post-navigation", "title": "Post navigation", "area": "uncategorized" },
+    { "name": "comments", "title": "Comments", "area": "uncategorized" }
   ],
   "styles": {
     "color": { "background": "var:preset|color|base", "text": "var:preset|color|contrast" },
-    "spacing": { "blockGap": "1.2rem", "padding": { "left": "0", "right": "0" } },
+    "spacing": { "blockGap": "var:preset|spacing|30", "padding": { "left": "0", "right": "0" } },
     "typography": { "fontFamily": "var:preset|font-family|system", "fontWeight": "350" },
     "elements": {
-      "link": { "typography": { "textDecoration": "none" }, ":hover": { "color": { "text": "var:preset|color|accent-1" } } },
-      "button": { "color": { "background": "var:preset|color|contrast", "text": "var:preset|color|base" }, "border": { "radius": "0" } }
+      "link": {
+        "color": { "text": "var:preset|color|accent-3" },
+        "typography": { "textDecoration": "none" },
+        ":hover": { "color": { "text": "var:preset|color|accent-3" } },
+        ":focus": { "outline": { "color": "var:preset|color|accent-1", "offset": "3px", "width": "3px", "style": "solid" } }
+      },
+      "button": {
+        "color": { "background": "var:preset|color|contrast", "text": "var:preset|color|base" },
+        "border": { "radius": "0.2rem" }
+      }
     }
-  }
+  },
+  "customTemplates": [
+    { "name": "single-with-sidebar", "title": "Article with sidebar", "postTypes": [ "post" ] },
+    { "name": "single-no-sidebar", "title": "Article without sidebar", "postTypes": [ "post" ] }
+  ]
 }

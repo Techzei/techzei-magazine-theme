@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.1.1
+
+- Rebuilt the 404 template as a focused editorial recovery page with a controlled responsive layout, branded signal graphic, accessible search action, and clear return-home link.
+
+## 3.1.0
+
+- Added Appearance → Techzei Settings with one versioned, capability-protected option and a scoped defaults reset.
+- Added selectable Article with sidebar and Article without sidebar templates while preserving automatic legacy treatment and Site Editor ownership.
+- Consolidated image role handling with safe `WP_HTML_Tag_Processor` attributes, responsive sizes, and no lazy/high-priority conflicts.
+- Improved mobile logo/search interaction, sticky-header settings, controlled ticker pause/reduced-motion behaviour, and editor/frontend style parity.
+- Connected article discovery, sharing, reading time, metadata, and homepage feed/headline behaviour to the central settings resolver.
+- Removed the unused newsletter template part and corrected generic pages so comments remain post-only.
+
 ## 3.0.0
 
 - Rename the distributable child theme to Techzei Magazine Theme.

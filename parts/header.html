@@ -7,13 +7,22 @@
 			<!-- wp:site-tagline {"fontSize":"small"} /-->
 		</div>
 		<!-- /wp:group -->
-		<button class="tz-search-toggle" type="button" aria-expanded="false"><span class="screen-reader-text">Open search</span><svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><circle cx="10.8" cy="10.8" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg></button>
-		<!-- wp:search {"label":"Search","showLabel":false,"placeholder":"Search Techzei…","buttonText":"Search","buttonPosition":"button-inside","buttonUseIcon":true,"className":"tz-header-search"} /-->
+		<!-- wp:group {"className":"tz-search-controls","layout":{"type":"flex","flexWrap":"nowrap","justifyContent":"right"}} -->
+		<div class="wp-block-group tz-search-controls">
+			<!-- wp:html -->
+			<button class="tz-search-toggle" type="button" aria-controls="tz-header-search" aria-expanded="false" aria-label="Open search" data-tz-search-toggle>
+				<span class="screen-reader-text">Open search</span>
+				<svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><circle cx="10.8" cy="10.8" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg>
+			</button>
+			<!-- /wp:html -->
+			<!-- wp:search {"label":"Search Techzei","showLabel":false,"placeholder":"Search Techzei…","buttonText":"Search","buttonPosition":"button-inside","buttonUseIcon":true,"anchor":"tz-header-search","className":"tz-header-search"} /-->
 		</div>
 		<!-- /wp:group -->
+	</div>
+	<!-- /wp:group -->
 	<!-- wp:group {"align":"full","className":"tz-nav-wrap","layout":{"type":"constrained"}} -->
 	<div class="wp-block-group alignfull tz-nav-wrap">
-	<!-- wp:navigation {"overlayMenu":"mobile","overlayBackgroundColor":"contrast","overlayTextColor":"base","align":"wide","className":"tz-shell","layout":{"type":"flex","justifyContent":"left","flexWrap":"wrap"}} -->
+	<!-- wp:navigation {"overlayMenu":"mobile","overlayBackgroundColor":"contrast","overlayTextColor":"base","ariaLabel":"Primary","align":"wide","className":"tz-shell","layout":{"type":"flex","justifyContent":"left","flexWrap":"wrap"}} -->
 		<!-- wp:navigation-link {"label":"Home","url":"/","kind":"custom"} /-->
 		<!-- wp:navigation-link {"label":"News","url":"/topics/news/","kind":"custom"} /-->
 		<!-- wp:navigation-link {"label":"Apple","url":"/topics/apple/","kind":"custom"} /-->

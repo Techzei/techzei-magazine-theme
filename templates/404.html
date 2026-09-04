@@ -1,3 +1,35 @@
 <!-- wp:template-part {"slug":"header","tagName":"header","className":"tz-sticky-header"} /-->
-<!-- wp:group {"tagName":"main","align":"wide","className":"tz-shell tz-404","layout":{"type":"flex","orientation":"vertical","justifyContent":"center"}} --><main class="wp-block-group alignwide tz-shell tz-404"><!-- wp:paragraph {"className":"tz-section-kicker"} --><p class="tz-section-kicker">Error 404</p><!-- /wp:paragraph --><!-- wp:heading {"level":1} --><h1 class="wp-block-heading">That page has moved or disappeared.</h1><!-- /wp:heading --><!-- wp:paragraph --><p>Search Techzei or return to the latest stories.</p><!-- /wp:paragraph --><!-- wp:search {"label":"Search","showLabel":false,"placeholder":"Search Techzei…","buttonText":"Search"} /--><!-- wp:home-link {"label":"Return home →"} /--></main><!-- /wp:group -->
+<!-- wp:group {"tagName":"main","align":"full","className":"tz-404","layout":{"type":"default"}} -->
+<main class="wp-block-group alignfull tz-404">
+	<!-- wp:group {"align":"wide","className":"tz-shell tz-404-inner","layout":{"type":"flex","flexWrap":"nowrap","justifyContent":"space-between","verticalAlignment":"center"}} -->
+	<div class="wp-block-group alignwide tz-shell tz-404-inner">
+		<!-- wp:group {"className":"tz-404-art","layout":{"type":"default"}} -->
+		<div class="wp-block-group tz-404-art" aria-hidden="true">
+			<!-- wp:paragraph {"className":"tz-404-number"} -->
+			<p class="tz-404-number">404</p>
+			<!-- /wp:paragraph -->
+			<!-- wp:html -->
+			<div class="tz-404-signal"><span></span><span></span><span></span><span></span></div>
+			<!-- /wp:html -->
+		</div>
+		<!-- /wp:group -->
+		<!-- wp:group {"className":"tz-404-copy","layout":{"type":"constrained"}} -->
+		<div class="wp-block-group tz-404-copy">
+			<!-- wp:paragraph {"className":"tz-section-kicker"} -->
+			<p class="tz-section-kicker">Page not found</p>
+			<!-- /wp:paragraph -->
+			<!-- wp:heading {"level":1,"className":"tz-404-title"} -->
+			<h1 class="wp-block-heading tz-404-title">This story took a wrong turn.</h1>
+			<!-- /wp:heading -->
+			<!-- wp:paragraph {"className":"tz-404-description"} -->
+			<p class="tz-404-description">The page you’re looking for isn’t here anymore. Search the site or head back to the latest stories.</p>
+			<!-- /wp:paragraph -->
+			<!-- wp:search {"label":"Search Techzei","showLabel":false,"placeholder":"Search Techzei…","buttonText":"Search","buttonPosition":"button-inside","buttonUseIcon":false,"className":"tz-404-search"} /-->
+			<!-- wp:home-link {"label":"Back to Techzei →","className":"tz-404-home"} /-->
+		</div>
+		<!-- /wp:group -->
+	</div>
+	<!-- /wp:group -->
+</main>
+<!-- /wp:group -->
 <!-- wp:template-part {"slug":"footer","tagName":"footer"} /-->
