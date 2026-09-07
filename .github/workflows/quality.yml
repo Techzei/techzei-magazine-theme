@@ -1,0 +1,46 @@
+name: Theme quality
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate theme and fixtures
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['7.4', '8.3']
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - name: Check PHP syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          find . -type f -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Check JavaScript syntax
+        run: node --check assets/js/navigation-fallback.js
+
+      - name: Run static validation
+        run: php scripts/validate-theme.php
+
+      - name: Run focused quality checks
+        run: php scripts/test-theme.php
+
+      - name: Run settings and editorial checks
+        run: |
+          php scripts/validate-settings.php
+          php tests/editorial-static.php

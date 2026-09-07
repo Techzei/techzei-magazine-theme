@@ -3,45 +3,45 @@
 
 <!-- wp:group {"tagName":"main","align":"wide","className":"tz-shell","style":{"spacing":{"padding":{"top":"var:preset|spacing|60","bottom":"var:preset|spacing|60"}}},"layout":{"type":"default"}} -->
 <main class="wp-block-group alignwide tz-shell" style="padding-top:var(--wp--preset--spacing--60);padding-bottom:var(--wp--preset--spacing--60)">
-	<!-- wp:group {"className":"tz-rule","layout":{"type":"constrained"}} -->
-	<div class="wp-block-group tz-rule">
-		<!-- wp:paragraph {"className":"tz-section-kicker"} -->
-		<p class="tz-section-kicker">Topic archive</p>
+	<!-- wp:group {"className":"tz-rule tz-listing-header tz-archive-header","layout":{"type":"constrained"}} -->
+	<div class="wp-block-group tz-rule tz-listing-header tz-archive-header">
+		<!-- wp:paragraph {"className":"tz-section-kicker tz-archive-label"} -->
+		<p class="tz-section-kicker tz-archive-label">Archive</p>
 		<!-- /wp:paragraph -->
-		<!-- wp:query-title {"type":"archive","showPrefix":false,"className":"tz-page-title"} /-->
-		<!-- wp:term-description /-->
+		<!-- wp:query-title {"type":"archive","showPrefix":false,"className":"tz-page-title tz-archive-title"} /-->
+		<!-- wp:term-description {"className":"tz-archive-description"} /-->
 	</div>
 	<!-- /wp:group -->
 
-	<!-- wp:columns {"className":"tz-content-grid","style":{"spacing":{"margin":{"top":"var:preset|spacing|60"}}}} -->
-	<div class="wp-block-columns tz-content-grid" style="margin-top:var(--wp--preset--spacing--60)">
+	<!-- wp:columns {"className":"tz-content-grid","style":{"spacing":{"margin":{"top":"var:preset|spacing|50"}}}} -->
+	<div class="wp-block-columns tz-content-grid" style="margin-top:var(--wp--preset--spacing--50)">
 		<!-- wp:column -->
 		<div class="wp-block-column">
 			<!-- wp:query {"queryId":22,"query":{"perPage":10,"pages":0,"offset":0,"postType":"post","order":"desc","orderBy":"date","inherit":true},"className":"tz-feed"} -->
 			<div class="wp-block-query tz-feed">
 				<!-- wp:post-template -->
-					<!-- wp:group {"className":"tz-feed-card","layout":{"type":"default"}} -->
-					<div class="wp-block-group tz-feed-card">
-						<!-- wp:post-featured-image {"isLink":true,"aspectRatio":"3/2","sizeSlug":"techzei-feed"} /-->
-						<!-- wp:group {"layout":{"type":"constrained"}} -->
-						<div class="wp-block-group">
-							<!-- wp:post-terms {"term":"category","className":"tz-section-kicker"} /-->
-							<!-- wp:post-title {"isLink":true,"level":2} /-->
-							<!-- wp:post-excerpt {"moreText":""} /-->
-							<!-- wp:post-date {"className":"tz-meta"} /-->
+					<!-- wp:group {"className":"tz-feed-card tz-story-card","layout":{"type":"default"}} -->
+					<div class="wp-block-group tz-feed-card tz-story-card">
+						<!-- wp:post-featured-image {"isLink":true,"aspectRatio":"3/2","sizeSlug":"techzei-feed","className":"tz-card-media"} /-->
+						<!-- wp:group {"className":"tz-card-body","layout":{"type":"constrained"}} -->
+						<div class="wp-block-group tz-card-body">
+							<!-- wp:post-terms {"term":"category","className":"tz-section-kicker tz-card-kicker"} /-->
+							<!-- wp:post-title {"isLink":true,"level":2,"className":"tz-card-title"} /-->
+							<!-- wp:post-excerpt {"moreText":"","className":"tz-card-excerpt"} /-->
+							<!-- wp:post-date {"className":"tz-meta tz-card-meta"} /-->
 						</div>
 						<!-- /wp:group -->
 					</div>
 					<!-- /wp:group -->
 				<!-- /wp:post-template -->
 				<!-- wp:query-pagination {"className":"tz-pagination","layout":{"type":"flex","justifyContent":"space-between"}} -->
-					<!-- wp:query-pagination-previous /-->
+					<!-- wp:query-pagination-previous {"label":"Newer stories"} /-->
 					<!-- wp:query-pagination-numbers /-->
-					<!-- wp:query-pagination-next /-->
+					<!-- wp:query-pagination-next {"label":"Older stories"} /-->
 				<!-- /wp:query-pagination -->
 				<!-- wp:query-no-results -->
-					<!-- wp:paragraph -->
-					<p>No stories were found in this topic.</p>
+					<!-- wp:paragraph {"className":"tz-empty-state"} -->
+					<p class="tz-empty-state">No stories were found in this topic yet. Try another topic or browse the latest stories.</p>
 					<!-- /wp:paragraph -->
 				<!-- /wp:query-no-results -->
 			</div>

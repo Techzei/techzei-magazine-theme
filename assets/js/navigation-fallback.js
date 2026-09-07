@@ -10,6 +10,7 @@
 	var doc = document;
 	var win = window;
 	var idCounter = 0;
+	var translatedLabels = win.TechzeiThemeI18n || {};
 
 	/* Keep the full search form available until the enhancement is ready. */
 	doc.documentElement.classList.add('tz-js');
@@ -27,8 +28,12 @@
 		return prefix + '-' + idCounter;
 	}
 
+	function getLabel(name, fallback) {
+		return translatedLabels[name] || fallback;
+	}
+
 	function setSearchLabel(toggle, isOpen) {
-		var label = isOpen ? 'Close search' : 'Open search';
+		var label = isOpen ? getLabel('closeSearch', 'Close search') : getLabel('openSearch', 'Open search');
 		var screenReaderText = toggle.querySelector('.screen-reader-text');
 
 		toggle.setAttribute('aria-label', label);
@@ -91,8 +96,11 @@
 		toggle.setAttribute('data-tz-search-initialized', 'true');
 		searchId = search.getAttribute('id');
 
-		if (!searchId) {
+		if (!searchId || doc.getElementById(searchId) !== search) {
 			searchId = nextId('tz-search');
+			while (doc.getElementById(searchId)) {
+				searchId = nextId('tz-search');
+			}
 			search.setAttribute('id', searchId);
 		}
 
@@ -168,8 +176,8 @@
 
 		doc.addEventListener('click', function (event) {
 			if (compactMode && isOpen && !masthead.contains(event.target)) {
-				/* Do not move focus away from the control the reader clicked. */
-				closeSearch(false);
+				/* Keep focus on the clicked control, or recover it from the hidden panel. */
+				closeSearch(search.contains(doc.activeElement));
 			}
 		});
 
@@ -177,7 +185,7 @@
 			var activeElement = doc.activeElement;
 			var focusIsInSearch = search.contains(event.target) || search.contains(activeElement);
 
-			if (compactMode && isOpen && 'Escape' === event.key && focusIsInSearch) {
+			if (compactMode && isOpen && ( 'Escape' === event.key || 'Esc' === event.key ) && focusIsInSearch) {
 				event.preventDefault();
 				closeSearch(true);
 			}
@@ -207,7 +215,7 @@
 		var speed;
 		var reducedMotion;
 		var mobile;
-		var inView = true;
+		var inView = !win.IntersectionObserver;
 		var documentVisible = !doc.hidden;
 		var manualPause = false;
 		var interactionPause = false;
@@ -246,7 +254,7 @@
 
 		root.setAttribute('role', root.getAttribute('role') || 'region');
 		if (!root.getAttribute('aria-label')) {
-			root.setAttribute('aria-label', 'Trending headlines');
+			root.setAttribute('aria-label', getLabel('trendingHeadlines', 'Latest headlines'));
 		}
 
 		control = root.querySelector('[data-tz-ticker-control], .tz-ticker-toggle');
@@ -282,7 +290,7 @@
 		}
 
 		function shouldAnimate() {
-			return 'marquee' === mode && !mobile && !reducedMotion && !manualPause && !interactionPause && inView && documentVisible && hasOverflow();
+			return 'marquee' === mode && !mobile && !reducedMotion && !manualPause && !interactionPause && inView && documentVisible && !root.hidden && !list.hidden && hasOverflow();
 		}
 
 		function requestFrame(callback) {
@@ -303,8 +311,8 @@
 				return;
 			}
 
-			pauseLabel = control.getAttribute('data-tz-pause-label') || root.getAttribute('data-tz-pause-label') || 'Pause headlines';
-			resumeLabel = control.getAttribute('data-tz-resume-label') || root.getAttribute('data-tz-resume-label') || 'Resume headlines';
+			pauseLabel = control.getAttribute('data-tz-pause-label') || root.getAttribute('data-tz-pause-label') || getLabel('pauseHeadlines', 'Pause headlines');
+			resumeLabel = control.getAttribute('data-tz-resume-label') || root.getAttribute('data-tz-resume-label') || getLabel('resumeHeadlines', 'Resume headlines');
 			control.textContent = manualPause ? resumeLabel : pauseLabel;
 			control.setAttribute('aria-pressed', manualPause ? 'true' : 'false');
 		}

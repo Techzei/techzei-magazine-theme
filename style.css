@@ -3,7 +3,7 @@ Theme Name: Techzei Magazine Theme
 Theme URI: https://techzei.com/
 Author: Techzei
 Description: A fast, editorial technology publication child theme for Twenty Twenty-Five.
-Version: 3.1.1
+Version: 3.2.0
 Template: twentytwentyfive
 Requires at least: 6.7
 Tested up to: 6.8
@@ -26,8 +26,19 @@ Text Domain: techzei-magazine-theme
 	--tz-dark: #20201f;
 	--tz-footer-accent: #ffb09a;
 	--tz-focus: var(--wp--preset--color--accent-3, #344d62);
-	--tz-shell: min(var(--wp--style--global--wide-size, 1220px), calc(100% - 48px));
-	--tz-gutter: 24px;
+	--tz-gutter: var(--wp--custom--techzei--layout--shell-gutter, 24px);
+	--tz-mobile-gutter: var(--wp--custom--techzei--layout--mobile-gutter, 15px);
+	--tz-shell: min(var(--wp--style--global--wide-size, 1220px), calc(100% - (var(--tz-gutter) * 2)));
+	--tz-article-width: var(--wp--custom--techzei--layout--article-width, 780px);
+	--tz-sidebar-width: var(--wp--custom--techzei--layout--sidebar-width, 300px);
+	--tz-grid-gap: var(--wp--custom--techzei--layout--grid-gap, clamp(2rem, 5vw, 4rem));
+	--tz-card-radius: var(--wp--custom--techzei--card--radius, .35rem);
+	--tz-card-placeholder: var(--wp--custom--techzei--card--placeholder, #e5e1d8);
+	--tz-motion-duration: var(--wp--custom--techzei--motion--duration, 180ms);
+	--tz-card-thumb-width: 240px;
+	--tz-card-thumb-height: 155px;
+	--tz-list-thumb-width: 88px;
+	--tz-list-thumb-height: 64px;
 	--tz-header-offset: 0px;
 }
 
@@ -227,7 +238,7 @@ body.tz-sticky-desktop-off .tz-sticky-header {
 	font-size: .72rem;
 	letter-spacing: .07em;
 	text-transform: uppercase;
-	transition: background-color .18s ease, color .18s ease;
+	transition: background-color var(--tz-motion-duration) ease, color var(--tz-motion-duration) ease;
 }
 
 .tz-nav-wrap .wp-block-navigation__container {
@@ -471,8 +482,8 @@ body.tz-sticky-desktop-off .tz-sticky-header {
 
 .tz-content-grid {
 	display: grid !important;
-	grid-template-columns: minmax(0, 1fr) 320px;
-	gap: clamp(2rem, 5vw, 4rem);
+	grid-template-columns: minmax(0, 1fr) var(--tz-sidebar-width);
+	gap: var(--tz-grid-gap);
 	align-items: start;
 }
 
@@ -488,15 +499,18 @@ body.tz-sticky-desktop-off .tz-sticky-header {
 
 .tz-feed-card {
 	display: grid;
-	grid-template-columns: 240px minmax(0, 1fr);
+	grid-template-columns: var(--tz-card-thumb-width) minmax(0, 1fr);
 	gap: 1.5rem;
-	padding: 1.55rem 0;
+	padding: 1.5rem 0;
 	border-bottom: 1px solid var(--tz-line);
 }
 
 .tz-feed-card > .wp-block-post-featured-image {
-	height: 155px;
+	align-self: start;
+	height: var(--tz-card-thumb-height);
 	margin: 0;
+	border-radius: var(--tz-card-radius);
+	background: var(--tz-card-placeholder);
 }
 
 .tz-feed-card > .wp-block-post-featured-image a,
@@ -509,6 +523,8 @@ body.tz-sticky-desktop-off .tz-sticky-header {
 
 .tz-feed-card:not(:has(> .wp-block-post-featured-image img)) {
 	grid-template-columns: 1fr;
+	padding-inline: 1rem;
+	background: color-mix(in srgb, var(--tz-surface) 62%, transparent);
 }
 
 .tz-feed-card:not(:has(> .wp-block-post-featured-image img)) > .wp-block-post-featured-image {
@@ -534,6 +550,7 @@ body.tz-sticky-desktop-off .tz-sticky-header {
 }
 
 .tz-feed-card .wp-block-post-excerpt {
+	margin-top: .7rem;
 	color: var(--tz-muted);
 	font-size: .88rem;
 	line-height: 1.5;
@@ -543,9 +560,32 @@ body.tz-sticky-desktop-off .tz-sticky-header {
 	display: none;
 }
 
+.tz-card-body,
+.tz-story-copy {
+	align-self: start;
+	min-width: 0;
+	margin-block-start: 0;
+	padding-block-start: 0;
+}
+
+.tz-card-kicker {
+	margin: 0;
+}
+
+.tz-card-title {
+	text-wrap: pretty;
+}
+
 .tz-sidebar {
 	border-left: 1px solid var(--tz-line);
 	padding-left: 1.8rem;
+}
+
+/* PHP integration contract: the central resolver should add body class
+ * `tz-mobile-sidebar-off` when its mobile discovery setting is disabled.
+ * `.tz-discovery-sidebar` is the stable marker for archive and article rails. */
+.tz-discovery-sidebar {
+	min-width: 0;
 }
 
 .tz-sidebar .wp-block-heading {
@@ -614,7 +654,14 @@ body.tz-sticky-desktop-off .tz-sticky-header {
 	white-space: nowrap;
 }
 
+.tz-sidebar .wp-block-latest-posts li:last-child {
+	border-bottom: 0;
+}
+
 .tz-pagination {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
 	padding-top: 1.25rem;
 	border-top: 2px solid var(--tz-ink);
 	font-size: .88rem;
@@ -624,10 +671,56 @@ body.tz-sticky-desktop-off .tz-sticky-header {
 	text-decoration: none;
 }
 
+.tz-pagination .wp-block-query-pagination-numbers {
+	display: flex;
+	flex-wrap: wrap;
+	gap: .25rem;
+	justify-content: center;
+	margin-inline: auto;
+}
+
+.tz-pagination .page-numbers {
+	min-width: 2rem;
+	padding: .35rem .45rem;
+	text-align: center;
+}
+
+.tz-pagination .page-numbers.current {
+	background: var(--tz-ink);
+	color: var(--tz-paper);
+}
+
+.tz-empty-state {
+	margin: 1.5rem 0 0;
+	padding: 1.25rem;
+	border: 1px dashed var(--tz-line);
+	background: var(--tz-surface);
+	color: var(--tz-muted);
+}
+
 /* Article and archive */
 .tz-page-title {
-	font-size: clamp(3rem, 6vw, 5rem);
+	margin: .45rem 0 0;
+	font-size: clamp(2.8rem, 6vw, 5rem);
 	line-height: .95;
+}
+
+.tz-listing-header {
+	padding-bottom: 1.25rem;
+}
+
+.tz-archive-description {
+	max-width: 48rem;
+	margin: 1rem 0 0;
+	color: var(--tz-muted);
+	font-family: var(--wp--preset--font-family--editorial, Georgia, serif);
+	font-size: 1.08rem;
+	line-height: 1.5;
+}
+
+.tz-listing-search {
+	max-width: 34rem;
+	margin: 1.5rem 0 0;
 }
 
 .tz-article-head {
@@ -670,7 +763,7 @@ body.tz-sticky-desktop-off .tz-sticky-header {
 
 .tz-article-columns {
 	display: grid !important;
-	grid-template-columns: minmax(0, 780px) 300px;
+	grid-template-columns: minmax(0, var(--tz-article-width)) var(--tz-sidebar-width);
 	gap: clamp(2.5rem, 6vw, 4.5rem);
 	justify-content: center;
 	align-items: start;
@@ -686,6 +779,12 @@ body.tz-sticky-desktop-off .tz-sticky-header {
 	font-size: 1.14rem;
 	line-height: 1.78;
 	overflow-wrap: anywhere;
+}
+
+.tz-article-flow {
+	width: 100%;
+	max-width: var(--tz-article-width);
+	margin-inline: auto;
 }
 
 .tz-article-layout {
@@ -706,7 +805,7 @@ body.tz-sticky-desktop-off .tz-sticky-header {
 }
 
 body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-columns {
-	grid-template-columns: minmax(0, 780px);
+	grid-template-columns: minmax(0, var(--tz-article-width));
 }
 
 body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-sidebar {
@@ -863,14 +962,16 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 }
 
 .tz-post-tags {
-	margin-top: 2rem;
+	margin: 1.5rem 0 0;
+	padding-top: 1rem;
+	border-top: 1px solid var(--tz-line);
 	color: var(--tz-muted);
 	font-size: .78rem;
 }
 
 .tz-author-profile,
 .tz-share {
-	max-width: 780px;
+	max-width: var(--tz-article-width);
 	margin-inline: auto;
 	border-top: 1px solid var(--tz-line);
 	border-bottom: 1px solid var(--tz-line);
@@ -903,6 +1004,7 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 
 .tz-share {
 	display: flex;
+	align-items: center;
 	gap: 1rem;
 	padding: 1.25rem 0;
 }
@@ -1113,6 +1215,10 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 		padding: 2rem 0 0;
 	}
 
+	.tz-article-sidebar {
+		order: 2;
+	}
+
 	.tz-hero {
 		flex-direction: column;
 	}
@@ -1167,7 +1273,10 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 
 @media (max-width: 600px) {
 	:root {
-		--tz-shell: calc(100% - 30px);
+		--tz-gutter: var(--tz-mobile-gutter);
+		--tz-shell: calc(100% - (var(--tz-gutter) * 2));
+		--tz-card-thumb-width: 108px;
+		--tz-card-thumb-height: 92px;
 	}
 
 	.tz-utility .tz-date {
@@ -1179,6 +1288,11 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 		min-height: 72px;
 		gap: .5rem;
 		flex-wrap: nowrap !important;
+	}
+
+	body.tz-mobile-sidebar-off .tz-discovery-sidebar,
+	body[data-tz-mobile-sidebar="off"] .tz-discovery-sidebar {
+		display: none;
 	}
 
 	body.tz-sticky-desktop-off:not(.tz-sticky-mobile-off) .tz-sticky-header {
@@ -1293,7 +1407,7 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 	}
 
 	.tz-feed-card > .wp-block-post-featured-image {
-		height: 92px;
+		height: var(--tz-card-thumb-height);
 	}
 
 	.tz-feed-card .wp-block-post-excerpt {

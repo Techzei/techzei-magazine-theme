@@ -83,7 +83,7 @@
 }
 
 .tz-related-stories {
-	max-width: 780px;
+	max-width: var(--tz-article-width, 780px);
 	margin-inline: auto;
 	padding-top: 1.75rem;
 	border-top: 2px solid var(--tz-ink);
@@ -116,14 +116,25 @@
 	display: block;
 	width: 132px;
 	height: 82px;
+	border-radius: var(--tz-card-radius, .35rem);
 }
 
 .tz-story-thumb-image {
 	object-fit: cover;
 }
 
+.tz-story-thumb-placeholder {
+	background: var(--tz-card-placeholder, #e5e1d8);
+	box-shadow: inset 0 0 0 1px var(--tz-line);
+}
+
 .tz-story-copy {
 	min-width: 0;
+}
+
+.tz-story-copy > a {
+	display: block;
+	text-wrap: pretty;
 }
 
 .tz-related-stories a {
@@ -158,10 +169,15 @@
 	border-bottom: 1px solid var(--tz-line);
 }
 
+.tz-article-sidebar .tz-latest-stories li:last-child,
+.tz-article-sidebar .tz-latest-reviews li:last-child {
+	border-bottom: 0;
+}
+
 .tz-article-sidebar .tz-story-thumb,
 .tz-article-sidebar .tz-story-thumb-image {
-	width: 88px;
-	height: 64px;
+	width: var(--tz-list-thumb-width, 88px);
+	height: var(--tz-list-thumb-height, 64px);
 }
 
 .tz-article-sidebar .tz-latest-stories a,

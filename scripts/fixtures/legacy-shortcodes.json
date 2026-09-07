@@ -1,0 +1,11 @@
+{
+  "shortcodes": ["column", "alert", "button", "pullquote", "hr", "attention"],
+  "cases": [
+    "[column size=\"one_half\" position=\"first\"]A[/column][column size='one_half' position='last']B[/column]",
+    "[column size=\"one_third\"]A[/column][column size=\"two_thirds\"]B[/column]",
+    "[column size=\"one_half\"]Unclosed content",
+    "[alert type=\"warning\"][strong]Nested formatting[/strong][/alert]",
+    "[button link=\"javascript:alert(1)\" target=\"_blank\"]Unsafe URL[/button]",
+    "[pullquote align=\"left\"]Quote[/pullquote] [hr] [attention]Read this[/attention]"
+  ]
+}

@@ -3,12 +3,16 @@
 <main class="wp-block-group alignwide tz-shell tz-article-layout tz-layout-no-sidebar" style="padding-top:var(--wp--preset--spacing--50);padding-bottom:var(--wp--preset--spacing--50)">
 	<!-- wp:group {"className":"tz-article-head","layout":{"type":"constrained"}} --><div class="wp-block-group tz-article-head"><!-- wp:post-terms {"term":"category","className":"tz-section-kicker"} /--><!-- wp:post-title {"level":1,"className":"tz-article-title"} /--><!-- wp:group {"className":"tz-meta","layout":{"type":"flex","flexWrap":"wrap","justifyContent":"center"}} --><div class="wp-block-group tz-meta"><!-- wp:post-author-name {"isLink":true} /--><!-- wp:post-date /--><!-- wp:paragraph {"className":"tz-updated-label"} --><p class="tz-updated-label">Updated</p><!-- /wp:paragraph --><!-- wp:post-date {"displayType":"modified","className":"tz-updated-date"} /--><!-- wp:shortcode {"className":"tz-reading-time"} -->[techzei_reading_time]<!-- /wp:shortcode --></div><!-- /wp:group --></div><!-- /wp:group -->
 	<!-- wp:post-featured-image {"aspectRatio":"16/9","sizeSlug":"techzei-hero","align":"wide","className":"tz-feature-image","style":{"spacing":{"margin":{"top":"var:preset|spacing|30","bottom":"var:preset|spacing|50"}}}} /-->
-	<!-- wp:group {"className":"tz-article-primary","layout":{"type":"constrained"}} --><div class="wp-block-group tz-article-primary"><!-- wp:post-content {"className":"tz-article-content","layout":{"type":"constrained"}} /--><!-- wp:post-terms {"term":"post_tag","separator":"  ","className":"tz-post-tags"} /--></div><!-- /wp:group -->
+	<!-- wp:group {"className":"tz-article-primary tz-article-flow","layout":{"type":"default"}} --><div class="wp-block-group tz-article-primary tz-article-flow">
+		<!-- wp:post-content {"className":"tz-article-content","layout":{"type":"constrained"}} /-->
+		<!-- Article flow contract: share and author stay immediately after content in DOM. -->
+		<!-- wp:template-part {"slug":"share"} /-->
+		<!-- wp:template-part {"slug":"author-profile"} /-->
+		<!-- wp:post-terms {"term":"post_tag","separator":"  ","className":"tz-post-tags"} /-->
+		<!-- wp:group {"className":"tz-post-navigation","style":{"spacing":{"padding":{"top":"var:preset|spacing|40","bottom":"var:preset|spacing|40"}}},"layout":{"type":"constrained"}} --><div class="wp-block-group tz-post-navigation" style="padding-top:var(--wp--preset--spacing--40);padding-bottom:var(--wp--preset--spacing--40)"><!-- wp:template-part {"slug":"post-navigation"} /--></div><!-- /wp:group -->
+		<!-- wp:template-part {"slug":"related-stories"} /-->
+		<!-- wp:group {"className":"tz-comments","style":{"spacing":{"padding":{"top":"var:preset|spacing|50","bottom":"var:preset|spacing|60"}}},"layout":{"type":"constrained"}} --><div class="wp-block-group tz-comments" style="padding-top:var(--wp--preset--spacing--50);padding-bottom:var(--wp--preset--spacing--60)"><!-- wp:template-part {"slug":"comments"} /--></div><!-- /wp:group -->
+	</div><!-- /wp:group -->
 </main>
 <!-- /wp:group -->
-<!-- wp:template-part {"slug":"share"} /-->
-<!-- wp:group {"align":"wide","className":"tz-shell tz-post-navigation","style":{"spacing":{"padding":{"top":"var:preset|spacing|40","bottom":"var:preset|spacing|40"}}},"layout":{"type":"constrained"}} --><div class="wp-block-group alignwide tz-shell tz-post-navigation" style="padding-top:var(--wp--preset--spacing--40);padding-bottom:var(--wp--preset--spacing--40)"><!-- wp:template-part {"slug":"post-navigation"} /--></div><!-- /wp:group -->
-<!-- wp:template-part {"slug":"author-profile"} /-->
-<!-- wp:template-part {"slug":"related-stories"} /-->
-<!-- wp:group {"align":"wide","className":"tz-shell tz-comments","style":{"spacing":{"padding":{"top":"var:preset|spacing|50","bottom":"var:preset|spacing|60"}}},"layout":{"type":"constrained"}} --><div class="wp-block-group alignwide tz-shell tz-comments" style="padding-top:var(--wp--preset--spacing--50);padding-bottom:var(--wp--preset--spacing--60)"><!-- wp:template-part {"slug":"comments"} /--></div><!-- /wp:group -->
 <!-- wp:template-part {"slug":"footer","tagName":"footer"} /-->

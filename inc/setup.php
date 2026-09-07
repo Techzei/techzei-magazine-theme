@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function techzei_tt5_setup() {
 	load_child_theme_textdomain( 'techzei-magazine-theme', get_stylesheet_directory() . '/languages' );
-	add_editor_style( 'assets/css/article.css' );
+	add_editor_style( array( 'style.css', 'assets/css/article.css' ) );
 
 	add_image_size( 'techzei-hero', 1440, 810, true );
 	add_image_size( 'techzei-tile', 720, 540, true );
@@ -23,29 +23,96 @@ function techzei_tt5_setup() {
 add_action( 'after_setup_theme', 'techzei_tt5_setup' );
 
 /**
+ * Return the labels used by the progressive header and ticker enhancements.
+ *
+ * Keeping these strings in PHP gives WordPress's translation system ownership
+ * of both the server-rendered no-JavaScript fallback and the deferred script.
+ *
+ * @return array
+ */
+function techzei_tt5_interaction_labels() {
+	return array(
+		'openSearch'        => __( 'Open search', 'techzei-magazine-theme' ),
+		'closeSearch'       => __( 'Close search', 'techzei-magazine-theme' ),
+		'pauseHeadlines'    => __( 'Pause headlines', 'techzei-magazine-theme' ),
+		'resumeHeadlines'   => __( 'Resume headlines', 'techzei-magazine-theme' ),
+		'trendingHeadlines' => __( 'Latest headlines', 'techzei-magazine-theme' ),
+	);
+}
+
+/**
  * Load the small, local stylesheets used by the child theme.
  */
 function techzei_tt5_enqueue_assets() {
 	$theme = wp_get_theme();
+	$version = $theme->get( 'Version' );
 
-	wp_enqueue_style( 'techzei-magazine-theme', get_stylesheet_uri(), array(), $theme->get( 'Version' ) );
-	if ( is_singular( 'post' ) || is_page() ) {
-		wp_enqueue_style(
-			'techzei-magazine-theme-article',
-			get_stylesheet_directory_uri() . '/assets/css/article.css',
-			array( 'techzei-magazine-theme' ),
-			$theme->get( 'Version' )
-		);
-	}
+	wp_enqueue_style( 'techzei-magazine-theme', get_stylesheet_uri(), array(), $version );
+	wp_enqueue_style(
+		'techzei-magazine-theme-article',
+		get_stylesheet_directory_uri() . '/assets/css/article.css',
+		array( 'techzei-magazine-theme' ),
+		$version
+	);
 	wp_enqueue_script(
 		'techzei-magazine-theme-navigation-fallback',
 		get_stylesheet_directory_uri() . '/assets/js/navigation-fallback.js',
 		array(),
-		$theme->get( 'Version' ),
+		$version,
 		array( 'in_footer' => true, 'strategy' => 'defer' )
+	);
+	wp_localize_script(
+		'techzei-magazine-theme-navigation-fallback',
+		'TechzeiThemeI18n',
+		techzei_tt5_interaction_labels()
+	);
+	wp_set_script_translations(
+		'techzei-magazine-theme-navigation-fallback',
+		'techzei-magazine-theme',
+		get_stylesheet_directory() . '/languages'
 	);
 }
 add_action( 'wp_enqueue_scripts', 'techzei_tt5_enqueue_assets' );
+
+/**
+ * Translate the raw-HTML controls before the page reaches the browser.
+ *
+ * This keeps the no-JavaScript search fallback usable and gives the ticker
+ * button a translated accessible name before JavaScript enhances it.
+ *
+ * @param string $block_content Rendered HTML block.
+ * @param array  $block         Parsed block.
+ * @return string
+ */
+function techzei_tt5_translate_interaction_markup( $block_content, $block ) {
+	if ( ! is_array( $block ) || ! class_exists( 'WP_HTML_Tag_Processor' ) ) {
+		return $block_content;
+	}
+
+	$labels = techzei_tt5_interaction_labels();
+	$tags   = new WP_HTML_Tag_Processor( $block_content );
+
+	if ( $tags->next_tag( array( 'tag_name' => 'BUTTON', 'class_name' => 'tz-search-toggle' ) ) ) {
+		$tags->set_attribute( 'aria-label', $labels['openSearch'] );
+	}
+
+	$tags = new WP_HTML_Tag_Processor( $block_content );
+	if ( $tags->next_tag( array( 'tag_name' => 'BUTTON', 'class_name' => 'tz-search-toggle' ) ) ) {
+		while ( $tags->next_tag( array( 'tag_name' => 'SPAN', 'class_name' => 'screen-reader-text' ) ) ) {
+			$tags->set_modifiable_text( $labels['openSearch'] );
+		}
+		$block_content = $tags->get_updated_html();
+	}
+
+	$tags = new WP_HTML_Tag_Processor( $block_content );
+	if ( $tags->next_tag( array( 'tag_name' => 'BUTTON', 'class_name' => 'tz-ticker-toggle' ) ) ) {
+		$tags->set_modifiable_text( $labels['pauseHeadlines'] );
+		$block_content = $tags->get_updated_html();
+	}
+
+	return $block_content;
+}
+add_filter( 'render_block_core/html', 'techzei_tt5_translate_interaction_markup', 10, 2 );
 
 /**
  * Return whether a parsed block has an exact Techzei class token.

@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.2.0
+
+- Improve mobile article reading flow by placing sharing, author, related stories, and comments immediately after article content.
+- Add relevance-ordered related stories with optional editorial-first selection through the central settings resolver.
+- Add native Review Verdict, Product Specifications, and Related Reading block patterns.
+- Add mobile discovery visibility, related-story mode, request-local settings caching, and read-only Site Editor customization diagnostics.
+- Improve card hierarchy, archive/search states, editor/frontend style parity, translated controls, and interaction safeguards.
+- Strengthen block validation, focused quality checks, push/pull-request validation, and release packaging integrity.
+
 ## 3.1.1
 
 - Rebuilt the 404 template as a focused editorial recovery page with a controlled responsive layout, branded signal graphic, accessible search action, and clear return-home link.

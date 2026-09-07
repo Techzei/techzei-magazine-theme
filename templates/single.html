@@ -22,14 +22,24 @@
 
 	<!-- wp:columns {"className":"tz-article-columns","layout":{"type":"default"}} -->
 	<div class="wp-block-columns tz-article-columns">
-		<!-- wp:column {"className":"tz-article-primary"} -->
+		<!-- wp:column {"className":"tz-article-primary","layout":{"type":"default"}} -->
 		<div class="wp-block-column tz-article-primary">
-			<!-- wp:post-content {"className":"tz-article-content","layout":{"type":"constrained"}} /-->
-			<!-- wp:post-terms {"term":"post_tag","separator":"  ","className":"tz-post-tags"} /-->
+			<!-- wp:group {"className":"tz-article-flow","layout":{"type":"default"}} -->
+			<div class="wp-block-group tz-article-flow">
+				<!-- wp:post-content {"className":"tz-article-content","layout":{"type":"constrained"}} /-->
+				<!-- Article flow contract: share and author stay immediately after content in DOM. -->
+				<!-- wp:template-part {"slug":"share"} /-->
+				<!-- wp:template-part {"slug":"author-profile"} /-->
+				<!-- wp:post-terms {"term":"post_tag","separator":"  ","className":"tz-post-tags"} /-->
+				<!-- wp:group {"className":"tz-post-navigation","style":{"spacing":{"padding":{"top":"var:preset|spacing|40","bottom":"var:preset|spacing|40"}}},"layout":{"type":"constrained"}} --><div class="wp-block-group tz-post-navigation" style="padding-top:var(--wp--preset--spacing--40);padding-bottom:var(--wp--preset--spacing--40)"><!-- wp:template-part {"slug":"post-navigation"} /--></div><!-- /wp:group -->
+				<!-- wp:template-part {"slug":"related-stories"} /-->
+				<!-- wp:group {"className":"tz-comments","style":{"spacing":{"padding":{"top":"var:preset|spacing|50","bottom":"var:preset|spacing|60"}}},"layout":{"type":"constrained"}} --><div class="wp-block-group tz-comments" style="padding-top:var(--wp--preset--spacing--50);padding-bottom:var(--wp--preset--spacing--60)"><!-- wp:template-part {"slug":"comments"} /--></div><!-- /wp:group -->
+			</div>
+			<!-- /wp:group -->
 		</div>
 		<!-- /wp:column -->
-		<!-- wp:column {"className":"tz-article-sidebar"} -->
-		<div class="wp-block-column tz-article-sidebar">
+		<!-- wp:column {"className":"tz-article-sidebar tz-discovery-sidebar"} -->
+		<div class="wp-block-column tz-article-sidebar tz-discovery-sidebar">
 			<!-- wp:group {"className":"tz-sidebar-latest-module","layout":{"type":"constrained"}} -->
 			<div class="wp-block-group tz-sidebar-latest-module">
 				<!-- wp:group {"className":"tz-sidebar-latest-heading","layout":{"type":"constrained"}} --><div class="wp-block-group tz-sidebar-latest-heading"><!-- wp:paragraph {"className":"tz-section-kicker"} --><p class="tz-section-kicker">From Techzei</p><!-- /wp:paragraph --><!-- wp:heading {"level":2} --><h2 class="wp-block-heading">Latest stories</h2><!-- /wp:heading --></div><!-- /wp:group -->
@@ -42,16 +52,6 @@
 	</div>
 	<!-- /wp:columns -->
 </main>
-<!-- /wp:group -->
-
-<!-- wp:template-part {"slug":"share"} /-->
-<!-- wp:group {"align":"wide","className":"tz-shell tz-post-navigation","style":{"spacing":{"padding":{"top":"var:preset|spacing|40","bottom":"var:preset|spacing|40"}}},"layout":{"type":"constrained"}} -->
-<div class="wp-block-group alignwide tz-shell tz-post-navigation" style="padding-top:var(--wp--preset--spacing--40);padding-bottom:var(--wp--preset--spacing--40)"><!-- wp:template-part {"slug":"post-navigation"} /--></div>
-<!-- /wp:group -->
-<!-- wp:template-part {"slug":"author-profile"} /-->
-<!-- wp:template-part {"slug":"related-stories"} /-->
-<!-- wp:group {"align":"wide","className":"tz-shell tz-comments","style":{"spacing":{"padding":{"top":"var:preset|spacing|50","bottom":"var:preset|spacing|60"}}},"layout":{"type":"constrained"}} -->
-<div class="wp-block-group alignwide tz-shell tz-comments" style="padding-top:var(--wp--preset--spacing--50);padding-bottom:var(--wp--preset--spacing--60)"><!-- wp:template-part {"slug":"comments"} /--></div>
 <!-- /wp:group -->
 
 <!-- wp:template-part {"slug":"footer","tagName":"footer"} /-->

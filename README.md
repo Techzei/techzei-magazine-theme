@@ -47,9 +47,9 @@ Open **Appearance → Editor** after activation and review these items:
 
 ## Techzei Settings
 
-Use **Appearance → Techzei Settings** for theme behaviour: sticky header modes, header search and Topics visibility, homepage feature/feed/headline behaviour, default article layout, article metadata/share/related controls, and article-sidebar discovery counts/categories. The page uses one namespaced option and its reset action changes only that option.
+Use **Appearance → Techzei Settings** for theme behaviour: sticky header modes, header search and Topics visibility, homepage feature/feed/headline behaviour, default article layout, article metadata/share/related controls, related-story selection mode, and article-sidebar discovery counts/categories including mobile visibility. The page uses one namespaced option and its reset action changes only that option. Its read-only diagnostics show active/parent theme versions and saved Site Editor template customisations with inspect links.
 
-Use **Appearance → Editor → Styles** for colours, font families, typography, content/wide widths, and spacing. Keep the Site Editor as the owner of the logo, menus, footer copy, India mark, template composition, and section labels. Use the post editor’s **Template** control for a one-off article layout. See [the settings reference](docs/3.1.0-settings.md) for the full inventory and precedence rules.
+Use **Appearance → Editor → Styles** for colours, font families, typography, content/wide widths, and spacing. Keep the Site Editor as the owner of the logo, menus, footer copy, India mark, template composition, and section labels. Use the post editor’s **Template** control for a one-off article layout. See [the 3.1.0 settings contract](docs/3.1.0-settings.md) and [the 3.2.0 settings additions](docs/3.2.0-settings.md) for the full inventory and precedence rules.
 
 ## Legacy article support
 
@@ -109,7 +109,7 @@ Before publishing a release:
 
 Publishing a GitHub Release automatically runs the release workflow. It checks out the release tag, confirms that the tag matches the `Version` field in `style.css`, builds a clean WordPress upload ZIP, verifies its structure, and attaches it to the release.
 
-Use matching version tags, for example `v3.1.1` for theme version `3.1.1`. The resulting release asset is named `techzei-magazine-theme-3.1.1.zip` and contains exactly one top-level `techzei-magazine-theme/` folder.
+Use matching version tags, for example `v3.2.0` for theme version `3.2.0`. The resulting release asset is named `techzei-magazine-theme-3.2.0.zip` and contains exactly one top-level `techzei-magazine-theme/` folder.
 
 ## License
 

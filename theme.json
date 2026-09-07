@@ -47,6 +47,24 @@
         { "slug": "accent-5", "name": "Soft Paper", "color": "#ebe7df" },
         { "slug": "accent-6", "name": "Rule", "color": "#d8d3ca" }
       ]
+    },
+    "custom": {
+      "techzei": {
+        "layout": {
+          "shellGutter": "24px",
+          "mobileGutter": "15px",
+          "articleWidth": "780px",
+          "sidebarWidth": "300px",
+          "gridGap": "clamp(2rem, 5vw, 4rem)"
+        },
+        "card": {
+          "radius": "0.35rem",
+          "placeholder": "#e5e1d8"
+        },
+        "motion": {
+          "duration": "180ms"
+        }
+      }
     }
   },
   "templateParts": [

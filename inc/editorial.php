@@ -136,37 +136,245 @@ function techzei_tt5_reading_time() {
 add_shortcode( 'techzei_reading_time', 'techzei_tt5_reading_time' );
 
 /**
- * Render related posts from the current post's WordPress categories.
+ * Normalize a bounded list of post IDs used by editorial modules.
  *
+ * @param array $ids       Candidate post IDs.
+ * @param int   $limit     Maximum number of IDs to return.
+ * @param array $exclude   IDs that must not be returned.
+ * @return array
+ */
+function techzei_tt5_normalize_editorial_ids( $ids, $limit, $exclude = array() ) {
+	$ids     = is_array( $ids ) ? $ids : array();
+	$exclude = array_map( 'absint', is_array( $exclude ) ? $exclude : array() );
+	$clean   = array();
+
+	foreach ( $ids as $id ) {
+		$id = absint( $id );
+		if ( $id && ! in_array( $id, $exclude, true ) && ! in_array( $id, $clean, true ) ) {
+			$clean[] = $id;
+		}
+		if ( count( $clean ) >= absint( $limit ) ) {
+			break;
+		}
+	}
+
+	return $clean;
+}
+
+/**
+ * Return category IDs from most specific to least specific.
+ *
+ * Child categories are a stronger editorial signal than their ancestors.
+ * The list is capped so a post with unusually many terms cannot cause an
+ * unbounded sequence of related-story queries.
+ *
+ * @param array $category_ids Current post category IDs.
+ * @return array
+ */
+function techzei_tt5_order_related_categories( $category_ids ) {
+	$category_ids = techzei_tt5_normalize_editorial_ids( $category_ids, 8 );
+	$categories   = array();
+
+	foreach ( $category_ids as $category_id ) {
+		$categories[] = array(
+			'id'    => $category_id,
+			'depth' => count( get_ancestors( $category_id, 'category', 'taxonomy' ) ),
+		);
+	}
+
+	usort(
+		$categories,
+		function ( $left, $right ) {
+			if ( $left['depth'] === $right['depth'] ) {
+				return $left['id'] <=> $right['id'];
+			}
+			return $left['depth'] > $right['depth'] ? -1 : 1;
+		}
+	);
+
+	return wp_list_pluck( $categories, 'id' );
+}
+
+/**
+ * Query a bounded set of optional editorial selections.
+ *
+ * Sticky posts are WordPress's native manual editorial-selection mechanism.
+ * They are only consulted when the related-story mode is explicitly set to
+ * editorial/editorial-first, or when an integration opts in through the
+ * filter below. No post content or schema changes are required.
+ *
+ * @param array $selection Candidate post IDs, in editorial order.
+ * @param int   $limit     Maximum number of posts to return.
+ * @param array $exclude   IDs that must not be returned.
+ * @return array
+ */
+function techzei_tt5_editorial_selection_ids( $selection, $limit, $exclude = array() ) {
+	$selection = techzei_tt5_normalize_editorial_ids( $selection, 12, $exclude );
+	if ( empty( $selection ) ) {
+		return array();
+	}
+
+	$query = techzei_tt5_editorial_query(
+		array(
+			'posts_per_page' => min( 6, max( 1, absint( $limit ) ) ),
+			'post__in'       => $selection,
+			'orderby'        => 'post__in',
+			'fields'         => 'ids',
+			'post_status'    => 'publish',
+		)
+	);
+
+	return techzei_tt5_normalize_editorial_ids( $query->posts, $limit, $exclude );
+}
+
+/**
+ * Resolve related-story IDs in relevance order without unbounded work.
+ *
+ * The resolver uses editorial selections only when explicitly enabled, then
+ * shared tags, then one bounded query per most-specific shared category. Each
+ * query is ordered by publication date and post ID so equal-date results are
+ * stable. Unrelated posts are not added merely to fill the requested count.
+ *
+ * @param int $post_id Current post ID.
+ * @param int $limit   Maximum number of related posts.
+ * @return array
+ */
+function techzei_tt5_related_story_ids( $post_id, $limit ) {
+	$post_id = absint( $post_id );
+	$limit   = min( 6, max( 2, absint( $limit ) ) );
+	$ids     = array();
+	$exclude = array( $post_id );
+
+	$mode = sanitize_key( (string) techzei_tt5_get_editorial_setting( 'articles.related_mode', 'automatic' ) );
+	$editorial_first = in_array( $mode, array( 'editorial', 'editorial-first' ), true );
+	$editorial_first = (bool) apply_filters( 'techzei_tt5_related_editorial_first', $editorial_first, $post_id, $limit );
+
+	if ( $editorial_first ) {
+		$selection = apply_filters(
+			'techzei_tt5_editorial_selection',
+			get_option( 'sticky_posts', array() ),
+			$post_id,
+			$limit
+		);
+		$editorial_ids = techzei_tt5_editorial_selection_ids( $selection, $limit, $exclude );
+		$ids          = array_merge( $ids, $editorial_ids );
+		$exclude      = array_merge( $exclude, $editorial_ids );
+	}
+
+	$tag_ids = wp_get_post_terms(
+		$post_id,
+		'post_tag',
+		array(
+			'fields'  => 'ids',
+			'orderby' => 'term_id',
+			'order'   => 'ASC',
+		)
+	);
+	$tag_ids = is_wp_error( $tag_ids ) ? array() : techzei_tt5_normalize_editorial_ids( $tag_ids, 8 );
+
+	if ( ! empty( $tag_ids ) && count( $ids ) < $limit ) {
+		$tag_query = techzei_tt5_editorial_query(
+			array(
+				'posts_per_page' => min( 18, max( $limit, $limit * 3 ) ),
+				'post__not_in'   => $exclude,
+				'fields'        => 'ids',
+				'orderby'       => array(
+					'date' => 'DESC',
+					'ID'   => 'DESC',
+				),
+				'tax_query'     => array(
+					array(
+						'taxonomy'         => 'post_tag',
+						'field'            => 'term_id',
+						'terms'            => $tag_ids,
+						'operator'         => 'IN',
+						'include_children' => false,
+					),
+				),
+			)
+		);
+		$tag_matches = techzei_tt5_normalize_editorial_ids( $tag_query->posts, $limit - count( $ids ), $exclude );
+		$ids         = array_merge( $ids, $tag_matches );
+		$exclude     = array_merge( $exclude, $tag_matches );
+	}
+
+	$category_ids = wp_get_post_terms(
+		$post_id,
+		'category',
+		array(
+			'fields'  => 'ids',
+			'orderby' => 'term_id',
+			'order'   => 'ASC',
+		)
+	);
+	$category_ids = is_wp_error( $category_ids ) ? array() : techzei_tt5_order_related_categories( $category_ids );
+
+	foreach ( $category_ids as $category_id ) {
+		if ( count( $ids ) >= $limit ) {
+			break;
+		}
+
+		$category_query = techzei_tt5_editorial_query(
+			array(
+				'posts_per_page' => $limit - count( $ids ),
+				'post__not_in'   => $exclude,
+				'fields'        => 'ids',
+				'orderby'       => array(
+					'date' => 'DESC',
+					'ID'   => 'DESC',
+				),
+				'tax_query'     => array(
+					array(
+						'taxonomy'         => 'category',
+						'field'            => 'term_id',
+						'terms'            => array( $category_id ),
+						'operator'         => 'IN',
+						'include_children' => false,
+					),
+				),
+			)
+		);
+		$category_matches = techzei_tt5_normalize_editorial_ids( $category_query->posts, $limit - count( $ids ), $exclude );
+		$ids              = array_merge( $ids, $category_matches );
+		$exclude          = array_merge( $exclude, $category_matches );
+	}
+
+	$ids = apply_filters( 'techzei_tt5_related_story_ids', $ids, $post_id, $limit );
+
+	return techzei_tt5_normalize_editorial_ids( $ids, $limit, array( $post_id ) );
+}
+
+/**
+ * Render related posts, preferring shared tags and specific shared categories.
+ *
+ * @param array $atts Optional shortcode attributes.
  * @return string
  */
-function techzei_tt5_related_stories() {
+function techzei_tt5_related_stories( $atts = array() ) {
 	if ( ! is_singular( 'post' ) || ! techzei_tt5_get_editorial_setting( 'articles.related_stories', true ) ) {
 		return '';
 	}
 
-	$post_id  = get_the_ID();
-	$term_ids = wp_get_post_terms( $post_id, 'category', array( 'fields' => 'ids' ) );
+	$post_id = get_the_ID();
+	$limit   = min( 6, max( 2, absint( techzei_tt5_get_editorial_setting( 'articles.related_count', 3 ) ) ) );
+	$ids     = techzei_tt5_related_story_ids( $post_id, $limit );
 
-	if ( empty( $term_ids ) || is_wp_error( $term_ids ) ) {
+	if ( empty( $ids ) ) {
 		return '';
 	}
 
 	$posts = techzei_tt5_editorial_query(
 		array(
-			'posts_per_page' => min( 6, max( 2, absint( techzei_tt5_get_editorial_setting( 'articles.related_count', 3 ) ) ) ),
-			'post__not_in' => array( $post_id ),
-			'orderby'      => 'date',
-			'order'        => 'DESC',
-			'tax_query'    => array(
-				array(
-					'taxonomy' => 'category',
-					'field'    => 'term_id',
-					'terms'    => $term_ids,
-				),
-			),
+			'posts_per_page' => $limit,
+			'post__in'       => $ids,
+			'orderby'        => 'post__in',
 		)
 	);
+
+	$atts = shortcode_atts( array( 'heading' => '1' ), $atts, 'techzei_related_stories' );
+	if ( in_array( sanitize_key( (string) $atts['heading'] ), array( '0', 'false', 'no', 'none' ), true ) ) {
+		return techzei_tt5_render_story_list( $posts, 'tz-related-stories' );
+	}
 
 	return techzei_tt5_render_story_list( $posts, 'tz-related-stories', __( 'Keep reading', 'techzei-magazine-theme' ), __( 'More on this topic', 'techzei-magazine-theme' ) );
 }

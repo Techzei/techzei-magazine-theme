@@ -2,7 +2,7 @@
 Requires at least: 6.7
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 3.1.1
+Stable tag: 3.2.0
 License: GPLv2 or later
 
 == Required Parent Theme ==
@@ -15,6 +15,14 @@ This is a child theme of Twenty Twenty-Five. Install the official Twenty Twenty-
 4. Review the Header, Footer, Topic navigation, and article template parts in the Site Editor.
 5. Regenerate thumbnails once for older Media Library images.
 6. Clear all WordPress, host, and CDN caches.
+
+== Version 3.2.0 ==
+
+* Improve mobile article reading flow by moving sharing, author, related stories, and comments before optional discovery content.
+* Add relevance-ordered related stories, editorial-first selection support, and native Review Verdict, Product Specifications, and Related Reading patterns.
+* Add mobile discovery visibility, related-story mode, request-local settings caching, and read-only Site Editor customization diagnostics.
+* Improve card hierarchy, archive/search states, editor/frontend style parity, translated controls, and responsive interaction safeguards.
+* Strengthen block validation, focused quality checks, pull-request validation, and release packaging integrity.
 
 == Version 3.1.1 ==
 

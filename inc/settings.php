@@ -76,6 +76,7 @@ function techzei_tt5_settings_defaults() {
 				'share_links'          => true,
 				'share_destinations'   => array( 'x', 'facebook', 'linkedin', 'whatsapp' ),
 				'related_stories'      => true,
+				'related_mode'         => 'automatic',
 				'related_count'        => 3,
 			),
 			'sidebar'  => array(
@@ -84,6 +85,7 @@ function techzei_tt5_settings_defaults() {
 				'reviews'        => true,
 				'review_category' => techzei_tt5_settings_default_review_category(),
 				'review_count'   => 4,
+				'mobile_discovery' => true,
 			),
 		),
 	);
@@ -129,7 +131,7 @@ function techzei_tt5_settings_normalize_values( $values ) {
 		'header'   => array( 'sticky_desktop', 'sticky_mobile', 'show_search', 'show_topics' ),
 		'homepage' => array( 'show_featured_grid' ),
 		'articles' => array( 'automatic_legacy', 'show_reading_time', 'author_card', 'share_links', 'related_stories' ),
-		'sidebar'  => array( 'latest_stories', 'reviews' ),
+		'sidebar'  => array( 'latest_stories', 'reviews', 'mobile_discovery' ),
 	);
 
 	foreach ( $booleans as $group => $keys ) {
@@ -152,6 +154,7 @@ function techzei_tt5_settings_normalize_values( $values ) {
 		'articles' => array(
 			'default_layout' => array( 'sidebar', 'no-sidebar' ),
 			'updated_date'   => array( 'later', 'hide' ),
+			'related_mode'   => array( 'automatic', 'editorial-first' ),
 		),
 	);
 
@@ -209,6 +212,37 @@ function techzei_tt5_settings_normalize_values( $values ) {
 }
 
 /**
+ * Return the normalized settings once per request.
+ *
+ * The cache is deliberately request-local. It avoids repeating option reads,
+ * default resolution, and normalization while keeping an option update in a
+ * later request authoritative.
+ *
+ * @return array
+ */
+function techzei_tt5_settings_resolved_values() {
+	if ( isset( $GLOBALS['techzei_tt5_settings_resolved_cache'] ) && is_array( $GLOBALS['techzei_tt5_settings_resolved_cache'] ) ) {
+		return $GLOBALS['techzei_tt5_settings_resolved_cache'];
+	}
+
+	$GLOBALS['techzei_tt5_settings_resolved_cache'] = techzei_tt5_settings_normalize_values( techzei_tt5_settings_stored_values() );
+
+	return $GLOBALS['techzei_tt5_settings_resolved_cache'];
+}
+
+/**
+ * Invalidate the request-local resolved settings cache.
+ *
+ * @return void
+ */
+function techzei_tt5_settings_invalidate_cache() {
+	unset( $GLOBALS['techzei_tt5_settings_resolved_cache'] );
+}
+add_action( 'added_option_' . TECHZEI_TT5_SETTINGS_OPTION, 'techzei_tt5_settings_invalidate_cache' );
+add_action( 'updated_option_' . TECHZEI_TT5_SETTINGS_OPTION, 'techzei_tt5_settings_invalidate_cache' );
+add_action( 'deleted_option_' . TECHZEI_TT5_SETTINGS_OPTION, 'techzei_tt5_settings_invalidate_cache' );
+
+/**
  * Resolve settings for frontend and editor consumers.
  *
  * Pass a group name to receive that group's values, or pass a dotted path
@@ -219,7 +253,7 @@ function techzei_tt5_settings_normalize_values( $values ) {
  * @return mixed
  */
 function techzei_tt5_get_settings( $path = null ) {
-	$settings = techzei_tt5_settings_normalize_values( techzei_tt5_settings_stored_values() );
+	$settings = techzei_tt5_settings_resolved_values();
 
 	if ( null === $path || '' === $path ) {
 		return $settings;
@@ -284,6 +318,7 @@ function techzei_tt5_settings_error( $message ) {
  * @return array
  */
 function techzei_tt5_settings_sanitize( $input ) {
+	techzei_tt5_settings_invalidate_cache();
 	$defaults = techzei_tt5_settings_defaults();
 	$current  = techzei_tt5_settings_normalize_values( techzei_tt5_settings_stored_values() );
 	$input    = is_array( $input ) ? wp_unslash( $input ) : array();
@@ -293,7 +328,7 @@ function techzei_tt5_settings_sanitize( $input ) {
 		'header'   => array( 'sticky_desktop', 'sticky_mobile', 'show_search', 'show_topics' ),
 		'homepage' => array( 'show_featured_grid' ),
 		'articles' => array( 'automatic_legacy', 'show_reading_time', 'author_card', 'share_links', 'related_stories' ),
-		'sidebar'  => array( 'latest_stories', 'reviews' ),
+		'sidebar'  => array( 'latest_stories', 'reviews', 'mobile_discovery' ),
 	);
 
 	foreach ( $boolean_fields as $group => $keys ) {
@@ -313,6 +348,7 @@ function techzei_tt5_settings_sanitize( $input ) {
 		'articles' => array(
 			'default_layout' => array( 'sidebar', 'no-sidebar' ),
 			'updated_date'   => array( 'later', 'hide' ),
+			'related_mode'   => array( 'automatic', 'editorial-first' ),
 		),
 	);
 
@@ -524,14 +560,16 @@ function techzei_tt5_settings_register() {
 			'share_links'        => __( 'Share links', 'techzei-magazine-theme' ),
 			'share_destinations' => __( 'Share destinations', 'techzei-magazine-theme' ),
 			'related_stories'    => __( 'Related stories', 'techzei-magazine-theme' ),
+			'related_mode'       => __( 'Related story selection', 'techzei-magazine-theme' ),
 			'related_count'      => __( 'Related story count', 'techzei-magazine-theme' ),
 		),
 		'techzei_sidebar' => array(
-			'latest_stories' => __( 'Latest stories module', 'techzei-magazine-theme' ),
-			'latest_count'   => __( 'Latest story count', 'techzei-magazine-theme' ),
-			'reviews'        => __( 'Reviews module', 'techzei-magazine-theme' ),
-			'review_category' => __( 'Review category', 'techzei-magazine-theme' ),
-			'review_count'   => __( 'Review count', 'techzei-magazine-theme' ),
+			'latest_stories'   => __( 'Latest stories module', 'techzei-magazine-theme' ),
+			'latest_count'     => __( 'Latest story count', 'techzei-magazine-theme' ),
+			'reviews'          => __( 'Reviews module', 'techzei-magazine-theme' ),
+			'review_category'  => __( 'Review category', 'techzei-magazine-theme' ),
+			'review_count'     => __( 'Review count', 'techzei-magazine-theme' ),
+			'mobile_discovery' => __( 'Discovery sidebar on mobile', 'techzei-magazine-theme' ),
 		),
 	);
 
@@ -635,12 +673,14 @@ function techzei_tt5_settings_field( $args ) {
 		'share_links'        => __( 'With no destinations selected, the complete share row is omitted.', 'techzei-magazine-theme' ),
 		'share_destinations' => __( 'Fixed display order: X, Facebook, LinkedIn, WhatsApp.', 'techzei-magazine-theme' ),
 		'related_stories'    => __( 'Uses shared categories and excludes the current article.', 'techzei-magazine-theme' ),
+		'related_mode'       => __( 'Automatic ranks by taxonomy relevance; Editorial-first lets an editorial integration provide an ordered set before automatic results.', 'techzei-magazine-theme' ),
 		'related_count'      => __( 'A smaller result set is allowed; unrelated fallback stories are not inserted.', 'techzei-magazine-theme' ),
 		'latest_stories'     => __( 'This affects article sidebars only.', 'techzei-magazine-theme' ),
 		'latest_count'       => __( 'The current article is excluded.', 'techzei-magazine-theme' ),
 		'reviews'            => __( 'If no valid review category exists, the module is omitted and a notice explains why.', 'techzei-magazine-theme' ),
 		'review_category'    => __( 'Choose an existing category. The default matches the review slug when available.', 'techzei-magazine-theme' ),
 		'review_count'       => __( 'A smaller result set is allowed.', 'techzei-magazine-theme' ),
+		'mobile_discovery'   => __( 'Controls the discovery sidebar on article layouts at mobile widths; it does not alter the Site Editor composition.', 'techzei-magazine-theme' ),
 	);
 
 	$disabled = false;
@@ -650,7 +690,7 @@ function techzei_tt5_settings_field( $args ) {
 		$disabled = 'marquee' !== $settings['homepage']['headline_mode'];
 	} elseif ( 'share_destinations' === $key ) {
 		$disabled = ! $settings['articles']['share_links'];
-	} elseif ( in_array( $key, array( 'related_count' ), true ) ) {
+	} elseif ( in_array( $key, array( 'related_count', 'related_mode' ), true ) ) {
 		$disabled = ! $settings['articles']['related_stories'];
 	} elseif ( in_array( $key, array( 'latest_count' ), true ) ) {
 		$disabled = ! $settings['sidebar']['latest_stories'];
@@ -658,7 +698,7 @@ function techzei_tt5_settings_field( $args ) {
 		$disabled = ! $settings['sidebar']['reviews'];
 	}
 
-	if ( in_array( $key, array( 'sticky_desktop', 'sticky_mobile', 'show_search', 'show_topics', 'show_featured_grid', 'automatic_legacy', 'show_reading_time', 'author_card', 'share_links', 'related_stories', 'latest_stories', 'reviews' ), true ) ) {
+	if ( in_array( $key, array( 'sticky_desktop', 'sticky_mobile', 'show_search', 'show_topics', 'show_featured_grid', 'automatic_legacy', 'show_reading_time', 'author_card', 'share_links', 'related_stories', 'latest_stories', 'reviews', 'mobile_discovery' ), true ) ) {
 		printf( '<input type="hidden" name="%1$s" value="0" />', esc_attr( $name ) );
 		printf( '<label><input type="checkbox" name="%1$s" value="1" %2$s%3$s /> %4$s</label>', esc_attr( $name ), checked( $value, true, false ), disabled( $disabled, true, false ), esc_html__( 'Enabled', 'techzei-magazine-theme' ) );
 	} elseif ( 'share_destinations' === $key ) {
@@ -690,6 +730,8 @@ function techzei_tt5_settings_field( $args ) {
 		techzei_tt5_settings_select( $name, $value, array( 'sidebar' => __( 'With sidebar', 'techzei-magazine-theme' ), 'no-sidebar' => __( 'Without sidebar', 'techzei-magazine-theme' ) ), false );
 	} elseif ( 'updated_date' === $key ) {
 		techzei_tt5_settings_select( $name, $value, array( 'later' => __( 'Show when later', 'techzei-magazine-theme' ), 'hide' => __( 'Hide', 'techzei-magazine-theme' ) ), false );
+	} elseif ( 'related_mode' === $key ) {
+		techzei_tt5_settings_select( $name, $value, array( 'automatic' => __( 'Automatic relevance', 'techzei-magazine-theme' ), 'editorial-first' => __( 'Editorial-first, then automatic', 'techzei-magazine-theme' ) ), $disabled );
 	} elseif ( in_array( $key, array( 'headline_category', 'review_category' ), true ) ) {
 		$categories = techzei_tt5_settings_categories();
 		$options    = array( 0 => __( 'No category selected', 'techzei-magazine-theme' ) );
@@ -780,6 +822,131 @@ function techzei_tt5_settings_shortcuts() {
 }
 
 /**
+ * Return saved Site Editor customizations for the active theme.
+ *
+ * Core marks database-backed block templates with a custom source. Only those
+ * entries are shown here; theme-file templates are not mislabelled as saved
+ * customizations.
+ *
+ * @param string $template_type Block template post type.
+ * @return array|null Null when the core block-template API is unavailable.
+ */
+function techzei_tt5_settings_saved_customizations( $template_type ) {
+	$template_types = array( 'wp_template', 'wp_template_part' );
+	$template_type  = sanitize_key( $template_type );
+
+	if ( ! in_array( $template_type, $template_types, true ) || ! function_exists( 'get_block_templates' ) ) {
+		return null;
+	}
+
+	$templates = get_block_templates(
+		array( 'theme' => get_stylesheet() ),
+		$template_type
+	);
+	$customizations = array();
+
+	if ( ! is_array( $templates ) ) {
+		return $customizations;
+	}
+
+	foreach ( $templates as $template ) {
+		if ( ! is_object( $template ) ) {
+			continue;
+		}
+
+		$is_custom = ! empty( $template->is_custom )
+			|| ( isset( $template->source ) && 'custom' === $template->source )
+			|| ( isset( $template->origin ) && 'custom' === $template->origin );
+		if ( ! $is_custom ) {
+			continue;
+		}
+
+		$slug = isset( $template->slug ) ? sanitize_key( $template->slug ) : '';
+		if ( '' === $slug ) {
+			continue;
+		}
+
+		$customizations[] = $template;
+	}
+
+	return $customizations;
+}
+
+/**
+ * Build an inspect link for a saved Site Editor template.
+ *
+ * @param string           $template_type Block template post type.
+ * @param WP_Block_Template $template      Block template object.
+ * @return string
+ */
+function techzei_tt5_settings_customization_url( $template_type, $template ) {
+	$template_types = array( 'wp_template', 'wp_template_part' );
+	$template_type  = sanitize_key( $template_type );
+	$theme_slug     = isset( $template->theme ) ? sanitize_key( $template->theme ) : sanitize_key( get_stylesheet() );
+	$template_slug  = isset( $template->slug ) ? sanitize_key( $template->slug ) : '';
+
+	if ( ! in_array( $template_type, $template_types, true ) || '' === $theme_slug || '' === $template_slug ) {
+		return techzei_tt5_settings_site_editor_url();
+	}
+
+	return techzei_tt5_settings_site_editor_url( '/' . $template_type . '/' . $theme_slug . '//' . $template_slug );
+}
+
+/** Render read-only theme and Site Editor customization diagnostics. */
+function techzei_tt5_settings_diagnostics() {
+	$theme  = wp_get_theme();
+	$parent = $theme->parent();
+	?>
+	<p>
+		<?php
+		printf(
+			/* translators: 1: active theme name, 2: theme version, 3: parent theme name, 4: parent version. */
+			esc_html__( 'Active theme: %1$s %2$s · Parent: %3$s %4$s', 'techzei-magazine-theme' ),
+			esc_html( $theme->get( 'Name' ) ),
+			esc_html( $theme->get( 'Version' ) ),
+			esc_html( $parent ? $parent->get( 'Name' ) : __( 'Not detected', 'techzei-magazine-theme' ) ),
+			esc_html( $parent ? $parent->get( 'Version' ) : '—' )
+		);
+		?>
+	</p>
+	<p class="description"><?php echo esc_html__( 'The checks below are read-only. They inspect the active theme’s registered block templates and template parts; they never clear or rewrite Site Editor customizations.', 'techzei-magazine-theme' ); ?></p>
+	<?php
+	$types = array(
+		'wp_template'      => __( 'Saved templates', 'techzei-magazine-theme' ),
+		'wp_template_part' => __( 'Saved template parts', 'techzei-magazine-theme' ),
+	);
+
+	foreach ( $types as $type => $label ) {
+		$customizations = techzei_tt5_settings_saved_customizations( $type );
+		echo '<h3>' . esc_html( $label ) . '</h3>';
+
+		if ( null === $customizations ) {
+			printf( '<p class="description">%s</p>', esc_html__( 'The WordPress block-template inspection API is unavailable.', 'techzei-magazine-theme' ) );
+			continue;
+		}
+
+		if ( empty( $customizations ) ) {
+			printf( '<p class="description">%s</p>', esc_html__( 'No saved customizations detected for the active theme.', 'techzei-magazine-theme' ) );
+			continue;
+		}
+
+		echo '<ul>';
+		foreach ( $customizations as $template ) {
+			$title = isset( $template->title ) && is_scalar( $template->title ) ? (string) $template->title : '';
+			$slug  = isset( $template->slug ) ? sanitize_key( $template->slug ) : '';
+			$title = '' !== trim( wp_strip_all_tags( $title ) ) ? wp_strip_all_tags( $title ) : $slug;
+			printf(
+				'<li>%1$s <a href="%2$s">%3$s</a></li>',
+				esc_html( $title ),
+				esc_url( techzei_tt5_settings_customization_url( $type, $template ) ),
+				esc_html__( 'Inspect in Site Editor', 'techzei-magazine-theme' )
+			);
+		}
+		echo '</ul>';
+	}
+}
+
+/**
  * Render Appearance > Techzei Settings.
  *
  * @return void
@@ -823,19 +990,8 @@ function techzei_tt5_settings_page() {
 		</form>
 
 		<hr />
-		<h2><?php echo esc_html__( 'Theme information', 'techzei-magazine-theme' ); ?></h2>
-		<p>
-			<?php
-			$theme = wp_get_theme();
-			printf(
-				/* translators: 1: theme version, 2: parent theme name, 3: parent theme version. */
-				esc_html__( 'Techzei Magazine Theme %1$s · Parent: %2$s %3$s', 'techzei-magazine-theme' ),
-				esc_html( $theme->get( 'Version' ) ),
-				esc_html( $theme->parent() ? $theme->parent()->get( 'Name' ) : __( 'Not detected', 'techzei-magazine-theme' ) ),
-				esc_html( $theme->parent() ? $theme->parent()->get( 'Version' ) : '—' )
-			);
-			?>
-		</p>
+		<h2><?php echo esc_html__( 'Read-only diagnostics', 'techzei-magazine-theme' ); ?></h2>
+		<?php techzei_tt5_settings_diagnostics(); ?>
 		<p><a href="<?php echo esc_url( 'https://github.com/Techzei/techzei-magazine-theme' ); ?>"><?php echo esc_html__( 'Open theme documentation', 'techzei-magazine-theme' ); ?></a></p>
 	</div>
 	<?php

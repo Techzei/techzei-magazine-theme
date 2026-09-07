@@ -25,6 +25,13 @@ The old Valenti home-page assignment and Site Editor customizations can override
 4. Verify that the primary navigation contains only one row. Topic shortcuts should appear in the content rail, not under the header.
 5. Open **Appearance → Techzei Settings** and review the behaviour defaults. The Restore action resets only Techzei’s option, not Site Editor customisations.
 
+## 3.2.0 review
+
+1. In **Appearance → Techzei Settings**, review the mobile discovery-sidebar and related-story selection controls.
+2. Open **Read-only diagnostics** and inspect any saved template or template-part overrides before judging a theme-file change absent.
+3. In the post editor, verify the article flow on both **Article with sidebar** and **Article without sidebar** templates. On mobile, sharing and author information should appear immediately after the story before optional discovery content.
+4. Check the block inserter for the Review Verdict, Product Specifications, and Related Reading patterns. These are optional editor patterns and do not modify existing posts.
+
 ## Performance and visual checks
 
 1. Regenerate thumbnails for the existing Media Library.
