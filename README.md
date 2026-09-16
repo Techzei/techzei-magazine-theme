@@ -8,6 +8,8 @@ It is deliberately small: no external fonts, front-end framework, analytics, ad 
 
 ## Highlights
 
+The unreleased 3.3.0 update uses **Reading Charcoal** (`#575555`) for post/page content, with darker headings. Change it through the Site Editor palette and Post Content block styles. Existing saved Global Styles and explicitly colored blocks take precedence. Prose links are underlined, including internal links, and long strings wrap within the reading column.
+
 - Editorial homepage with lead coverage, supporting stories, a compact trending rail, latest stories, and a discovery sidebar.
 - Responsive desktop and mobile article layouts, including sticky navigation, logo-first mobile header, and a compact search control.
 - Article essentials: featured image, author profile, share links, post navigation, related stories with thumbnails, tags, and native comments.
@@ -15,6 +17,7 @@ It is deliberately small: no external fonts, front-end framework, analytics, ad 
 - Yoast-friendly metadata behavior: when Yoast SEO is active, it owns titles, descriptions, canonical URLs, and social cards. A small server-rendered fallback is used only when no supported SEO plugin is active.
 - Legacy Valenti content compatibility for `column`, `alert`, `button`, `pullquote`, `hr`, and `attention` shortcodes.
 - Footer navigation, RSS, social links, Techzei’s original India mark, and the site credit.
+- Curated local Gadget Icons in topic navigation, with no frontend icon-library or CDN dependency.
 
 ## Requirements
 
@@ -82,7 +85,7 @@ The primary article image loads eagerly with high priority. Card and list imager
 
 ```text
 techzei-magazine-theme/
-├── assets/             # Article styles, compact interaction script, India mark
+├── assets/             # Article styles, interaction script, India mark, and curated SVG icons
 ├── inc/                # Setup, editorial components, SEO fallback, shortcodes
 ├── parts/              # Header, footer, author, related stories, sidebar, sharing
 ├── templates/          # Front page, single post, archives, pages, search, 404
@@ -92,6 +95,8 @@ techzei-magazine-theme/
 ```
 
 The unused newsletter template part is not shipped. The theme retains the original India PNG at `assets/images/india-techzei.png` and the public `techzei_tt5_*` integration names.
+
+The selected topic SVGs come from [Gadget Icons](https://www.npmjs.com/package/gadget-icons), version 0.4.0, and are redistributed under the MIT license included at `assets/icons/LICENSE.txt`.
 
 ## Development and releases
 

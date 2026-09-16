@@ -1,4 +1,20 @@
 /* Long-form editorial content. Loaded with the theme stylesheet, without a script. */
+.tz-article-content {
+	overflow-wrap: anywhere;
+}
+
+.tz-article-content :where(h1, h2, h3, h4, h5, h6):not(.has-text-color) {
+	color: var(--wp--preset--color--contrast, #171716);
+}
+
+/* Keep internal and external prose links equally recognizable. */
+.tz-article-content :where(p, li, dd, td, blockquote) a:not(.wp-element-button):not(.wp-block-button__link):not(.tz-legacy-button):not(:has(img)) {
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: .18em;
+	text-decoration-skip-ink: auto;
+}
+
 .tz-article-content > * {
 	max-width: 100%;
 }

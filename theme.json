@@ -40,6 +40,7 @@
       "palette": [
         { "slug": "base", "name": "Paper", "color": "#f7f5f0" },
         { "slug": "contrast", "name": "Ink", "color": "#171716" },
+        { "slug": "reading", "name": "Reading Charcoal", "color": "#575555" },
         { "slug": "accent-1", "name": "Soft Techzei Cyan", "color": "#25a7b5" },
         { "slug": "accent-2", "name": "Soft Techzei Lime", "color": "#8bcb5a" },
         { "slug": "accent-3", "name": "Deep Blue", "color": "#344d62" },
@@ -79,6 +80,14 @@
     { "name": "comments", "title": "Comments", "area": "uncategorized" }
   ],
   "styles": {
+    "blocks": {
+      "core/post-content": {
+        "color": { "text": "var:preset|color|reading" },
+        "elements": {
+          "heading": { "color": { "text": "var:preset|color|contrast" } }
+        }
+      }
+    },
     "color": { "background": "var:preset|color|base", "text": "var:preset|color|contrast" },
     "spacing": { "blockGap": "var:preset|spacing|30", "padding": { "left": "0", "right": "0" } },
     "typography": { "fontFamily": "var:preset|font-family|system", "fontWeight": "350" },

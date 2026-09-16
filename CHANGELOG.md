@@ -1,5 +1,22 @@
 # Changelog
 
+## 3.3.2 - Unreleased
+
+- Replace unsupported external SVG masks with local SVG background images for reliable topic icon rendering.
+
+## 3.3.1
+
+- Fix topic icon rendering by using explicit theme-root SVG URLs for CSS masks.
+
+## 3.3.0
+
+- Add the archived Reading Charcoal (#575555) as a Site Editor palette preset and the default post/page content color, retaining darker headings and explicit editor color choices.
+- Underline internal as well as external prose links and wrap long content strings on narrow screens.
+- Restrict topic icon decoration to assigned icon classes and inherit link colors for contrast.
+
+- Added a curated set of locally bundled, MIT-licensed Gadget Icons to the Topics and discovery navigation.
+- Added lightweight device cues for Phones, PC & Mac, Gaming, Crypto, Explainers, and Startups without adding a runtime icon library.
+
 ## 3.2.0
 
 - Improve mobile article reading flow by placing sharing, author, related stories, and comments immediately after article content.
