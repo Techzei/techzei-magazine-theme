@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.3.3 - Unreleased
+
+- Remove visible updated-date labels and modified dates from article metadata.
+- Keep a compatibility guard so saved templates cannot reintroduce the updated-date component.
+
 ## 3.3.2 - Unreleased
 
 - Replace unsupported external SVG masks with local SVG background images for reliable topic icon rendering.

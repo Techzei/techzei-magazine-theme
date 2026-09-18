@@ -162,10 +162,8 @@ function techzei_tt5_apply_block_settings( $block, $source_block, $parent_block 
 	}
 
 	if ( 'core/post-date' === ( isset( $block['blockName'] ) ? $block['blockName'] : '' ) && 'modified' === ( isset( $block['attrs']['displayType'] ) ? $block['attrs']['displayType'] : '' ) ) {
-		$updated_mode = techzei_tt5_get_setting( 'articles', 'updated_date', 'later' );
-		if ( 'hide' === $updated_mode || get_the_modified_time( 'U' ) <= get_the_time( 'U' ) ) {
-			$block['attrs']['className'] = trim( ( isset( $block['attrs']['className'] ) ? $block['attrs']['className'] : '' ) . ' tz-hide-updated-date' );
-		}
+		// Keep saved Site Editor or legacy templates from reintroducing modified dates.
+		$block['attrs']['className'] = trim( ( isset( $block['attrs']['className'] ) ? $block['attrs']['className'] : '' ) . ' tz-hide-updated-date' );
 	}
 
 	return $block;
@@ -230,7 +228,7 @@ function techzei_tt5_render_block_settings( $block_content, $block ) {
 		return '';
 	}
 
-	if ( techzei_tt5_has_class_token( $class_name, 'tz-updated-label' ) && ( 'hide' === techzei_tt5_get_setting( 'articles', 'updated_date', 'later' ) || get_the_modified_time( 'U' ) <= get_the_time( 'U' ) ) ) {
+	if ( techzei_tt5_has_class_token( $class_name, 'tz-updated-label' ) ) {
 		return '';
 	}
 

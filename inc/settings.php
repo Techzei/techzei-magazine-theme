@@ -71,7 +71,6 @@ function techzei_tt5_settings_defaults() {
 				'default_layout'       => 'sidebar',
 				'automatic_legacy'     => true,
 				'show_reading_time'    => true,
-				'updated_date'         => 'later',
 				'author_card'          => true,
 				'share_links'          => true,
 				'share_destinations'   => array( 'x', 'facebook', 'linkedin', 'whatsapp' ),
@@ -153,7 +152,6 @@ function techzei_tt5_settings_normalize_values( $values ) {
 		),
 		'articles' => array(
 			'default_layout' => array( 'sidebar', 'no-sidebar' ),
-			'updated_date'   => array( 'later', 'hide' ),
 			'related_mode'   => array( 'automatic', 'editorial-first' ),
 		),
 	);
@@ -347,7 +345,6 @@ function techzei_tt5_settings_sanitize( $input ) {
 		),
 		'articles' => array(
 			'default_layout' => array( 'sidebar', 'no-sidebar' ),
-			'updated_date'   => array( 'later', 'hide' ),
 			'related_mode'   => array( 'automatic', 'editorial-first' ),
 		),
 	);
@@ -555,7 +552,6 @@ function techzei_tt5_settings_register() {
 			'default_layout'     => __( 'Default article layout', 'techzei-magazine-theme' ),
 			'automatic_legacy'   => __( 'Automatic legacy styling', 'techzei-magazine-theme' ),
 			'show_reading_time'  => __( 'Reading time', 'techzei-magazine-theme' ),
-			'updated_date'       => __( 'Updated date', 'techzei-magazine-theme' ),
 			'author_card'        => __( 'Author profile card', 'techzei-magazine-theme' ),
 			'share_links'        => __( 'Share links', 'techzei-magazine-theme' ),
 			'share_destinations' => __( 'Share destinations', 'techzei-magazine-theme' ),
@@ -668,7 +664,6 @@ function techzei_tt5_settings_field( $args ) {
 		'default_layout'     => __( 'An explicit post template selection wins over this site default.', 'techzei-magazine-theme' ),
 		'automatic_legacy'   => __( 'Keeps the established shortcode/date treatment without disabling shortcode support.', 'techzei-magazine-theme' ),
 		'show_reading_time'  => __( 'Controls the reading-time item in the article metadata row.', 'techzei-magazine-theme' ),
-		'updated_date'       => __( 'The later-only mode avoids repeating an identical publication date.', 'techzei-magazine-theme' ),
 		'author_card'        => __( 'The title-area byline remains even when this card is hidden.', 'techzei-magazine-theme' ),
 		'share_links'        => __( 'With no destinations selected, the complete share row is omitted.', 'techzei-magazine-theme' ),
 		'share_destinations' => __( 'Fixed display order: X, Facebook, LinkedIn, WhatsApp.', 'techzei-magazine-theme' ),
@@ -728,8 +723,6 @@ function techzei_tt5_settings_field( $args ) {
 		techzei_tt5_settings_select( $name, $value, array( 'slow' => __( 'Slow', 'techzei-magazine-theme' ), 'standard' => __( 'Standard', 'techzei-magazine-theme' ) ), $disabled );
 	} elseif ( 'default_layout' === $key ) {
 		techzei_tt5_settings_select( $name, $value, array( 'sidebar' => __( 'With sidebar', 'techzei-magazine-theme' ), 'no-sidebar' => __( 'Without sidebar', 'techzei-magazine-theme' ) ), false );
-	} elseif ( 'updated_date' === $key ) {
-		techzei_tt5_settings_select( $name, $value, array( 'later' => __( 'Show when later', 'techzei-magazine-theme' ), 'hide' => __( 'Hide', 'techzei-magazine-theme' ) ), false );
 	} elseif ( 'related_mode' === $key ) {
 		techzei_tt5_settings_select( $name, $value, array( 'automatic' => __( 'Automatic relevance', 'techzei-magazine-theme' ), 'editorial-first' => __( 'Editorial-first, then automatic', 'techzei-magazine-theme' ) ), $disabled );
 	} elseif ( in_array( $key, array( 'headline_category', 'review_category' ), true ) ) {
