@@ -2,7 +2,7 @@
 Requires at least: 6.7
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 3.3.3
+Stable tag: 3.4.1
 License: GPLv2 or later
 
 == Required Parent Theme ==
@@ -15,6 +15,16 @@ This is a child theme of Twenty Twenty-Five. Install the official Twenty Twenty-
 4. Review the Header, Footer, Topic navigation, and article template parts in the Site Editor.
 5. Regenerate thumbnails once for older Media Library images.
 6. Clear all WordPress, host, and CDN caches.
+
+== Version 3.4.1 ==
+
+* Preserve existing Techzei Settings values when updating from the earlier schema; new discovery controls receive their documented defaults.
+
+== Version 3.4.0 ==
+
+* Add a topic-aware article sidebar with More in this topic, recent stories, an optional provider-free newsletter slot, freshness-limited reviews, and compact follow links.
+* Add visible Yoast-aware breadcrumbs, automatic How To/Explainer tables of contents, and a WhatsApp-first mobile sticky share dock.
+* Improve related-story relevance with fresh product/topic matches while retaining existing editorial-first integration support.
 
 == Version 3.2.0 ==
 
@@ -154,7 +164,7 @@ The homepage uses native Query, Latest Posts, Featured Image, Navigation, Search
 == Editing ==
 Use Appearance > Editor to change templates visually. Changes saved in the Site Editor override files in this child theme; use the Editor’s Clear customizations option if a future theme update does not appear.
 
-The theme does not include a newsletter placeholder. Add a provider Form or Shortcode block in the Site Editor only when a real signup service is configured.
+The newsletter CTA template part is disabled by default. Enable it in Appearance > Techzei Settings and add a provider Form or Shortcode block in the Site Editor only when a real signup service is configured.
 
 == Updating ==
 Update Twenty Twenty-Five normally through WordPress. Techzei-specific layout changes remain in this child theme. Back up Site Editor customizations before major redesigns.

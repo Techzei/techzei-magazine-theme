@@ -26,6 +26,57 @@
 	letter-spacing: -.035em;
 }
 
+/* A native-details TOC avoids a frontend dependency and remains collapsible
+ * on small screens. Heading anchors are generated only for eligible posts. */
+.tz-article-toc-part {
+	max-width: var(--tz-article-width, 780px);
+	margin: 0 auto 1.75rem;
+}
+
+.tz-article-toc {
+	border: 1px solid var(--tz-line);
+	background: var(--tz-surface);
+	font-family: var(--wp--preset--font-family--system, system-ui, sans-serif);
+}
+
+.tz-article-toc details {
+	padding: .85rem 1rem;
+}
+
+.tz-article-toc summary {
+	cursor: pointer;
+	color: var(--tz-accent-ink);
+	font-size: .76rem;
+	font-weight: 700;
+	letter-spacing: .1em;
+	text-transform: uppercase;
+}
+
+.tz-article-toc ol {
+	margin: .75rem 0 0;
+	padding-left: 1.2rem;
+}
+
+.tz-article-toc li {
+	margin: .35rem 0;
+	line-height: 1.35;
+}
+
+.tz-article-toc .tz-toc-level-3 {
+	margin-left: .9rem;
+	font-size: .92em;
+}
+
+.tz-article-toc a {
+	color: var(--tz-ink);
+	text-decoration: none;
+}
+
+.tz-article-toc a:hover {
+	color: var(--tz-accent-ink);
+	text-decoration: underline;
+}
+
 .tz-article-content h2 {
 	margin-top: 2.4rem;
 	margin-bottom: .8rem;
@@ -169,6 +220,8 @@
 }
 
 .tz-article-sidebar .tz-latest-stories,
+.tz-article-sidebar .tz-more-in-topic,
+.tz-article-sidebar .tz-more-in-topic ol,
 .tz-article-sidebar .tz-latest-reviews,
 .tz-article-sidebar .tz-latest-reviews ol {
 	margin: 0;
@@ -177,6 +230,7 @@
 }
 
 .tz-article-sidebar .tz-latest-stories li,
+.tz-article-sidebar .tz-more-in-topic li,
 .tz-article-sidebar .tz-latest-reviews li {
 	display: grid;
 	grid-template-columns: 88px minmax(0, 1fr);
@@ -186,6 +240,7 @@
 }
 
 .tz-article-sidebar .tz-latest-stories li:last-child,
+.tz-article-sidebar .tz-more-in-topic li:last-child,
 .tz-article-sidebar .tz-latest-reviews li:last-child {
 	border-bottom: 0;
 }
@@ -197,6 +252,7 @@
 }
 
 .tz-article-sidebar .tz-latest-stories a,
+.tz-article-sidebar .tz-more-in-topic a,
 .tz-article-sidebar .tz-latest-reviews a {
 	display: block;
 	font-family: var(--wp--preset--font-family--editorial, Georgia, serif);
@@ -206,12 +262,48 @@
 }
 
 .tz-article-sidebar .tz-latest-stories time,
+.tz-article-sidebar .tz-more-in-topic time,
 .tz-article-sidebar .tz-latest-reviews time {
 	display: block;
 	margin-top: .35rem;
 	color: var(--tz-muted);
 	font-family: var(--wp--preset--font-family--system, system-ui, sans-serif);
 	font-size: .7rem;
+}
+
+.tz-article-sidebar .tz-more-in-topic,
+.tz-article-sidebar .tz-sidebar-newsletter-slot,
+.tz-article-sidebar .tz-sidebar-reviews,
+.tz-article-sidebar .tz-follow-techzei {
+	margin-top: 1.8rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid var(--tz-line);
+}
+
+.tz-article-sidebar .tz-more-in-topic h2,
+.tz-article-sidebar .tz-follow-techzei h2 {
+	margin: .35rem 0 1rem;
+}
+
+.tz-follow-techzei ul {
+	display: flex;
+	flex-wrap: wrap;
+	gap: .5rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.tz-follow-techzei a {
+	display: inline-block;
+	padding: .4rem .6rem;
+	border: 1px solid var(--tz-line);
+	font-family: var(--wp--preset--font-family--system, system-ui, sans-serif);
+	font-size: .7rem;
+	font-weight: 700;
+	letter-spacing: .04em;
+	text-decoration: none;
+	text-transform: uppercase;
 }
 
 /* Legacy Valenti content compatibility */

@@ -26,7 +26,7 @@ if ( ! defined( 'TECHZEI_TT5_SETTINGS_PAGE' ) ) {
 }
 
 if ( ! defined( 'TECHZEI_TT5_SETTINGS_VERSION' ) ) {
-	define( 'TECHZEI_TT5_SETTINGS_VERSION', 1 );
+	define( 'TECHZEI_TT5_SETTINGS_VERSION', 2 );
 }
 
 /**
@@ -71,19 +71,27 @@ function techzei_tt5_settings_defaults() {
 				'default_layout'       => 'sidebar',
 				'automatic_legacy'     => true,
 				'show_reading_time'    => true,
+				'breadcrumbs'          => true,
+				'toc'                  => true,
 				'author_card'          => true,
 				'share_links'          => true,
+				'mobile_share_dock'    => true,
 				'share_destinations'   => array( 'x', 'facebook', 'linkedin', 'whatsapp' ),
 				'related_stories'      => true,
 				'related_mode'         => 'automatic',
 				'related_count'        => 3,
 			),
 			'sidebar'  => array(
+				'more_in_topic'  => true,
+				'more_topic_count' => 4,
 				'latest_stories' => true,
 				'latest_count'   => 5,
+				'newsletter_slot' => false,
 				'reviews'        => true,
 				'review_category' => techzei_tt5_settings_default_review_category(),
 				'review_count'   => 4,
+				'review_max_age' => 5,
+				'follow_techzei' => true,
 				'mobile_discovery' => true,
 			),
 		),
@@ -98,7 +106,10 @@ function techzei_tt5_settings_defaults() {
 function techzei_tt5_settings_stored_values() {
 	$stored = get_option( TECHZEI_TT5_SETTINGS_OPTION, array() );
 
-	if ( ! is_array( $stored ) || TECHZEI_TT5_SETTINGS_VERSION !== (int) ( isset( $stored['version'] ) ? $stored['version'] : 0 ) ) {
+	$version = isset( $stored['version'] ) ? absint( $stored['version'] ) : 0;
+	// Earlier records use the same nested schema. Keep their recognised values
+	// while the normalizer supplies defaults for fields introduced in 3.4.0.
+	if ( ! is_array( $stored ) || $version < 1 || $version > TECHZEI_TT5_SETTINGS_VERSION ) {
 		return array();
 	}
 
@@ -129,8 +140,8 @@ function techzei_tt5_settings_normalize_values( $values ) {
 	$booleans = array(
 		'header'   => array( 'sticky_desktop', 'sticky_mobile', 'show_search', 'show_topics' ),
 		'homepage' => array( 'show_featured_grid' ),
-		'articles' => array( 'automatic_legacy', 'show_reading_time', 'author_card', 'share_links', 'related_stories' ),
-		'sidebar'  => array( 'latest_stories', 'reviews', 'mobile_discovery' ),
+		'articles' => array( 'automatic_legacy', 'show_reading_time', 'breadcrumbs', 'toc', 'author_card', 'share_links', 'mobile_share_dock', 'related_stories' ),
+		'sidebar'  => array( 'more_in_topic', 'latest_stories', 'newsletter_slot', 'reviews', 'follow_techzei', 'mobile_discovery' ),
 	);
 
 	foreach ( $booleans as $group => $keys ) {
@@ -174,8 +185,10 @@ function techzei_tt5_settings_normalize_values( $values ) {
 		),
 		'articles' => array( 'related_count' => array( 2, 6 ) ),
 		'sidebar'  => array(
+			'more_topic_count' => array( 2, 6 ),
 			'latest_count' => array( 3, 6 ),
 			'review_count' => array( 2, 6 ),
+			'review_max_age' => array( 1, 10 ),
 		),
 	);
 
@@ -325,8 +338,8 @@ function techzei_tt5_settings_sanitize( $input ) {
 	$boolean_fields = array(
 		'header'   => array( 'sticky_desktop', 'sticky_mobile', 'show_search', 'show_topics' ),
 		'homepage' => array( 'show_featured_grid' ),
-		'articles' => array( 'automatic_legacy', 'show_reading_time', 'author_card', 'share_links', 'related_stories' ),
-		'sidebar'  => array( 'latest_stories', 'reviews', 'mobile_discovery' ),
+		'articles' => array( 'automatic_legacy', 'show_reading_time', 'breadcrumbs', 'toc', 'author_card', 'share_links', 'mobile_share_dock', 'related_stories' ),
+		'sidebar'  => array( 'more_in_topic', 'latest_stories', 'newsletter_slot', 'reviews', 'follow_techzei', 'mobile_discovery' ),
 	);
 
 	foreach ( $boolean_fields as $group => $keys ) {
@@ -378,8 +391,10 @@ function techzei_tt5_settings_sanitize( $input ) {
 		),
 		'articles' => array( 'related_count' => array( 2, 6 ) ),
 		'sidebar'  => array(
+			'more_topic_count' => array( 2, 6 ),
 			'latest_count' => array( 3, 6 ),
 			'review_count' => array( 2, 6 ),
+			'review_max_age' => array( 1, 10 ),
 		),
 	);
 
@@ -552,19 +567,27 @@ function techzei_tt5_settings_register() {
 			'default_layout'     => __( 'Default article layout', 'techzei-magazine-theme' ),
 			'automatic_legacy'   => __( 'Automatic legacy styling', 'techzei-magazine-theme' ),
 			'show_reading_time'  => __( 'Reading time', 'techzei-magazine-theme' ),
+			'breadcrumbs'        => __( 'Visible breadcrumbs', 'techzei-magazine-theme' ),
+			'toc'                => __( 'Table of contents for How Tos and Explainers', 'techzei-magazine-theme' ),
 			'author_card'        => __( 'Author profile card', 'techzei-magazine-theme' ),
 			'share_links'        => __( 'Share links', 'techzei-magazine-theme' ),
+			'mobile_share_dock'  => __( 'Mobile sticky share dock', 'techzei-magazine-theme' ),
 			'share_destinations' => __( 'Share destinations', 'techzei-magazine-theme' ),
 			'related_stories'    => __( 'Related stories', 'techzei-magazine-theme' ),
 			'related_mode'       => __( 'Related story selection', 'techzei-magazine-theme' ),
 			'related_count'      => __( 'Related story count', 'techzei-magazine-theme' ),
 		),
 		'techzei_sidebar' => array(
+			'more_in_topic'  => __( 'More in this topic', 'techzei-magazine-theme' ),
+			'more_topic_count' => __( 'More in this topic count', 'techzei-magazine-theme' ),
 			'latest_stories'   => __( 'Latest stories module', 'techzei-magazine-theme' ),
 			'latest_count'     => __( 'Latest story count', 'techzei-magazine-theme' ),
+			'newsletter_slot'  => __( 'Newsletter CTA slot', 'techzei-magazine-theme' ),
 			'reviews'          => __( 'Reviews module', 'techzei-magazine-theme' ),
 			'review_category'  => __( 'Review category', 'techzei-magazine-theme' ),
 			'review_count'     => __( 'Review count', 'techzei-magazine-theme' ),
+			'review_max_age'   => __( 'Review freshness cap (years)', 'techzei-magazine-theme' ),
+			'follow_techzei'   => __( 'Follow Techzei module', 'techzei-magazine-theme' ),
 			'mobile_discovery' => __( 'Discovery sidebar on mobile', 'techzei-magazine-theme' ),
 		),
 	);
@@ -664,17 +687,25 @@ function techzei_tt5_settings_field( $args ) {
 		'default_layout'     => __( 'An explicit post template selection wins over this site default.', 'techzei-magazine-theme' ),
 		'automatic_legacy'   => __( 'Keeps the established shortcode/date treatment without disabling shortcode support.', 'techzei-magazine-theme' ),
 		'show_reading_time'  => __( 'Controls the reading-time item in the article metadata row.', 'techzei-magazine-theme' ),
+		'breadcrumbs'        => __( 'Uses Yoast breadcrumbs when Yoast SEO is active; otherwise Techzei provides a visible, non-schema fallback.', 'techzei-magazine-theme' ),
+		'toc'                => __( 'Shown only on How To or Explainer posts with at least three H2 or H3 headings.', 'techzei-magazine-theme' ),
 		'author_card'        => __( 'The title-area byline remains even when this card is hidden.', 'techzei-magazine-theme' ),
 		'share_links'        => __( 'With no destinations selected, the complete share row is omitted.', 'techzei-magazine-theme' ),
+		'mobile_share_dock'  => __( 'Keeps WhatsApp first on small-screen article share controls without changing the normal share row.', 'techzei-magazine-theme' ),
 		'share_destinations' => __( 'Fixed display order: X, Facebook, LinkedIn, WhatsApp.', 'techzei-magazine-theme' ),
 		'related_stories'    => __( 'Uses shared categories and excludes the current article.', 'techzei-magazine-theme' ),
 		'related_mode'       => __( 'Automatic ranks by taxonomy relevance; Editorial-first lets an editorial integration provide an ordered set before automatic results.', 'techzei-magazine-theme' ),
 		'related_count'      => __( 'A smaller result set is allowed; unrelated fallback stories are not inserted.', 'techzei-magazine-theme' ),
+		'more_in_topic'      => __( 'Matches the primary WordPress category, excludes the current article, and prefers posts with featured images.', 'techzei-magazine-theme' ),
+		'more_topic_count'   => __( 'Shown only when the topic module is enabled and related posts are available.', 'techzei-magazine-theme' ),
 		'latest_stories'     => __( 'This affects article sidebars only.', 'techzei-magazine-theme' ),
 		'latest_count'       => __( 'The current article is excluded.', 'techzei-magazine-theme' ),
+		'newsletter_slot'    => __( 'Off by default. Add provider-specific content to the Newsletter CTA template part in the Site Editor only after choosing a provider.', 'techzei-magazine-theme' ),
 		'reviews'            => __( 'If no valid review category exists, the module is omitted and a notice explains why.', 'techzei-magazine-theme' ),
 		'review_category'    => __( 'Choose an existing category. The default matches the review slug when available.', 'techzei-magazine-theme' ),
 		'review_count'       => __( 'A smaller result set is allowed.', 'techzei-magazine-theme' ),
+		'review_max_age'     => __( 'Older reviews are not shown in the sidebar, which prevents stale product recommendations.', 'techzei-magazine-theme' ),
+		'follow_techzei'     => __( 'Shows compact RSS, X, and YouTube links from the theme without a social SDK.', 'techzei-magazine-theme' ),
 		'mobile_discovery'   => __( 'Controls the discovery sidebar on article layouts at mobile widths; it does not alter the Site Editor composition.', 'techzei-magazine-theme' ),
 	);
 
@@ -687,13 +718,17 @@ function techzei_tt5_settings_field( $args ) {
 		$disabled = ! $settings['articles']['share_links'];
 	} elseif ( in_array( $key, array( 'related_count', 'related_mode' ), true ) ) {
 		$disabled = ! $settings['articles']['related_stories'];
+	} elseif ( 'mobile_share_dock' === $key ) {
+		$disabled = ! $settings['articles']['share_links'];
+	} elseif ( 'more_topic_count' === $key ) {
+		$disabled = ! $settings['sidebar']['more_in_topic'];
 	} elseif ( in_array( $key, array( 'latest_count' ), true ) ) {
 		$disabled = ! $settings['sidebar']['latest_stories'];
-	} elseif ( in_array( $key, array( 'review_category', 'review_count' ), true ) ) {
+	} elseif ( in_array( $key, array( 'review_category', 'review_count', 'review_max_age' ), true ) ) {
 		$disabled = ! $settings['sidebar']['reviews'];
 	}
 
-	if ( in_array( $key, array( 'sticky_desktop', 'sticky_mobile', 'show_search', 'show_topics', 'show_featured_grid', 'automatic_legacy', 'show_reading_time', 'author_card', 'share_links', 'related_stories', 'latest_stories', 'reviews', 'mobile_discovery' ), true ) ) {
+	if ( in_array( $key, array( 'sticky_desktop', 'sticky_mobile', 'show_search', 'show_topics', 'show_featured_grid', 'automatic_legacy', 'show_reading_time', 'breadcrumbs', 'toc', 'author_card', 'share_links', 'mobile_share_dock', 'related_stories', 'more_in_topic', 'latest_stories', 'newsletter_slot', 'reviews', 'follow_techzei', 'mobile_discovery' ), true ) ) {
 		printf( '<input type="hidden" name="%1$s" value="0" />', esc_attr( $name ) );
 		printf( '<label><input type="checkbox" name="%1$s" value="1" %2$s%3$s /> %4$s</label>', esc_attr( $name ), checked( $value, true, false ), disabled( $disabled, true, false ), esc_html__( 'Enabled', 'techzei-magazine-theme' ) );
 	} elseif ( 'share_destinations' === $key ) {
@@ -706,13 +741,15 @@ function techzei_tt5_settings_field( $args ) {
 		foreach ( $choices as $choice => $label ) {
 			printf( '<label style="margin-right:1.25em"><input type="checkbox" name="%1$s[]" value="%2$s" %3$s%4$s /> %5$s</label>', esc_attr( $name ), esc_attr( $choice ), checked( in_array( $choice, (array) $value, true ), true, false ), disabled( $disabled, true, false ), esc_html( $label ) );
 		}
-	} elseif ( in_array( $key, array( 'feed_count', 'headline_count', 'related_count', 'latest_count', 'review_count' ), true ) ) {
+	} elseif ( in_array( $key, array( 'feed_count', 'headline_count', 'related_count', 'more_topic_count', 'latest_count', 'review_count', 'review_max_age' ), true ) ) {
 		$ranges = array(
 			'feed_count'     => array( 4, 20 ),
 			'headline_count' => array( 3, 8 ),
 			'related_count'  => array( 2, 6 ),
+			'more_topic_count' => array( 2, 6 ),
 			'latest_count'   => array( 3, 6 ),
 			'review_count'   => array( 2, 6 ),
+			'review_max_age' => array( 1, 10 ),
 		);
 		printf( '<input class="small-text" type="number" name="%1$s" value="%2$d" min="%3$d" max="%4$d" step="1"%5$s />', esc_attr( $name ), absint( $value ), $ranges[ $key ][0], $ranges[ $key ][1], disabled( $disabled, true, false ) );
 	} elseif ( 'headline_mode' === $key ) {

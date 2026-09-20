@@ -64,8 +64,14 @@ foreach ( array(
 	"'articles' => array(",
 	"'default_layout'",
 	"'related_stories'",
+	"'breadcrumbs'",
+	"'toc'",
+	"'mobile_share_dock'",
 	"'share_destinations'",
 	"'sidebar'  => array(",
+	"'more_in_topic'",
+	"'newsletter_slot'",
+	"'review_max_age'",
 	"'review_category'",
 	"'sanitize_callback' => 'techzei_tt5_settings_sanitize'",
 	"add_action( 'admin_init', 'techzei_tt5_settings_register' )",
@@ -112,6 +118,14 @@ foreach ( $theme_json['customTemplates'] ?? array() as $template ) {
 }
 techzei_quality_assert( in_array( 'single-with-sidebar', $template_names, true ) && in_array( 'single-no-sidebar', $template_names, true ), 'Both explicit article templates must remain registered.', $failures );
 techzei_quality_assert( false !== strpos( $setup, 'get_page_template_slug' ) && false !== strpos( $setup, "! \$selected_template || 'default' === \$selected_template" ), 'Layout precedence check is missing the explicit-template guard.', $failures );
+
+$editorial = techzei_quality_read( $root . '/inc/editorial.php', $failures );
+foreach ( array( 'techzei_more_in_topic', 'techzei_breadcrumbs', 'techzei_article_toc', 'techzei_mobile_share_dock', 'techzei_tt5_related_freshness_date_query', 'WP_HTML_Tag_Processor' ) as $needle ) {
+	techzei_quality_assert( false !== strpos( $editorial, $needle ), 'Article discovery contract is missing: ' . $needle, $failures );
+}
+foreach ( array( 'article-sidebar.html', 'article-toc.html', 'breadcrumbs.html', 'mobile-share-dock.html', 'newsletter-cta.html', 'follow-techzei.html' ) as $part ) {
+	techzei_quality_assert( is_file( $root . '/parts/' . $part ), 'Article discovery template part is missing: ' . $part, $failures );
+}
 
 $release_workflow = techzei_quality_read( $root . '/.github/workflows/release-theme.yml', $failures );
 $quality_workflow = techzei_quality_read( $root . '/.github/workflows/quality.yml', $failures );

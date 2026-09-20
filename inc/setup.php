@@ -192,6 +192,7 @@ function techzei_tt5_render_block_settings( $block_content, $block ) {
 			'author-profile'  => array( 'articles', 'author_card', true ),
 			'share'           => array( 'articles', 'share_links', true ),
 			'related-stories' => array( 'articles', 'related_stories', true ),
+			'newsletter-cta'  => array( 'sidebar', 'newsletter_slot', false ),
 		);
 		if ( isset( $part_settings[ $slug ] ) && ! techzei_tt5_get_setting( $part_settings[ $slug ][0], $part_settings[ $slug ][1], $part_settings[ $slug ][2] ) ) {
 			return '';
@@ -221,6 +222,22 @@ function techzei_tt5_render_block_settings( $block_content, $block ) {
 	}
 
 	if ( techzei_tt5_has_class_token( $class_name, 'tz-sidebar-reviews' ) && ( ! techzei_tt5_get_setting( 'sidebar', 'reviews', true ) || false === strpos( $block_content, 'tz-latest-reviews' ) ) ) {
+		return '';
+	}
+
+	if ( techzei_tt5_has_class_token( $class_name, 'tz-sidebar-newsletter-slot' ) && ! techzei_tt5_get_setting( 'sidebar', 'newsletter_slot', false ) ) {
+		return '';
+	}
+
+	if ( techzei_tt5_has_class_token( $class_name, 'tz-breadcrumbs-part' ) && ( ! techzei_tt5_get_setting( 'articles', 'breadcrumbs', true ) || ( ! is_singular( 'post' ) && ! is_archive() ) ) ) {
+		return '';
+	}
+
+	if ( techzei_tt5_has_class_token( $class_name, 'tz-article-toc-part' ) && ( ! function_exists( 'techzei_tt5_should_show_article_toc' ) || ! techzei_tt5_should_show_article_toc( get_the_ID() ) ) ) {
+		return '';
+	}
+
+	if ( techzei_tt5_has_class_token( $class_name, 'tz-mobile-share-dock-part' ) && ( ! is_singular( 'post' ) || ! techzei_tt5_get_setting( 'articles', 'mobile_share_dock', true ) || ! techzei_tt5_get_setting( 'articles', 'share_links', true ) || ! function_exists( 'techzei_tt5_has_enabled_share_destinations' ) || ! techzei_tt5_has_enabled_share_destinations() ) ) {
 		return '';
 	}
 

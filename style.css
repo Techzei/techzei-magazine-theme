@@ -3,7 +3,7 @@ Theme Name: Techzei Magazine Theme
 Theme URI: https://techzei.com/
 Author: Techzei
 Description: A fast, editorial technology publication child theme for Twenty Twenty-Five.
-Version: 3.3.3
+Version: 3.4.1
 Template: twentytwentyfive
 Requires at least: 6.7
 Tested up to: 6.8
@@ -736,6 +736,51 @@ body.tz-sticky-desktop-off .tz-sticky-header {
 	padding-bottom: 1.25rem;
 }
 
+.tz-breadcrumbs-part {
+	width: 100%;
+	max-width: 1160px;
+	margin: 0 auto clamp(1.25rem, 3vw, 2.5rem);
+}
+
+.tz-breadcrumbs {
+	color: var(--tz-muted);
+	font-family: var(--wp--preset--font-family--system, system-ui, sans-serif);
+	font-size: .76rem;
+	line-height: 1.4;
+}
+
+.tz-breadcrumbs ol,
+.tz-breadcrumbs #breadcrumbs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: .45rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.tz-breadcrumbs li,
+.tz-breadcrumbs #breadcrumbs > span {
+	display: inline-flex;
+	gap: .45rem;
+	align-items: center;
+}
+
+.tz-breadcrumbs a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.tz-breadcrumbs a:hover {
+	color: var(--tz-accent-ink);
+	text-decoration: underline;
+}
+
+.tz-breadcrumb-separator,
+.tz-breadcrumbs .separator {
+	color: var(--tz-line);
+}
+
 .tz-archive-description {
 	max-width: 48rem;
 	margin: 1rem 0 0;
@@ -1054,6 +1099,10 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 .tz-share-links a:hover {
 	border-color: var(--tz-accent);
 	color: var(--tz-accent-ink);
+}
+
+.tz-mobile-share-dock-part {
+	display: none;
 }
 
 /* Footer */
@@ -1502,6 +1551,50 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 	.tz-share {
 		align-items: flex-start;
 		flex-direction: column;
+	}
+
+	body.tz-mobile-share-dock-on {
+		padding-bottom: 4.5rem;
+	}
+
+	.tz-mobile-share-dock-part {
+		position: fixed;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		z-index: 40;
+		display: block;
+		padding: .55rem max(var(--tz-mobile-gutter), env(safe-area-inset-right)) calc(.55rem + env(safe-area-inset-bottom)) max(var(--tz-mobile-gutter), env(safe-area-inset-left));
+		border-top: 1px solid var(--tz-line);
+		background: color-mix(in srgb, var(--tz-paper) 94%, transparent);
+		box-shadow: 0 -.3rem .9rem rgb(23 23 22 / .1);
+		backdrop-filter: blur(10px);
+	}
+
+	.tz-mobile-share-dock {
+		display: flex;
+		justify-content: center;
+		gap: .45rem;
+	}
+
+	.tz-mobile-share-dock a {
+		min-width: 44px;
+		padding: .48rem .62rem;
+		border: 1px solid var(--tz-line);
+		border-radius: 999px;
+		color: var(--tz-ink);
+		font-family: var(--wp--preset--font-family--system, system-ui, sans-serif);
+		font-size: .68rem;
+		font-weight: 700;
+		line-height: 1.1;
+		text-align: center;
+		text-decoration: none;
+	}
+
+	.tz-mobile-share-dock .tz-share-whatsapp {
+		border-color: var(--tz-accent);
+		background: var(--tz-accent);
+		color: var(--tz-ink);
 	}
 
 	.tz-footer .wp-block-column {
