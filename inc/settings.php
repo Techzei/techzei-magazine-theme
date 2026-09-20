@@ -106,7 +106,10 @@ function techzei_tt5_settings_defaults() {
 function techzei_tt5_settings_stored_values() {
 	$stored = get_option( TECHZEI_TT5_SETTINGS_OPTION, array() );
 
-	if ( ! is_array( $stored ) || TECHZEI_TT5_SETTINGS_VERSION !== (int) ( isset( $stored['version'] ) ? $stored['version'] : 0 ) ) {
+	$version = isset( $stored['version'] ) ? absint( $stored['version'] ) : 0;
+	// Earlier records use the same nested schema. Keep their recognised values
+	// while the normalizer supplies defaults for fields introduced in 3.4.0.
+	if ( ! is_array( $stored ) || $version < 1 || $version > TECHZEI_TT5_SETTINGS_VERSION ) {
 		return array();
 	}
 

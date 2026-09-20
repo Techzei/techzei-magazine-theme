@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.4.1 - Unreleased
+
+- Preserve existing version-1 Techzei Settings values during the 3.4 upgrade while applying defaults only for new controls.
+
 ## 3.4.0 - Unreleased
 
 - Add a setting-controlled article sidebar stack: current-topic stories, latest stories, an empty-by-default newsletter CTA slot, freshness-limited reviews, and compact follow links.

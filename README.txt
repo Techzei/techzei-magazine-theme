@@ -2,7 +2,7 @@
 Requires at least: 6.7
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 3.4.0
+Stable tag: 3.4.1
 License: GPLv2 or later
 
 == Required Parent Theme ==
@@ -15,6 +15,10 @@ This is a child theme of Twenty Twenty-Five. Install the official Twenty Twenty-
 4. Review the Header, Footer, Topic navigation, and article template parts in the Site Editor.
 5. Regenerate thumbnails once for older Media Library images.
 6. Clear all WordPress, host, and CDN caches.
+
+== Version 3.4.1 ==
+
+* Preserve existing Techzei Settings values when updating from the earlier schema; new discovery controls receive their documented defaults.
 
 == Version 3.4.0 ==
 

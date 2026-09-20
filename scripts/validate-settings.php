@@ -18,6 +18,7 @@ if ( false === $settings ) {
 	$required_fragments = array(
 		'cache resolver'       => 'function techzei_tt5_settings_resolved_values()',
 		'cache invalidation'   => 'function techzei_tt5_settings_invalidate_cache()',
+		'previous-schema compatibility' => '$version < 1 || $version > TECHZEI_TT5_SETTINGS_VERSION',
 		'mobile sidebar key'   => "'mobile_discovery' => true",
 		'related mode key'     => "'related_mode'         => 'automatic'",
 		'breadcrumb key'       => "'breadcrumbs'          => true",
