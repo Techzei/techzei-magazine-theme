@@ -74,7 +74,13 @@
     { "name": "topic-nav", "title": "Topic navigation", "area": "uncategorized" },
     { "name": "author-profile", "title": "Author profile", "area": "uncategorized" },
     { "name": "share", "title": "Share links", "area": "uncategorized" },
+    { "name": "mobile-share-dock", "title": "Mobile share dock", "area": "uncategorized" },
+    { "name": "breadcrumbs", "title": "Breadcrumbs", "area": "uncategorized" },
+    { "name": "article-toc", "title": "Article table of contents", "area": "uncategorized" },
     { "name": "related-stories", "title": "Related stories", "area": "uncategorized" },
+    { "name": "article-sidebar", "title": "Article discovery sidebar", "area": "uncategorized" },
+    { "name": "newsletter-cta", "title": "Newsletter CTA slot", "area": "uncategorized" },
+    { "name": "follow-techzei", "title": "Follow Techzei", "area": "uncategorized" },
     { "name": "discovery-sidebar", "title": "Discovery sidebar", "area": "uncategorized" },
     { "name": "post-navigation", "title": "Post navigation", "area": "uncategorized" },
     { "name": "comments", "title": "Comments", "area": "uncategorized" }

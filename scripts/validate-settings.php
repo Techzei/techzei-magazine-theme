@@ -9,7 +9,7 @@ declare( strict_types=1 );
 
 $root     = dirname( __DIR__ );
 $settings = file_get_contents( $root . '/inc/settings.php' );
-$docs     = file_get_contents( $root . '/docs/3.2.0-settings.md' );
+$docs     = file_get_contents( $root . '/docs/3.4.0-discovery.md' );
 $failures = array();
 
 if ( false === $settings ) {
@@ -20,6 +20,12 @@ if ( false === $settings ) {
 		'cache invalidation'   => 'function techzei_tt5_settings_invalidate_cache()',
 		'mobile sidebar key'   => "'mobile_discovery' => true",
 		'related mode key'     => "'related_mode'         => 'automatic'",
+		'breadcrumb key'       => "'breadcrumbs'          => true",
+		'toc key'              => "'toc'                  => true",
+		'mobile share dock key' => "'mobile_share_dock'    => true",
+		'more-in-topic key'    => "'more_in_topic'  => true",
+		'newsletter slot key'  => "'newsletter_slot' => false",
+		'review freshness key' => "'review_max_age' => 5",
 		'related mode allowlist' => "'related_mode'   => array( 'automatic', 'editorial-first' )",
 		'added-option hook'    => "added_option_' . TECHZEI_TT5_SETTINGS_OPTION",
 		'updated-option hook'  => "updated_option_' . TECHZEI_TT5_SETTINGS_OPTION",
@@ -39,8 +45,8 @@ if ( false === $settings ) {
 	}
 }
 
-if ( false === $docs || false === strpos( (string) $docs, 'mobile_discovery' ) || false === strpos( (string) $docs, 'related_mode' ) ) {
-	$failures[] = '3.2.0 settings documentation is missing the new schema values.';
+if ( false === $docs || false === strpos( (string) $docs, 'more_in_topic' ) || false === strpos( (string) $docs, 'breadcrumbs' ) || false === strpos( (string) $docs, 'mobile_share_dock' ) ) {
+	$failures[] = '3.4.0 settings documentation is missing the new schema values.';
 }
 
 if ( empty( $failures ) ) {

@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.4.0 - Unreleased
+
+- Add a setting-controlled article sidebar stack: current-topic stories, latest stories, an empty-by-default newsletter CTA slot, freshness-limited reviews, and compact follow links.
+- Add visible Yoast-aware breadcrumbs and a non-schema fallback, plus an automatic accessible table of contents for eligible How To and Explainer posts.
+- Improve related-story ordering with fresh product/topic intersections before broader taxonomy matches.
+- Add a WhatsApp-first mobile sticky share dock without a social SDK.
+
 ## 3.3.3 - Unreleased
 
 - Remove visible updated-date labels and modified dates from article metadata.

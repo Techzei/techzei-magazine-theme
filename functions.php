@@ -26,6 +26,9 @@ function techzei_tt5_add_mobile_discovery_class( $classes ) {
 	if ( is_singular( 'post' ) && function_exists( 'techzei_tt5_get_setting' ) && ! techzei_tt5_get_setting( 'sidebar', 'mobile_discovery', true ) ) {
 		$classes[] = 'tz-mobile-sidebar-off';
 	}
+	if ( is_singular( 'post' ) && function_exists( 'techzei_tt5_get_setting' ) && function_exists( 'techzei_tt5_has_enabled_share_destinations' ) && techzei_tt5_get_setting( 'articles', 'share_links', true ) && techzei_tt5_get_setting( 'articles', 'mobile_share_dock', true ) && techzei_tt5_has_enabled_share_destinations() ) {
+		$classes[] = 'tz-mobile-share-dock-on';
+	}
 
 	return $classes;
 }
