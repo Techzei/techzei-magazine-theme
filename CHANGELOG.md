@@ -3,6 +3,11 @@
 ## 3.4.1 - Unreleased
 
 - Preserve existing version-1 Techzei Settings values during the 3.4 upgrade while applying defaults only for new controls.
+- Reduce article discovery from a query chain to bounded, cached ID resolution with invalidation for content, taxonomy, thumbnails, and settings changes.
+- Prevent overlap between in-flow related stories and the sidebar topic module.
+- Make automatic TOC anchors valid, deterministic, unique, and safe for legacy headings.
+- Register one featured-image processor while retaining the historical callback functions for integrations.
+- Add optional WordPress integration-test scaffolding and document the WordPress 7.1 production verification gap.
 
 ## 3.4.0 - Unreleased
 

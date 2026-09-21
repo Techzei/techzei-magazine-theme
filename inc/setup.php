@@ -114,6 +114,22 @@ function techzei_tt5_translate_interaction_markup( $block_content, $block ) {
 }
 add_filter( 'render_block_core/html', 'techzei_tt5_translate_interaction_markup', 10, 2 );
 
+/** Translate the accessible name of the theme-owned headline region. */
+function techzei_tt5_translate_headline_region( $block_content, $block ) {
+	$class_name = isset( $block['attrs']['className'] ) ? (string) $block['attrs']['className'] : '';
+	if ( false === strpos( ' ' . $class_name . ' ', ' tz-trending ' ) || ! class_exists( 'WP_HTML_Tag_Processor' ) ) {
+		return $block_content;
+	}
+
+	$tags = new WP_HTML_Tag_Processor( $block_content );
+	if ( $tags->next_tag() ) {
+		$tags->set_attribute( 'aria-label', techzei_tt5_interaction_labels()['trendingHeadlines'] );
+	}
+
+	return $tags->get_updated_html();
+}
+add_filter( 'render_block_core/group', 'techzei_tt5_translate_headline_region', 10, 2 );
+
 /**
  * Return whether a parsed block has an exact Techzei class token.
  *
@@ -462,12 +478,8 @@ function techzei_tt5_optimize_card_images( $block_content, $block ) {
 	return techzei_tt5_process_featured_image( $block_content, $block );
 }
 
-/* Preserve the three historical callback registrations for integrations that
- * remove or replace them by name. The consolidated handler remains the first
- * pass, and each compatibility pass is idempotent. */
-add_filter( 'render_block_core/post-featured-image', 'techzei_tt5_prioritize_article_hero', 11, 2 );
-add_filter( 'render_block_core/post-featured-image', 'techzei_tt5_ensure_featured_image_alt', 12, 2 );
-add_filter( 'render_block_core/post-featured-image', 'techzei_tt5_optimize_card_images', 13, 2 );
+// The historical split callbacks remain callable for integrations, but only
+// the consolidated processor is registered so each image is parsed once.
 
 /**
  * Identify posts authored under the former Valenti system without changing
