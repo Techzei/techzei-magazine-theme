@@ -249,8 +249,24 @@ function techzei_tt5_render_block_settings( $block_content, $block ) {
 		return '';
 	}
 
+	if ( techzei_tt5_has_class_token( $class_name, 'tz-reading-progress-wrapper' ) && ! techzei_tt5_get_setting( 'articles', 'reading_progress', true ) ) {
+		return '';
+	}
+
 	if ( techzei_tt5_has_class_token( $class_name, 'tz-article-toc-part' ) && ( ! function_exists( 'techzei_tt5_should_show_article_toc' ) || ! techzei_tt5_should_show_article_toc( get_the_ID() ) ) ) {
 		return '';
+	}
+
+	/*
+	 * Saved Site Editor sidebar parts can predate the shipped theme part. Add
+	 * the sidebar TOC as a wrapper in that case, without replacing the saved
+	 * template or duplicating a newer sidebar TOC part.
+	 */
+	if ( techzei_tt5_has_class_token( $class_name, 'tz-article-sidebar' ) && is_singular( 'post' ) && function_exists( 'techzei_tt5_should_show_article_toc' ) && techzei_tt5_should_show_article_toc( get_the_ID() ) && false === strpos( $block_content, 'tz-article-toc-sidebar-part' ) && function_exists( 'do_shortcode' ) ) {
+		$toc = do_shortcode( '[techzei_article_toc]' );
+		if ( '' !== trim( $toc ) ) {
+			$block_content = '<div class="wp-block-group tz-article-toc-sidebar-part">' . $toc . '</div>' . $block_content;
+		}
 	}
 
 	if ( techzei_tt5_has_class_token( $class_name, 'tz-mobile-share-dock-part' ) && ( ! is_singular( 'post' ) || ! techzei_tt5_get_setting( 'articles', 'mobile_share_dock', true ) || ! techzei_tt5_get_setting( 'articles', 'share_links', true ) || ! function_exists( 'techzei_tt5_has_enabled_share_destinations' ) || ! techzei_tt5_has_enabled_share_destinations() ) ) {

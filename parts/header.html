@@ -12,7 +12,8 @@
 			<!-- wp:html -->
 			<button class="tz-search-toggle" type="button" aria-controls="tz-header-search" aria-expanded="false" aria-label="Open search" data-tz-search-toggle>
 				<span class="screen-reader-text">Open search</span>
-				<svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><circle cx="10.8" cy="10.8" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg>
+				<svg class="tz-search-icon" aria-hidden="true" viewBox="0 0 24 24" focusable="false"><circle cx="10.8" cy="10.8" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg>
+				<svg class="tz-search-close-icon" aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path d="m6 6 12 12M18 6 6 18"></path></svg>
 			</button>
 			<!-- /wp:html -->
 			<!-- wp:search {"label":"Search Techzei","showLabel":false,"placeholder":"Search Techzei…","buttonText":"Search","buttonPosition":"button-inside","buttonUseIcon":true,"anchor":"tz-header-search","className":"tz-header-search"} /-->
@@ -22,7 +23,7 @@
 	<!-- /wp:group -->
 	<!-- wp:group {"align":"full","className":"tz-nav-wrap","layout":{"type":"constrained"}} -->
 	<div class="wp-block-group alignfull tz-nav-wrap">
-	<!-- wp:navigation {"overlayMenu":"mobile","overlayBackgroundColor":"contrast","overlayTextColor":"base","ariaLabel":"Primary","align":"wide","className":"tz-shell","layout":{"type":"flex","justifyContent":"left","flexWrap":"wrap"}} -->
+	<!-- wp:navigation {"overlayMenu":"mobile","overlayBackgroundColor":"contrast","overlayTextColor":"base","ariaLabel":"Primary","align":"wide","className":"tz-shell","layout":{"type":"flex","justifyContent":"center","flexWrap":"wrap"}} -->
 		<!-- wp:navigation-link {"label":"Home","url":"/","kind":"custom"} /-->
 		<!-- wp:navigation-link {"label":"News","url":"/topics/news/","kind":"custom"} /-->
 		<!-- wp:navigation-link {"label":"Apple","url":"/topics/apple/","kind":"custom"} /-->
@@ -31,5 +32,12 @@
 		<!-- wp:navigation-link {"label":"How To","url":"/topics/how-to/","kind":"custom"} /-->
 		<!-- wp:navigation-link {"label":"Events","url":"/events/","kind":"custom"} /-->
 		<!-- /wp:navigation -->
+	</div>
+	<!-- /wp:group -->
+	<!-- wp:group {"align":"full","className":"tz-reading-progress-wrapper","layout":{"type":"default"}} -->
+	<div class="wp-block-group alignfull tz-reading-progress-wrapper">
+		<!-- wp:html -->
+		<div class="tz-reading-progress" data-tz-reading-progress aria-hidden="true"><span data-tz-reading-progress-bar></span></div>
+		<!-- /wp:html -->
 	</div>
 	<!-- /wp:group -->

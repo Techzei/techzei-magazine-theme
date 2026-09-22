@@ -238,6 +238,18 @@ function techzei_tt5_has_enabled_share_destinations() {
 	return ! empty( array_intersect( array_keys( $available ), $destinations ) );
 }
 
+/** Return the small inline brand mark used by a share destination. */
+function techzei_tt5_share_icon( $destination ) {
+	$icons = array(
+		'x'        => '<svg viewBox="0 0 24 24" focusable="false"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817-5.964 6.817H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z" /></svg>',
+		'facebook' => '<svg viewBox="0 0 24 24" focusable="false"><path d="M14.45 8.2h2.55V4.35c-.44-.06-1.95-.2-3.71-.2-3.67 0-6.18 2.24-6.18 6.35v3.55H3v4.78h4.11v5.17h5.05v-5.17h4.28l.68-4.78h-4.96v-3.06c0-1.39.38-2.34 2.29-2.34Z" /></svg>',
+		'linkedin' => '<svg viewBox="0 0 24 24" focusable="false"><path d="M5.16 7.04a2.54 2.54 0 1 0 0-5.08 2.54 2.54 0 0 0 0 5.08ZM2.87 21.99h4.58V8.24H2.87v13.75ZM10.31 8.24h4.39v1.88h.06c.61-1.15 2.1-2.36 4.33-2.36 4.63 0 5.49 3.05 5.49 7.01v7.22H20v-6.4c0-1.53-.03-3.49-2.13-3.49-2.13 0-2.46 1.67-2.46 3.38v6.51h-4.57V8.24h-.53Z" /></svg>',
+		'whatsapp' => '<svg viewBox="0 0 24 24" focusable="false"><path d="M20.52 3.48A11.87 11.87 0 0 0 12.05 0C5.49 0 .15 5.34.15 11.9c0 2.1.55 4.15 1.6 5.95L.05 24l6.3-1.65a11.9 11.9 0 0 0 5.7 1.45h.01c6.55 0 11.89-5.34 11.89-11.9 0-3.18-1.24-6.16-3.43-8.42ZM12.06 21.8h-.01a9.9 9.9 0 0 1-5.04-1.38l-.36-.22-3.74.98 1-3.65-.24-.37a9.88 9.88 0 0 1-1.52-5.27C3.15 6.45 7.15 2.45 12.06 2.45c2.38 0 4.61.93 6.29 2.62a8.84 8.84 0 0 1 2.6 6.3c0 4.91-4 8.91-8.89 8.91Zm4.88-6.68c-.27-.14-1.59-.78-1.84-.87-.25-.09-.43-.14-.61.14-.18.27-.7.87-.86 1.05-.16.18-.32.2-.59.07-.27-.14-1.12-.41-2.13-1.31-.79-.7-1.32-1.57-1.48-1.84-.16-.27-.02-.42.12-.56.12-.12.27-.32.41-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47h-.52c-.18 0-.48.07-.73.34-.25.27-.95.93-.95 2.27s.98 2.63 1.11 2.82c.14.18 1.92 2.93 4.65 4.11.65.28 1.16.45 1.55.58.65.2 1.24.17 1.71.1.52-.08 1.59-.65 1.81-1.28.22-.63.22-1.17.16-1.28-.07-.11-.25-.18-.52-.32Z" /></svg>',
+	);
+
+	return isset( $icons[ $destination ] ) ? $icons[ $destination ] : '';
+}
+
 /**
  * Render share links for either the normal article row or compact mobile dock.
  *
@@ -270,10 +282,11 @@ function techzei_tt5_render_share_links( $mobile_dock = false ) {
 
 	foreach ( $destinations as $destination ) {
 		$output .= sprintf(
-			'<a class="tz-share-%1$s" href="%2$s" target="_blank" rel="noopener noreferrer" aria-label="%3$s">%4$s</a>',
+			'<a class="tz-share-%1$s" href="%2$s" target="_blank" rel="noopener noreferrer" aria-label="%3$s"><span class="tz-share-icon" aria-hidden="true">%4$s</span><span class="tz-share-label">%5$s</span></a>',
 			esc_attr( $destination ),
 			esc_url( $available[ $destination ]['url'] ),
 			esc_attr( sprintf( __( 'Share on %s', 'techzei-magazine-theme' ), $available[ $destination ]['label'] ) ),
+			techzei_tt5_share_icon( $destination ),
 			esc_html( $available[ $destination ]['label'] )
 		);
 	}
@@ -367,22 +380,15 @@ function techzei_tt5_primary_category( $post_id ) {
 /**
  * Render visible breadcrumbs while leaving schema ownership with Yoast.
  *
- * When Yoast is active its own breadcrumb output is used, so presentation and
- * structured-data configuration remain in one plugin. The fallback is visible
- * HTML only and deliberately does not emit a second BreadcrumbList schema.
+ * Yoast remains the owner of breadcrumb structured data. The theme renders a
+ * concise visible trail so a single post does not repeat its full headline
+ * immediately before the actual post title.
  *
  * @return string
  */
 function techzei_tt5_visible_breadcrumbs() {
 	if ( ! techzei_tt5_get_editorial_setting( 'articles.breadcrumbs', true ) || ( ! is_singular( 'post' ) && ! is_archive() ) ) {
 		return '';
-	}
-
-	if ( function_exists( 'yoast_breadcrumb' ) ) {
-		$yoast = yoast_breadcrumb( '', '', false );
-		if ( is_string( $yoast ) && '' !== trim( $yoast ) ) {
-			return '<nav class="tz-breadcrumbs" aria-label="' . esc_attr__( 'Breadcrumb', 'techzei-magazine-theme' ) . '">' . $yoast . '</nav>';
-		}
 	}
 
 	$items   = array();
@@ -393,7 +399,6 @@ function techzei_tt5_visible_breadcrumbs() {
 		if ( $category ) {
 			$items[] = '<a href="' . esc_url( get_category_link( $category ) ) . '">' . esc_html( $category->name ) . '</a>';
 		}
-		$items[] = '<span aria-current="page">' . esc_html( get_the_title() ) . '</span>';
 	} else {
 		$items[] = '<span aria-current="page">' . esc_html( wp_strip_all_tags( get_the_archive_title() ) ) . '</span>';
 	}

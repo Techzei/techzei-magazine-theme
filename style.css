@@ -3,7 +3,7 @@ Theme Name: Techzei Magazine Theme
 Theme URI: https://techzei.com/
 Author: Techzei
 Description: A fast, editorial technology publication child theme for Twenty Twenty-Five.
-Version: 3.4.1
+Version: 3.5.8
 Template: twentytwentyfive
 Requires at least: 6.7
 Tested up to: 6.8
@@ -34,7 +34,11 @@ Text Domain: techzei-magazine-theme
 	--tz-grid-gap: var(--wp--custom--techzei--layout--grid-gap, clamp(2rem, 5vw, 4rem));
 	--tz-card-radius: var(--wp--custom--techzei--card--radius, .35rem);
 	--tz-card-placeholder: var(--wp--custom--techzei--card--placeholder, #e5e1d8);
-	--tz-motion-duration: var(--wp--custom--techzei--motion--duration, 180ms);
+	--tz-motion-fast: 150ms;
+	--tz-motion-duration: var(--wp--custom--techzei--motion--duration, 220ms);
+	--tz-motion-slow: 360ms;
+	--tz-motion-ease: cubic-bezier(.2, .7, .2, 1);
+	--tz-motion-emphasis: cubic-bezier(.16, 1, .3, 1);
 	--tz-card-thumb-width: 240px;
 	--tz-card-thumb-height: 155px;
 	--tz-list-thumb-width: 88px;
@@ -151,8 +155,10 @@ select:focus-visible {
 }
 
 .tz-masthead {
+	position: relative;
 	min-height: 104px;
 	gap: 2rem;
+	align-items: center;
 }
 
 .tz-brand {
@@ -193,6 +199,10 @@ select:focus-visible {
 	margin: 0;
 }
 
+.tz-search-controls {
+	align-items: center;
+}
+
 .tz-masthead .wp-block-search__input {
 	min-height: 42px;
 	border-color: var(--tz-line);
@@ -207,6 +217,66 @@ select:focus-visible {
 }
 
 .tz-search-toggle {
+	display: inline-grid;
+	width: 42px;
+	height: 42px;
+	place-items: center;
+	flex: 0 0 42px;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: var(--tz-ink);
+	cursor: pointer;
+}
+
+.tz-search-toggle svg {
+	width: 22px;
+	height: 22px;
+	fill: none;
+	stroke: currentColor;
+	stroke-linecap: round;
+	stroke-width: 1.8;
+	transition: opacity var(--tz-motion-fast) ease, transform var(--tz-motion-duration) var(--tz-motion-emphasis);
+}
+
+.tz-search-close-icon {
+	display: none;
+}
+
+.tz-js .tz-masthead .tz-header-search {
+	position: absolute;
+	top: calc(100% + .5rem);
+	right: 0;
+	z-index: 20;
+	width: min(22rem, calc(100vw - (var(--tz-gutter) * 2)));
+	max-width: 100%;
+	margin: 0;
+	padding: .55rem;
+	border: 1px solid var(--tz-line);
+	background: var(--tz-paper);
+	box-shadow: 0 .75rem 1.5rem rgb(23 23 22 / .12);
+	visibility: hidden;
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(-.45rem) scale(.985);
+	transform-origin: top right;
+	transition: opacity var(--tz-motion-duration) var(--tz-motion-ease), transform var(--tz-motion-duration) var(--tz-motion-ease), visibility 0s linear var(--tz-motion-duration);
+}
+
+.tz-js .tz-masthead.is-search-open .tz-header-search {
+	visibility: visible;
+	opacity: 1;
+	pointer-events: auto;
+	transform: none;
+	transition-delay: 0s;
+}
+
+.tz-masthead .wp-block-search__inside-wrapper,
+.tz-masthead .wp-block-search__input {
+	width: 100%;
+}
+
+html:not(.tz-js) .tz-search-toggle {
 	display: none;
 }
 
@@ -215,6 +285,11 @@ select:focus-visible {
 	top: var(--tz-header-offset);
 	z-index: 30;
 	background: var(--tz-paper);
+	box-shadow: 0 .35rem .85rem transparent;
+	transition: box-shadow var(--tz-motion-duration) var(--tz-motion-ease), background-color var(--tz-motion-duration) ease;
+}
+
+.tz-sticky-header.is-scrolled {
 	box-shadow: 0 .35rem .85rem rgb(23 23 22 / .12);
 }
 
@@ -234,11 +309,12 @@ body.tz-sticky-desktop-off .tz-sticky-header {
 	font-size: .72rem;
 	letter-spacing: .07em;
 	text-transform: uppercase;
-	transition: background-color var(--tz-motion-duration) ease, color var(--tz-motion-duration) ease;
+	transition: background-color var(--tz-motion-duration) var(--tz-motion-ease), color var(--tz-motion-duration) ease;
 }
 
 .tz-nav-wrap .wp-block-navigation__container {
 	gap: .25rem;
+	justify-content: center;
 	flex-wrap: wrap;
 }
 
@@ -250,6 +326,33 @@ body.tz-sticky-desktop-off .tz-sticky-header {
 
 .tz-nav-wrap .current-menu-item > .wp-block-navigation-item__content {
 	background: var(--tz-accent-lime);
+}
+
+.tz-reading-progress-wrapper {
+	display: none;
+	height: 3px;
+	margin: 0;
+	padding: 0 !important;
+	background: var(--tz-line);
+}
+
+body.single-post .tz-reading-progress-wrapper {
+	display: block;
+}
+
+.tz-reading-progress {
+	height: 100%;
+	overflow: hidden;
+}
+
+.tz-reading-progress > span {
+	display: block;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(90deg, var(--tz-accent), var(--tz-accent-lime));
+	transform: scaleX(0);
+	transform-origin: left center;
+	will-change: transform;
 }
 
 .tz-nav-wrap .wp-block-navigation__responsive-container.is-menu-open {
@@ -335,6 +438,34 @@ body.tz-sticky-desktop-off .tz-sticky-header {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
+}
+
+.tz-feature-card .wp-block-post-featured-image,
+.tz-feed-card > .wp-block-post-featured-image {
+	overflow: hidden;
+}
+
+.tz-feature-card .wp-block-post-featured-image img,
+.tz-feed-card > .wp-block-post-featured-image img {
+	transition: transform var(--tz-motion-slow) var(--tz-motion-ease);
+}
+
+.tz-feature-card:hover .wp-block-post-featured-image img,
+.tz-feature-card:focus-within .wp-block-post-featured-image img,
+.tz-feed-card:hover > .wp-block-post-featured-image img,
+.tz-feed-card:focus-within > .wp-block-post-featured-image img {
+	transform: scale(1.025);
+}
+
+.tz-js .tz-motion-reveal {
+	opacity: 0;
+	transform: translateY(.65rem);
+	transition: opacity var(--tz-motion-slow) var(--tz-motion-ease), transform var(--tz-motion-slow) var(--tz-motion-ease);
+}
+
+.tz-js .tz-motion-reveal.is-visible {
+	opacity: 1;
+	transform: none;
 }
 
 .tz-feature-card::after {
@@ -735,7 +866,7 @@ body.tz-sticky-desktop-off .tz-sticky-header {
 .tz-breadcrumbs-part {
 	width: 100%;
 	max-width: 1160px;
-	margin: 0 auto clamp(1.25rem, 3vw, 2.5rem);
+	margin: 0 auto clamp(.9rem, 2vw, 1.5rem);
 }
 
 .tz-breadcrumbs {
@@ -760,6 +891,21 @@ body.tz-sticky-desktop-off .tz-sticky-header {
 	display: inline-flex;
 	gap: .45rem;
 	align-items: center;
+}
+
+.tz-breadcrumbs li:last-child {
+	min-width: 0;
+	max-width: min(100%, 34rem);
+}
+
+.tz-breadcrumbs li:last-child > span,
+.tz-breadcrumbs .breadcrumb_last {
+	display: block;
+	min-width: 0;
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .tz-breadcrumbs a {
@@ -798,7 +944,8 @@ body.tz-sticky-desktop-off .tz-sticky-header {
 }
 
 .tz-article-title {
-	margin: .45rem 0;
+	max-width: 1040px;
+	margin: .3rem auto .25rem;
 	font-size: clamp(2.25rem, 4.4vw, 4.1rem);
 	line-height: .98;
 }
@@ -814,11 +961,13 @@ body.tz-sticky-desktop-off .tz-sticky-header {
 
 .tz-article-head .tz-meta {
 	justify-content: center;
+	margin-top: .65rem;
 }
 
 .tz-feature-image {
 	aspect-ratio: 16 / 9;
 	overflow: hidden;
+	margin-top: clamp(1rem, 2vw, 1.5rem) !important;
 }
 
 .tz-feature-image img {
@@ -859,6 +1008,7 @@ body.tz-sticky-desktop-off .tz-sticky-header {
 	width: var(--tz-shell);
 	max-width: 100%;
 	margin-inline: auto;
+	padding-top: clamp(1rem, 2vw, 1.5rem) !important;
 }
 
 .tz-article-layout.tz-layout-no-sidebar .tz-article-content {
@@ -1084,12 +1234,57 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 }
 
 .tz-share-links a {
-	padding: .45rem .7rem;
+	display: inline-flex;
+	min-height: 2.5rem;
+	align-items: center;
+	gap: .45rem;
+	padding: .45rem .8rem;
 	border: 1px solid var(--tz-line);
+	border-radius: 999px;
 	color: inherit;
 	font-size: .7rem;
+	font-weight: 700;
 	letter-spacing: .04em;
 	text-decoration: none;
+}
+
+.tz-share-icon {
+	display: inline-flex;
+	width: 1rem;
+	height: 1rem;
+	align-items: center;
+	justify-content: center;
+}
+
+.tz-share-icon svg {
+	display: block;
+	width: 100%;
+	height: 100%;
+	fill: currentColor;
+}
+
+.tz-share-links .tz-share-x,
+.tz-mobile-share-dock .tz-share-x {
+	color: #111;
+}
+
+.tz-share-links .tz-share-facebook,
+.tz-mobile-share-dock .tz-share-facebook {
+	border-color: #b9d0f2;
+	color: #1877f2;
+}
+
+.tz-share-links .tz-share-linkedin,
+.tz-mobile-share-dock .tz-share-linkedin {
+	border-color: #a9c7e5;
+	color: #0a66c2;
+}
+
+.tz-share-links .tz-share-whatsapp,
+.tz-mobile-share-dock .tz-share-whatsapp {
+	border-color: #25d366;
+	background: #25d366;
+	color: #fff;
 }
 
 .tz-share-links a:hover {
@@ -1143,10 +1338,6 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 	margin: 0 .18rem;
 	background: url("assets/images/india-techzei.png") center / contain no-repeat;
 	vertical-align: -.18em;
-}
-
-.tz-footer .tz-made-in-india a:hover {
-	color: #ffb09a;
 }
 
 .tz-footer .tz-built-by {
@@ -1274,6 +1465,14 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 }
 
 @media (max-width: 900px) {
+	.tz-article-layout {
+		padding-top: 1rem !important;
+	}
+
+	.tz-article-title {
+		max-width: 100%;
+	}
+
 	.tz-content-grid,
 	.tz-article-columns {
 		grid-template-columns: 1fr !important;
@@ -1355,6 +1554,10 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 		display: none;
 	}
 
+	.tz-nav-wrap .wp-block-navigation__container {
+		justify-content: flex-start;
+	}
+
 	.tz-masthead {
 		position: relative;
 		min-height: 72px;
@@ -1398,52 +1601,22 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 
 	.tz-search-toggle {
 		display: inline-grid;
-		width: 42px;
-		height: 42px;
-		place-items: center;
-		flex: 0 0 42px;
-		padding: 0;
-		border: 0;
-		background: transparent;
-		color: var(--tz-ink);
 	}
 
-	.tz-search-toggle svg {
-		width: 22px;
-		height: 22px;
-		fill: none;
-		stroke: currentColor;
-		stroke-linecap: round;
-		stroke-width: 1.8;
-	}
-
-	.tz-js .tz-masthead .tz-header-search {
+	.tz-masthead.is-search-open .tz-search-icon {
 		display: none;
-		position: absolute;
-		top: calc(100% + .5rem);
-		left: 0;
-		z-index: 20;
-		width: 100%;
-		max-width: none;
-		margin: 0;
-		padding: .55rem;
-		border: 1px solid var(--tz-line);
-		background: var(--tz-paper);
-		box-shadow: 0 .75rem 1.5rem rgb(23 23 22 / .12);
 	}
 
-	.tz-js .tz-masthead.is-search-open .tz-header-search {
+	.tz-masthead.is-search-open .tz-search-close-icon {
 		display: block;
-	}
-
-	.tz-masthead .wp-block-search__inside-wrapper,
-	.tz-masthead .wp-block-search__input {
-		width: 100%;
+		transform: rotate(90deg);
 	}
 
 	.tz-masthead .tz-header-search {
 		width: 100%;
 		max-width: 100%;
+		left: 0;
+		right: auto;
 	}
 
 	html:not(.tz-js) .tz-masthead {
@@ -1574,11 +1747,14 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 	}
 
 	.tz-mobile-share-dock a {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: .35rem;
 		min-width: 44px;
 		padding: .48rem .62rem;
 		border: 1px solid var(--tz-line);
 		border-radius: 999px;
-		color: var(--tz-ink);
 		font-family: var(--wp--preset--font-family--system, system-ui, sans-serif);
 		font-size: .68rem;
 		font-weight: 700;
@@ -1587,10 +1763,8 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 		text-decoration: none;
 	}
 
-	.tz-mobile-share-dock .tz-share-whatsapp {
-		border-color: var(--tz-accent);
-		background: var(--tz-accent);
-		color: var(--tz-ink);
+	.tz-mobile-share-dock .tz-share-label {
+		display: none;
 	}
 
 	.tz-footer .wp-block-column {
@@ -1605,5 +1779,18 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 @media (prefers-reduced-motion: reduce) {
 	html {
 		scroll-behavior: auto;
+	}
+
+	*,
+	*::before,
+	*::after {
+		animation-duration: .01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: .01ms !important;
+	}
+
+	.tz-js .tz-motion-reveal {
+		opacity: 1;
+		transform: none;
 	}
 }
