@@ -1,8 +1,61 @@
 # Changelog
 
+## 3.5.9 - Unreleased
+
+- Rebalance the homepage featured grid so the lead story stays prominent while more secondary stories appear in the initial viewport.
+- Place single-post category labels below the author, date, and reading-time metadata, including saved-template compatibility styling.
+
+## 3.5.8 - Unreleased
+
+- Add lightweight inline social marks and platform-appropriate colors to the WhatsApp-first share controls.
+
+## 3.5.7 - Unreleased
+
+- Remove the repeated current-post title from visible single-post breadcrumbs and reduce the empty space above the article opening.
+
+## 3.5.6 - Unreleased
+
+- Tighten the single-post opening rhythm, constrain long breadcrumb labels, align the article grid, and center desktop navigation controls within the site shell.
+
+## 3.5.5 - Unreleased
+
+- Refine the article table of contents so it blends with the editorial sidebar styling instead of appearing as a boxed utility panel.
+
+## 3.5.4 - Unreleased
+
+- Keep the desktop article TOC in the sidebar when a saved Site Editor sidebar part predates the shipped theme part.
+
+## 3.5.3 - Unreleased
+
+- Move the article table of contents into the desktop sidebar while retaining a compact inline disclosure on mobile and no-sidebar articles.
+
+## 3.5.2 - Unreleased
+
+- Keep the Proudly made in India footer mark visible without linking it to an external site.
+
+## 3.5.1 - Unreleased
+
+- Make the header search icon-first at all responsive widths, with an animated expandable field and a full no-JavaScript fallback.
+
+## 3.5.0 - Unreleased
+
+- Add a restrained motion system with reduced-motion handling for header, search, navigation, cards, and archive reveals.
+- Add an animated mobile search panel with focus-safe open, close, and Escape behavior.
+- Add a single-post reading-progress bar beneath the sticky header, controlled by Techzei Settings.
+- Add scroll-aware sticky-header elevation without changing header layout.
+
+## 3.4.2 - 2026-09-21
+
+- Reduce the archive page's top spacing so the breadcrumb sits closer to the topic navigation without changing article or homepage spacing.
+
 ## 3.4.1 - Unreleased
 
 - Preserve existing version-1 Techzei Settings values during the 3.4 upgrade while applying defaults only for new controls.
+- Reduce article discovery from a query chain to bounded, cached ID resolution with invalidation for content, taxonomy, thumbnails, and settings changes.
+- Prevent overlap between in-flow related stories and the sidebar topic module.
+- Make automatic TOC anchors valid, deterministic, unique, and safe for legacy headings.
+- Register one featured-image processor while retaining the historical callback functions for integrations.
+- Add optional WordPress integration-test scaffolding and document the WordPress 7.1 production verification gap.
 
 ## 3.4.0 - Unreleased
 

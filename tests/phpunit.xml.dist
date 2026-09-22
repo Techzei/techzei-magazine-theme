@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+	bootstrap="bootstrap.php"
+	colors="true"
+	beStrictAboutTestsThatDoNotTestAnything="true"
+>
+	<testsuites>
+		<testsuite name="Techzei Magazine Theme WordPress integration">
+			<directory>.</directory>
+		</testsuite>
+	</testsuites>
+</phpunit>

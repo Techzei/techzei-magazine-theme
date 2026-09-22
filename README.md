@@ -107,6 +107,16 @@ The newsletter CTA template part is intentionally empty and disabled by default;
 
 The selected topic SVGs come from [Gadget Icons](https://www.npmjs.com/package/gadget-icons), version 0.4.0, and are redistributed under the MIT license included at `assets/icons/LICENSE.txt`.
 
+### Translation and compatibility
+
+Visitor-facing PHP strings use the `techzei-magazine-theme` text domain, while
+template strings remain native block content so WordPress can extract and
+translate them without taking ownership away from the Site Editor. The small
+header/ticker fallback labels are localized server-side and in the deferred
+interaction data. No translation plugin or remote service is required. The
+optional runtime suite in [tests/README.md](tests/README.md) exercises the
+cache, TOC, shortcode, settings-invalidation, and image-filter contracts.
+
 ## Development and releases
 
 The source folder must keep this exact name: `techzei-magazine-theme`. WordPress expects the folder at the root of the upload ZIP, alongside `style.css`.
@@ -123,7 +133,12 @@ Before publishing a release:
 
 Publishing a GitHub Release automatically runs the release workflow. It checks out the release tag, confirms that the tag matches the `Version` field in `style.css`, builds a clean WordPress upload ZIP, verifies its structure, and attaches it to the release.
 
-Use matching version tags, for example `v3.4.0` for theme version `3.4.0`. The resulting release asset is named `techzei-magazine-theme-3.4.0.zip` and contains exactly one top-level `techzei-magazine-theme/` folder.
+Use matching version tags, for example `v3.5.9` for theme version `3.5.9`. The resulting release asset is named `techzei-magazine-theme-3.5.9.zip` and contains exactly one top-level `techzei-magazine-theme/` folder.
+
+The current development metadata is **3.5.9** and is marked unreleased.
+in the changelog. `Tested up to: 6.8` remains deliberate: production is
+currently running WordPress 7.1.1, but this repository does not yet have a
+repeatable WordPress 7.1 test environment, so 7.1 support is not claimed.
 
 ## License
 

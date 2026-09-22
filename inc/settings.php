@@ -71,6 +71,7 @@ function techzei_tt5_settings_defaults() {
 				'default_layout'       => 'sidebar',
 				'automatic_legacy'     => true,
 				'show_reading_time'    => true,
+				'reading_progress'     => true,
 				'breadcrumbs'          => true,
 				'toc'                  => true,
 				'author_card'          => true,
@@ -140,7 +141,7 @@ function techzei_tt5_settings_normalize_values( $values ) {
 	$booleans = array(
 		'header'   => array( 'sticky_desktop', 'sticky_mobile', 'show_search', 'show_topics' ),
 		'homepage' => array( 'show_featured_grid' ),
-		'articles' => array( 'automatic_legacy', 'show_reading_time', 'breadcrumbs', 'toc', 'author_card', 'share_links', 'mobile_share_dock', 'related_stories' ),
+		'articles' => array( 'automatic_legacy', 'show_reading_time', 'reading_progress', 'breadcrumbs', 'toc', 'author_card', 'share_links', 'mobile_share_dock', 'related_stories' ),
 		'sidebar'  => array( 'more_in_topic', 'latest_stories', 'newsletter_slot', 'reviews', 'follow_techzei', 'mobile_discovery' ),
 	);
 
@@ -338,7 +339,7 @@ function techzei_tt5_settings_sanitize( $input ) {
 	$boolean_fields = array(
 		'header'   => array( 'sticky_desktop', 'sticky_mobile', 'show_search', 'show_topics' ),
 		'homepage' => array( 'show_featured_grid' ),
-		'articles' => array( 'automatic_legacy', 'show_reading_time', 'breadcrumbs', 'toc', 'author_card', 'share_links', 'mobile_share_dock', 'related_stories' ),
+		'articles' => array( 'automatic_legacy', 'show_reading_time', 'reading_progress', 'breadcrumbs', 'toc', 'author_card', 'share_links', 'mobile_share_dock', 'related_stories' ),
 		'sidebar'  => array( 'more_in_topic', 'latest_stories', 'newsletter_slot', 'reviews', 'follow_techzei', 'mobile_discovery' ),
 	);
 
@@ -567,6 +568,7 @@ function techzei_tt5_settings_register() {
 			'default_layout'     => __( 'Default article layout', 'techzei-magazine-theme' ),
 			'automatic_legacy'   => __( 'Automatic legacy styling', 'techzei-magazine-theme' ),
 			'show_reading_time'  => __( 'Reading time', 'techzei-magazine-theme' ),
+			'reading_progress'   => __( 'Article reading progress', 'techzei-magazine-theme' ),
 			'breadcrumbs'        => __( 'Visible breadcrumbs', 'techzei-magazine-theme' ),
 			'toc'                => __( 'Table of contents for How Tos and Explainers', 'techzei-magazine-theme' ),
 			'author_card'        => __( 'Author profile card', 'techzei-magazine-theme' ),
@@ -687,6 +689,7 @@ function techzei_tt5_settings_field( $args ) {
 		'default_layout'     => __( 'An explicit post template selection wins over this site default.', 'techzei-magazine-theme' ),
 		'automatic_legacy'   => __( 'Keeps the established shortcode/date treatment without disabling shortcode support.', 'techzei-magazine-theme' ),
 		'show_reading_time'  => __( 'Controls the reading-time item in the article metadata row.', 'techzei-magazine-theme' ),
+		'reading_progress'   => __( 'Adds a slim accent progress bar below the sticky header on single articles.', 'techzei-magazine-theme' ),
 		'breadcrumbs'        => __( 'Uses Yoast breadcrumbs when Yoast SEO is active; otherwise Techzei provides a visible, non-schema fallback.', 'techzei-magazine-theme' ),
 		'toc'                => __( 'Shown only on How To or Explainer posts with at least three H2 or H3 headings.', 'techzei-magazine-theme' ),
 		'author_card'        => __( 'The title-area byline remains even when this card is hidden.', 'techzei-magazine-theme' ),
@@ -728,7 +731,7 @@ function techzei_tt5_settings_field( $args ) {
 		$disabled = ! $settings['sidebar']['reviews'];
 	}
 
-	if ( in_array( $key, array( 'sticky_desktop', 'sticky_mobile', 'show_search', 'show_topics', 'show_featured_grid', 'automatic_legacy', 'show_reading_time', 'breadcrumbs', 'toc', 'author_card', 'share_links', 'mobile_share_dock', 'related_stories', 'more_in_topic', 'latest_stories', 'newsletter_slot', 'reviews', 'follow_techzei', 'mobile_discovery' ), true ) ) {
+	if ( in_array( $key, array( 'sticky_desktop', 'sticky_mobile', 'show_search', 'show_topics', 'show_featured_grid', 'automatic_legacy', 'show_reading_time', 'reading_progress', 'breadcrumbs', 'toc', 'author_card', 'share_links', 'mobile_share_dock', 'related_stories', 'more_in_topic', 'latest_stories', 'newsletter_slot', 'reviews', 'follow_techzei', 'mobile_discovery' ), true ) ) {
 		printf( '<input type="hidden" name="%1$s" value="0" />', esc_attr( $name ) );
 		printf( '<label><input type="checkbox" name="%1$s" value="1" %2$s%3$s /> %4$s</label>', esc_attr( $name ), checked( $value, true, false ), disabled( $disabled, true, false ), esc_html__( 'Enabled', 'techzei-magazine-theme' ) );
 	} elseif ( 'share_destinations' === $key ) {

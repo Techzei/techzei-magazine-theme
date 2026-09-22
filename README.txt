@@ -2,7 +2,7 @@
 Requires at least: 6.7
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 3.4.1
+Stable tag: 3.5.9
 License: GPLv2 or later
 
 == Required Parent Theme ==
@@ -16,9 +16,19 @@ This is a child theme of Twenty Twenty-Five. Install the official Twenty Twenty-
 5. Regenerate thumbnails once for older Media Library images.
 6. Clear all WordPress, host, and CDN caches.
 
+== Version 3.5.9 ==
+
+* Rebalance the homepage featured grid so the lead story stays prominent while more secondary stories appear in the initial viewport.
+* Place single-post category labels below the author, date, and reading-time metadata, including saved-template compatibility styling.
+
 == Version 3.4.1 ==
 
 * Preserve existing Techzei Settings values when updating from the earlier schema; new discovery controls receive their documented defaults.
+* Reduce bounded article-discovery queries with cached ID lists and safe invalidation.
+* Prevent duplicate related stories between the article flow and sidebar topic module.
+* Harden TOC anchor IDs and keep one registered featured-image processor while retaining historical callbacks.
+
+WordPress 7.1.1 is used by the production site but is not claimed as a tested version until a repeatable test environment is available. The theme remains tested up to WordPress 6.8.
 
 == Version 3.4.0 ==
 

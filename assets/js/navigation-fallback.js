@@ -195,6 +195,117 @@
 		refreshSearchMode();
 	}
 
+	/* Add a quiet elevation state without changing the sticky header's layout. */
+	function initStickyHeader(header) {
+		var ticking = false;
+
+		if (!header || header.hasAttribute('data-tz-sticky-initialized')) {
+			return;
+		}
+
+		header.setAttribute('data-tz-sticky-initialized', 'true');
+
+		function update() {
+			ticking = false;
+			header.classList.toggle('is-scrolled', win.scrollY > 8);
+		}
+
+		win.addEventListener('scroll', function () {
+			if (!ticking) {
+				ticking = true;
+				if (win.requestAnimationFrame) {
+					win.requestAnimationFrame(update);
+				} else {
+					win.setTimeout(update, 16);
+				}
+			}
+		}, { passive: true });
+
+		update();
+	}
+
+	/* Track article reading only; the header and footer do not affect progress. */
+	function initReadingProgress(root) {
+		var article;
+		var bar;
+		var ticking = false;
+
+		if (!root || !doc.body.classList.contains('single-post') || doc.body.classList.contains('tz-reading-progress-off')) {
+			return;
+		}
+
+		article = doc.querySelector('.tz-article-content, .wp-block-post-content');
+		bar = root.querySelector('[data-tz-reading-progress-bar]');
+
+		if (!article || !bar || root.hasAttribute('data-tz-reading-initialized')) {
+			return;
+		}
+
+		root.setAttribute('data-tz-reading-initialized', 'true');
+
+		function update() {
+			var articleTop;
+			var articleBottom;
+			var start;
+			var end;
+			var progress;
+
+			ticking = false;
+			articleTop = win.scrollY + article.getBoundingClientRect().top;
+			articleBottom = articleTop + article.offsetHeight;
+			start = Math.max(0, articleTop - (win.innerHeight * .12));
+			end = Math.max(start + 1, articleBottom - (win.innerHeight * .78));
+			progress = (win.scrollY - start) / (end - start);
+			progress = Math.max(0, Math.min(1, progress));
+			bar.style.transform = 'scaleX(' + progress.toFixed(4) + ')';
+		}
+
+		function requestUpdate() {
+			if (ticking) {
+				return;
+			}
+
+			ticking = true;
+			if (win.requestAnimationFrame) {
+				win.requestAnimationFrame(update);
+			} else {
+				win.setTimeout(update, 16);
+			}
+		}
+
+		win.addEventListener('scroll', requestUpdate, { passive: true });
+		win.addEventListener('resize', requestUpdate);
+		update();
+	}
+
+	/* Reveal only content already marked as a motion candidate; no content is hidden without JS. */
+	function initRevealMotion() {
+		var candidates = doc.querySelectorAll('.tz-feature-card, .tz-feed-card');
+		var reducedMotion = getMediaQuery('(prefers-reduced-motion: reduce)', false).matches;
+		var observer;
+
+		if (!candidates.length || reducedMotion || !win.IntersectionObserver) {
+			return;
+		}
+
+		forEachNode(candidates, function (candidate) {
+			candidate.classList.add('tz-motion-reveal');
+		});
+
+		observer = new win.IntersectionObserver(function (entries) {
+			forEachNode(entries, function (entry) {
+				if (entry.isIntersecting) {
+					entry.target.classList.add('is-visible');
+					observer.unobserve(entry.target);
+				}
+			});
+		}, { rootMargin: '0px 0px -8% 0px', threshold: 0.01 });
+
+		forEachNode(candidates, function (candidate) {
+			observer.observe(candidate);
+		});
+	}
+
 	function getMediaQuery(query, fallback) {
 		if (!win.matchMedia) {
 			return {
@@ -498,10 +609,15 @@
 
 	function init() {
 		var mastheads = doc.querySelectorAll('[data-tz-masthead], .tz-masthead');
+		var stickyHeaders = doc.querySelectorAll('.tz-sticky-header');
+		var progressRoots = doc.querySelectorAll('[data-tz-reading-progress]');
 		var tickerRoots = doc.querySelectorAll('[data-tz-ticker], .tz-trending');
 
 		forEachNode(mastheads, initSearch);
+		forEachNode(stickyHeaders, initStickyHeader);
+		forEachNode(progressRoots, initReadingProgress);
 		forEachNode(tickerRoots, initTicker);
+		initRevealMotion();
 	}
 
 	if ('loading' === doc.readyState) {

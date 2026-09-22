@@ -120,12 +120,28 @@ techzei_quality_assert( in_array( 'single-with-sidebar', $template_names, true )
 techzei_quality_assert( false !== strpos( $setup, 'get_page_template_slug' ) && false !== strpos( $setup, "! \$selected_template || 'default' === \$selected_template" ), 'Layout precedence check is missing the explicit-template guard.', $failures );
 
 $editorial = techzei_quality_read( $root . '/inc/editorial.php', $failures );
+$header    = techzei_quality_read( $root . '/parts/header.html', $failures );
+$style     = techzei_quality_read( $root . '/style.css', $failures );
+$script    = techzei_quality_read( $root . '/assets/js/navigation-fallback.js', $failures );
 foreach ( array( 'techzei_more_in_topic', 'techzei_breadcrumbs', 'techzei_article_toc', 'techzei_mobile_share_dock', 'techzei_tt5_related_freshness_date_query', 'WP_HTML_Tag_Processor' ) as $needle ) {
 	techzei_quality_assert( false !== strpos( $editorial, $needle ), 'Article discovery contract is missing: ' . $needle, $failures );
 }
-foreach ( array( 'article-sidebar.html', 'article-toc.html', 'breadcrumbs.html', 'mobile-share-dock.html', 'newsletter-cta.html', 'follow-techzei.html' ) as $part ) {
+techzei_quality_assert( false !== strpos( $header, 'data-tz-reading-progress' ), 'Header is missing the article reading-progress marker.', $failures );
+techzei_quality_assert( false !== strpos( $header, 'tz-search-close-icon' ), 'Header is missing the animated search close icon.', $failures );
+techzei_quality_assert( false !== strpos( $style, '.tz-js .tz-masthead .tz-header-search' ) && false !== strpos( $style, 'html:not(.tz-js) .tz-search-toggle' ), 'Search must be icon-first with a no-JavaScript fallback.', $failures );
+techzei_quality_assert( false !== strpos( $setup, 'tz-article-toc-sidebar-part' ) && false !== strpos( $setup, 'Saved Site Editor sidebar parts' ), 'Saved sidebar templates must receive the article TOC compatibility fallback.', $failures );
+techzei_quality_assert( false !== strpos( $script, 'initReadingProgress' ) && false !== strpos( $script, 'requestAnimationFrame' ), 'Motion script is missing the reading-progress frame loop.', $failures );
+techzei_quality_assert( false !== strpos( $script, 'prefers-reduced-motion' ), 'Motion script is missing reduced-motion detection.', $failures );
+techzei_quality_assert( false !== strpos( $style, '.tz-reading-progress' ) && false !== strpos( $style, '.tz-motion-reveal' ), 'Motion styles are missing progress or reveal states.', $failures );
+foreach ( array( 'article-sidebar.html', 'article-toc.html', 'article-toc-sidebar.html', 'breadcrumbs.html', 'mobile-share-dock.html', 'newsletter-cta.html', 'follow-techzei.html' ) as $part ) {
 	techzei_quality_assert( is_file( $root . '/parts/' . $part ), 'Article discovery template part is missing: ' . $part, $failures );
 }
+
+techzei_quality_assert( 1 === preg_match( "/add_filter\\( 'render_block_core\\/post-featured-image', 'techzei_tt5_process_featured_image', 10, 2 \\)/", $setup ), 'Featured-image processing must have one default registration.', $failures );
+techzei_quality_assert( 0 === preg_match( "/add_filter\\( 'render_block_core\\/post-featured-image', 'techzei_tt5_(?:prioritize_article_hero|ensure_featured_image_alt|optimize_card_images)'/", $setup ), 'Historical featured-image callbacks must remain callable without duplicate registrations.', $failures );
+techzei_quality_assert( false !== strpos( $editorial, 'techzei_tt5_editorial_ids_cache_get' ) && false !== strpos( $editorial, 'techzei_tt5_invalidate_editorial_cache' ), 'Editorial ID-list caching and invalidation are missing.', $failures );
+techzei_quality_assert( false !== strpos( $editorial, 'techzei_tt5_inflow_related_exclusions' ) && false !== strpos( $editorial, "'post__not_in' => " . '$exclude' ), 'In-flow related IDs must be excluded from the topic module.', $failures );
+techzei_quality_assert( false === strpos( $editorial, "'loading' => 'lazy', 'fetchpriority' => 'high'" ), 'Editorial images must not declare lazy loading and high fetch priority together.', $failures );
 
 $release_workflow = techzei_quality_read( $root . '/.github/workflows/release-theme.yml', $failures );
 $quality_workflow = techzei_quality_read( $root . '/.github/workflows/quality.yml', $failures );

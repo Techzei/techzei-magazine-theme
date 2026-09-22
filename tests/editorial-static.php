@@ -19,9 +19,14 @@ $required_editorial_markers = array(
 	"'post_tag'",
 	"'include_children' => false",
 	"'post__not_in'",
-	"'orderby'       => array",
+	"'orderby' => array",
 	"'techzei_tt5_related_story_ids'",
+	"'techzei_tt5_editorial_cache_version'",
+	"techzei_tt5_editorial_ids_cache_set",
+	"techzei_tt5_inflow_related_exclusions",
+	"techzei_tt5_toc_heading_id",
 	"add_shortcode( 'techzei_related_stories'",
+	"add_shortcode( 'techzei_more_in_topic'",
 );
 
 foreach ( $required_editorial_markers as $marker ) {

@@ -16,6 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return WP_Query
  */
 function techzei_tt5_editorial_query( $args = array() ) {
+	$GLOBALS['techzei_tt5_editorial_query_count'] = isset( $GLOBALS['techzei_tt5_editorial_query_count'] ) ? absint( $GLOBALS['techzei_tt5_editorial_query_count'] ) + 1 : 1;
 	$defaults = array(
 		'post_type'           => 'post',
 		'posts_per_page'      => 3,
@@ -24,6 +25,155 @@ function techzei_tt5_editorial_query( $args = array() ) {
 	);
 
 	return new WP_Query( wp_parse_args( $args, $defaults ) );
+}
+
+/**
+ * Return the number of bounded editorial WP_Query calls made in this request.
+ *
+ * The counter is intentionally lightweight and exists to make optional
+ * WordPress integration tests and Query Monitor comparisons reproducible. It
+ * is not used to change frontend behaviour.
+ *
+ * @return int
+ */
+function techzei_tt5_editorial_query_count() {
+	return isset( $GLOBALS['techzei_tt5_editorial_query_count'] ) ? absint( $GLOBALS['techzei_tt5_editorial_query_count'] ) : 0;
+}
+
+/** Return the persistent namespace version for editorial ID-list caches. */
+function techzei_tt5_editorial_cache_version() {
+	$version = absint( get_option( 'techzei_tt5_editorial_cache_version', 1 ) );
+	return max( 1, $version );
+}
+
+/** Bump the editorial cache namespace after relevant content changes. */
+function techzei_tt5_invalidate_editorial_cache() {
+	$version = techzei_tt5_editorial_cache_version();
+	update_option( 'techzei_tt5_editorial_cache_version', $version + 1, false );
+	unset( $GLOBALS['techzei_tt5_editorial_id_cache'], $GLOBALS['techzei_tt5_editorial_post_cache'] );
+}
+
+/** Invalidate discovery IDs for a post mutation. */
+function techzei_tt5_invalidate_editorial_post( $post_id ) {
+	$post = get_post( absint( $post_id ) );
+	if ( ! $post instanceof WP_Post || 'post' !== $post->post_type ) {
+		return;
+	}
+	techzei_tt5_invalidate_editorial_cache();
+}
+
+/** Invalidate discovery IDs when a relevant taxonomy relationship changes. */
+function techzei_tt5_invalidate_editorial_terms( $object_id, $terms = array(), $tt_ids = array(), $taxonomy = '' ) {
+	if ( in_array( $taxonomy, array( 'category', 'post_tag' ), true ) ) {
+		techzei_tt5_invalidate_editorial_post( $object_id );
+	}
+}
+
+/** Invalidate discovery IDs when a featured image or primary category changes. */
+function techzei_tt5_invalidate_editorial_postmeta( $meta_id, $object_id, $meta_key, $meta_value ) {
+	if ( in_array( $meta_key, array( '_thumbnail_id', '_yoast_wpseo_primary_category' ), true ) ) {
+		techzei_tt5_invalidate_editorial_post( $object_id );
+	}
+}
+
+add_action( 'save_post_post', 'techzei_tt5_invalidate_editorial_post', 20 );
+add_action( 'deleted_post', 'techzei_tt5_invalidate_editorial_post', 20 );
+add_action( 'set_object_terms', 'techzei_tt5_invalidate_editorial_terms', 20, 4 );
+add_action( 'added_post_meta', 'techzei_tt5_invalidate_editorial_postmeta', 20, 4 );
+add_action( 'updated_postmeta', 'techzei_tt5_invalidate_editorial_postmeta', 20, 4 );
+add_action( 'deleted_post_meta', 'techzei_tt5_invalidate_editorial_postmeta', 20, 4 );
+add_action( 'created_term', 'techzei_tt5_invalidate_editorial_cache', 20, 3 );
+add_action( 'edited_term', 'techzei_tt5_invalidate_editorial_cache', 20, 3 );
+add_action( 'delete_term', 'techzei_tt5_invalidate_editorial_cache', 20, 3 );
+add_action( 'added_option_' . ( defined( 'TECHZEI_TT5_SETTINGS_OPTION' ) ? TECHZEI_TT5_SETTINGS_OPTION : 'techzei_tt5_settings' ), 'techzei_tt5_invalidate_editorial_cache' );
+add_action( 'updated_option_' . ( defined( 'TECHZEI_TT5_SETTINGS_OPTION' ) ? TECHZEI_TT5_SETTINGS_OPTION : 'techzei_tt5_settings' ), 'techzei_tt5_invalidate_editorial_cache' );
+add_action( 'deleted_option_' . ( defined( 'TECHZEI_TT5_SETTINGS_OPTION' ) ? TECHZEI_TT5_SETTINGS_OPTION : 'techzei_tt5_settings' ), 'techzei_tt5_invalidate_editorial_cache' );
+
+/** Build a cache key from post, settings, taxonomy, and component state. */
+function techzei_tt5_editorial_cache_key( $component, $post_id = 0, $context = array() ) {
+	$post       = $post_id ? get_post( absint( $post_id ) ) : null;
+	$categories = $post_id ? wp_get_post_terms( $post_id, 'category', array( 'fields' => 'ids' ) ) : array();
+	$tags       = $post_id ? wp_get_post_terms( $post_id, 'post_tag', array( 'fields' => 'ids' ) ) : array();
+	$categories = is_wp_error( $categories ) ? array() : array_map( 'absint', $categories );
+	$tags       = is_wp_error( $tags ) ? array() : array_map( 'absint', $tags );
+	$state = array(
+		'component'         => sanitize_key( $component ),
+		'version'           => techzei_tt5_editorial_cache_version(),
+		'post_id'           => absint( $post_id ),
+		'post_modified_gmt' => $post instanceof WP_Post ? $post->post_modified_gmt : '',
+		'thumbnail_id'      => $post_id ? get_post_thumbnail_id( $post_id ) : 0,
+		'categories'        => $categories,
+		'tags'              => $tags,
+		'settings'          => function_exists( 'techzei_tt5_get_settings' ) ? techzei_tt5_get_settings() : array(),
+		'context'           => $context,
+	);
+	if ( function_exists( 'wp_cache_get_last_changed' ) ) {
+		$state['terms_last_changed'] = wp_cache_get_last_changed( 'terms' );
+	}
+	return 'techzei_tt5_' . sanitize_key( $component ) . '_' . md5( wp_json_encode( $state ) );
+}
+
+/** Read an ID-list cache using a request-local layer before the transient. */
+function techzei_tt5_editorial_ids_cache_get( $key ) {
+	if ( isset( $GLOBALS['techzei_tt5_editorial_id_cache'][ $key ] ) && is_array( $GLOBALS['techzei_tt5_editorial_id_cache'][ $key ] ) ) {
+		return $GLOBALS['techzei_tt5_editorial_id_cache'][ $key ];
+	}
+	$cached = get_transient( $key );
+	if ( false === $cached || ! is_array( $cached ) ) {
+		return null;
+	}
+	$GLOBALS['techzei_tt5_editorial_id_cache'][ $key ] = array_map( 'absint', $cached );
+	return $GLOBALS['techzei_tt5_editorial_id_cache'][ $key ];
+}
+
+/** Store a bounded ID list. Cache values are never rendered HTML. */
+function techzei_tt5_editorial_ids_cache_set( $key, $ids ) {
+	$ids = array_values( array_map( 'absint', is_array( $ids ) ? $ids : array() ) );
+	$GLOBALS['techzei_tt5_editorial_id_cache'][ $key ] = $ids;
+	set_transient( $key, $ids, 12 * HOUR_IN_SECONDS );
+}
+
+/** Prime request-local post objects so a resolver does not need a second query. */
+function techzei_tt5_prime_editorial_posts( $posts ) {
+	if ( $posts instanceof WP_Query ) {
+		$posts = $posts->posts;
+	}
+	if ( ! is_array( $posts ) ) {
+		return;
+	}
+	if ( ! isset( $GLOBALS['techzei_tt5_editorial_post_cache'] ) || ! is_array( $GLOBALS['techzei_tt5_editorial_post_cache'] ) ) {
+		$GLOBALS['techzei_tt5_editorial_post_cache'] = array();
+	}
+	foreach ( $posts as $post ) {
+		if ( $post instanceof WP_Post ) {
+			$GLOBALS['techzei_tt5_editorial_post_cache'][ $post->ID ] = $post;
+		}
+	}
+}
+
+/** Return post objects in a requested order, querying only uncached IDs. */
+function techzei_tt5_editorial_posts_by_ids( $ids ) {
+	$ids = techzei_tt5_normalize_editorial_ids( $ids, 18 );
+	if ( empty( $ids ) ) {
+		return array();
+	}
+	$missing = array();
+	foreach ( $ids as $id ) {
+		if ( empty( $GLOBALS['techzei_tt5_editorial_post_cache'][ $id ] ) ) {
+			$missing[] = $id;
+		}
+	}
+	if ( ! empty( $missing ) ) {
+		$query = techzei_tt5_editorial_query( array( 'posts_per_page' => count( $missing ), 'post__in' => $missing, 'orderby' => 'post__in' ) );
+		techzei_tt5_prime_editorial_posts( $query );
+	}
+	$posts = array();
+	foreach ( $ids as $id ) {
+		if ( ! empty( $GLOBALS['techzei_tt5_editorial_post_cache'][ $id ] ) ) {
+			$posts[] = $GLOBALS['techzei_tt5_editorial_post_cache'][ $id ];
+		}
+	}
+	return $posts;
 }
 
 /**
@@ -88,6 +238,18 @@ function techzei_tt5_has_enabled_share_destinations() {
 	return ! empty( array_intersect( array_keys( $available ), $destinations ) );
 }
 
+/** Return the small inline brand mark used by a share destination. */
+function techzei_tt5_share_icon( $destination ) {
+	$icons = array(
+		'x'        => '<svg viewBox="0 0 24 24" focusable="false"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817-5.964 6.817H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z" /></svg>',
+		'facebook' => '<svg viewBox="0 0 24 24" focusable="false"><path d="M14.45 8.2h2.55V4.35c-.44-.06-1.95-.2-3.71-.2-3.67 0-6.18 2.24-6.18 6.35v3.55H3v4.78h4.11v5.17h5.05v-5.17h4.28l.68-4.78h-4.96v-3.06c0-1.39.38-2.34 2.29-2.34Z" /></svg>',
+		'linkedin' => '<svg viewBox="0 0 24 24" focusable="false"><path d="M5.16 7.04a2.54 2.54 0 1 0 0-5.08 2.54 2.54 0 0 0 0 5.08ZM2.87 21.99h4.58V8.24H2.87v13.75ZM10.31 8.24h4.39v1.88h.06c.61-1.15 2.1-2.36 4.33-2.36 4.63 0 5.49 3.05 5.49 7.01v7.22H20v-6.4c0-1.53-.03-3.49-2.13-3.49-2.13 0-2.46 1.67-2.46 3.38v6.51h-4.57V8.24h-.53Z" /></svg>',
+		'whatsapp' => '<svg viewBox="0 0 24 24" focusable="false"><path d="M20.52 3.48A11.87 11.87 0 0 0 12.05 0C5.49 0 .15 5.34.15 11.9c0 2.1.55 4.15 1.6 5.95L.05 24l6.3-1.65a11.9 11.9 0 0 0 5.7 1.45h.01c6.55 0 11.89-5.34 11.89-11.9 0-3.18-1.24-6.16-3.43-8.42ZM12.06 21.8h-.01a9.9 9.9 0 0 1-5.04-1.38l-.36-.22-3.74.98 1-3.65-.24-.37a9.88 9.88 0 0 1-1.52-5.27C3.15 6.45 7.15 2.45 12.06 2.45c2.38 0 4.61.93 6.29 2.62a8.84 8.84 0 0 1 2.6 6.3c0 4.91-4 8.91-8.89 8.91Zm4.88-6.68c-.27-.14-1.59-.78-1.84-.87-.25-.09-.43-.14-.61.14-.18.27-.7.87-.86 1.05-.16.18-.32.2-.59.07-.27-.14-1.12-.41-2.13-1.31-.79-.7-1.32-1.57-1.48-1.84-.16-.27-.02-.42.12-.56.12-.12.27-.32.41-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47h-.52c-.18 0-.48.07-.73.34-.25.27-.95.93-.95 2.27s.98 2.63 1.11 2.82c.14.18 1.92 2.93 4.65 4.11.65.28 1.16.45 1.55.58.65.2 1.24.17 1.71.1.52-.08 1.59-.65 1.81-1.28.22-.63.22-1.17.16-1.28-.07-.11-.25-.18-.52-.32Z" /></svg>',
+	);
+
+	return isset( $icons[ $destination ] ) ? $icons[ $destination ] : '';
+}
+
 /**
  * Render share links for either the normal article row or compact mobile dock.
  *
@@ -120,10 +282,11 @@ function techzei_tt5_render_share_links( $mobile_dock = false ) {
 
 	foreach ( $destinations as $destination ) {
 		$output .= sprintf(
-			'<a class="tz-share-%1$s" href="%2$s" target="_blank" rel="noopener noreferrer" aria-label="%3$s">%4$s</a>',
+			'<a class="tz-share-%1$s" href="%2$s" target="_blank" rel="noopener noreferrer" aria-label="%3$s"><span class="tz-share-icon" aria-hidden="true">%4$s</span><span class="tz-share-label">%5$s</span></a>',
 			esc_attr( $destination ),
 			esc_url( $available[ $destination ]['url'] ),
 			esc_attr( sprintf( __( 'Share on %s', 'techzei-magazine-theme' ), $available[ $destination ]['label'] ) ),
+			techzei_tt5_share_icon( $destination ),
 			esc_html( $available[ $destination ]['label'] )
 		);
 	}
@@ -217,22 +380,15 @@ function techzei_tt5_primary_category( $post_id ) {
 /**
  * Render visible breadcrumbs while leaving schema ownership with Yoast.
  *
- * When Yoast is active its own breadcrumb output is used, so presentation and
- * structured-data configuration remain in one plugin. The fallback is visible
- * HTML only and deliberately does not emit a second BreadcrumbList schema.
+ * Yoast remains the owner of breadcrumb structured data. The theme renders a
+ * concise visible trail so a single post does not repeat its full headline
+ * immediately before the actual post title.
  *
  * @return string
  */
 function techzei_tt5_visible_breadcrumbs() {
 	if ( ! techzei_tt5_get_editorial_setting( 'articles.breadcrumbs', true ) || ( ! is_singular( 'post' ) && ! is_archive() ) ) {
 		return '';
-	}
-
-	if ( function_exists( 'yoast_breadcrumb' ) ) {
-		$yoast = yoast_breadcrumb( '', '', false );
-		if ( is_string( $yoast ) && '' !== trim( $yoast ) ) {
-			return '<nav class="tz-breadcrumbs" aria-label="' . esc_attr__( 'Breadcrumb', 'techzei-magazine-theme' ) . '">' . $yoast . '</nav>';
-		}
 	}
 
 	$items   = array();
@@ -243,7 +399,6 @@ function techzei_tt5_visible_breadcrumbs() {
 		if ( $category ) {
 			$items[] = '<a href="' . esc_url( get_category_link( $category ) ) . '">' . esc_html( $category->name ) . '</a>';
 		}
-		$items[] = '<span aria-current="page">' . esc_html( get_the_title() ) . '</span>';
 	} else {
 		$items[] = '<span aria-current="page">' . esc_html( wp_strip_all_tags( get_the_archive_title() ) ) . '</span>';
 	}
@@ -294,45 +449,52 @@ function techzei_tt5_is_instructional_category( $term ) {
 	return '' !== techzei_tt5_instructional_category_type( $term );
 }
 
-/**
- * Return readable H2/H3 items from post content for the article TOC.
- *
- * @param int $post_id Post ID.
- * @return array
- */
+/** Return a stable, valid, unique heading ID for one TOC item. */
+function techzei_tt5_toc_heading_id( $label, $existing, &$used ) {
+	$existing = trim( html_entity_decode( (string) $existing, ENT_QUOTES, get_bloginfo( 'charset' ) ) );
+	$base     = preg_match( '/^[A-Za-z][A-Za-z0-9_.:-]*$/D', $existing ) ? $existing : sanitize_title( $existing );
+	if ( '' === $base ) {
+		$base = sanitize_title( $label );
+	}
+	if ( '' === $base ) {
+		$base = 'section';
+	}
+	if ( preg_match( '/^[0-9]/', $base ) ) {
+		$base = 'section-' . $base;
+	}
+	$base_key = strtolower( $base );
+	$count    = isset( $used[ $base_key ] ) ? absint( $used[ $base_key ] ) + 1 : 1;
+	$id       = 1 === $count ? $base : $base . '-' . $count;
+	while ( isset( $used[ strtolower( $id ) ] ) ) {
+		$count++;
+		$id = $base . '-' . $count;
+	}
+	$used[ strtolower( $id ) ] = $count;
+	return $id;
+}
+
+/** Return readable H2/H3 items from post content for the article TOC. */
 function techzei_tt5_article_toc_items( $post_id ) {
 	$content = (string) get_post_field( 'post_content', absint( $post_id ) );
 	$matches = array();
 	$items   = array();
 	$used    = array();
-
-	preg_match_all( '/<h([23])\\b([^>]*)>(.*?)<\\/h\\1>/is', $content, $matches, PREG_SET_ORDER );
+	preg_match_all( '/<h([23])\\b([^>]*)>(.*?)<\\/h\\1\\s*>/is', $content, $matches, PREG_SET_ORDER );
 	foreach ( $matches as $match ) {
 		$label = trim( html_entity_decode( wp_strip_all_tags( $match[3] ), ENT_QUOTES, get_bloginfo( 'charset' ) ) );
 		if ( '' === $label ) {
 			continue;
 		}
-
 		$existing_id = '';
 		if ( preg_match( '/\\bid\\s*=\\s*(["\\\'])(.*?)\\1/i', $match[2], $id_match ) ) {
-			$existing_id = trim( html_entity_decode( $id_match[2], ENT_QUOTES, get_bloginfo( 'charset' ) ) );
-		}
-
-		$id = $existing_id ? $existing_id : sanitize_title( $label );
-		$id = '' === $id ? 'section' : $id;
-		if ( ! $existing_id ) {
-			$used[ $id ] = isset( $used[ $id ] ) ? $used[ $id ] + 1 : 1;
-			if ( $used[ $id ] > 1 ) {
-				$id .= '-' . $used[ $id ];
-			}
+			$existing_id = $id_match[2];
 		}
 		$items[] = array(
-			'id'    => $id,
+			'id'    => techzei_tt5_toc_heading_id( $label, $existing_id, $used ),
 			'label' => $label,
 			'level' => absint( $match[1] ),
 		);
 	}
-
 	return $items;
 }
 
@@ -383,9 +545,7 @@ function techzei_tt5_add_article_toc_ids( $content, $block ) {
 		if ( ! in_array( $tag, array( 'h2', 'h3' ), true ) || ! isset( $items[ $index ] ) ) {
 			continue;
 		}
-		if ( ! $tags->get_attribute( 'id' ) ) {
-			$tags->set_attribute( 'id', $items[ $index ]['id'] );
-		}
+		$tags->set_attribute( 'id', $items[ $index ]['id'] );
 		$index++;
 	}
 
@@ -477,12 +637,13 @@ function techzei_tt5_editorial_selection_ids( $selection, $limit, $exclude = arr
 			'posts_per_page' => min( 6, max( 1, absint( $limit ) ) ),
 			'post__in'       => $selection,
 			'orderby'        => 'post__in',
-			'fields'         => 'ids',
 			'post_status'    => 'publish',
 		)
 	);
 
-	return techzei_tt5_normalize_editorial_ids( $query->posts, $limit, $exclude );
+	techzei_tt5_prime_editorial_posts( $query );
+
+	return techzei_tt5_normalize_editorial_ids( wp_list_pluck( $query->posts, 'ID' ), $limit, $exclude );
 }
 
 /**
@@ -501,139 +662,78 @@ function techzei_tt5_editorial_selection_ids( $selection, $limit, $exclude = arr
 function techzei_tt5_related_story_ids( $post_id, $limit ) {
 	$post_id = absint( $post_id );
 	$limit   = min( 6, max( 2, absint( $limit ) ) );
-	$ids     = array();
-	$exclude = array( $post_id );
-
-	$mode = sanitize_key( (string) techzei_tt5_get_editorial_setting( 'articles.related_mode', 'automatic' ) );
+	$mode    = sanitize_key( (string) techzei_tt5_get_editorial_setting( 'articles.related_mode', 'automatic' ) );
 	$editorial_first = in_array( $mode, array( 'editorial', 'editorial-first' ), true );
 	$editorial_first = (bool) apply_filters( 'techzei_tt5_related_editorial_first', $editorial_first, $post_id, $limit );
-
-	if ( $editorial_first ) {
-		$selection = apply_filters(
-			'techzei_tt5_editorial_selection',
-			get_option( 'sticky_posts', array() ),
-			$post_id,
-			$limit
-		);
-		$editorial_ids = techzei_tt5_editorial_selection_ids( $selection, $limit, $exclude );
-		$ids          = array_merge( $ids, $editorial_ids );
-		$exclude      = array_merge( $exclude, $editorial_ids );
-	}
-
-	$category_ids = wp_get_post_terms(
-		$post_id,
-		'category',
-		array(
-			'fields'  => 'ids',
-			'orderby' => 'term_id',
-			'order'   => 'ASC',
-		)
-	);
+	$category_ids = wp_get_post_terms( $post_id, 'category', array( 'fields' => 'ids', 'orderby' => 'term_id', 'order' => 'ASC' ) );
 	$category_ids = is_wp_error( $category_ids ) ? array() : array_slice( techzei_tt5_order_related_categories( $category_ids ), 0, 3 );
-
-	$tag_ids = wp_get_post_terms(
-		$post_id,
-		'post_tag',
-		array(
-			'fields'  => 'ids',
-			'orderby' => 'term_id',
-			'order'   => 'ASC',
-		)
-	);
+	$tag_ids = wp_get_post_terms( $post_id, 'post_tag', array( 'fields' => 'ids', 'orderby' => 'term_id', 'order' => 'ASC' ) );
 	$tag_ids = is_wp_error( $tag_ids ) ? array() : techzei_tt5_normalize_editorial_ids( $tag_ids, 8 );
-	$freshness_date_query = apply_filters(
-		'techzei_tt5_related_freshness_date_query',
-		array(
-			array(
-				'after'     => gmdate( 'Y-m-d', strtotime( '-5 years' ) ),
-				'inclusive' => true,
-			),
-		),
-		$post_id
-	);
+	$freshness_date_query = apply_filters( 'techzei_tt5_related_freshness_date_query', array( array( 'after' => gmdate( 'Y-m-d', strtotime( '-5 years' ) ), 'inclusive' => true ) ), $post_id );
 	$freshness_date_query = is_array( $freshness_date_query ) ? $freshness_date_query : array();
-
-	if ( ! empty( $tag_ids ) && ! empty( $category_ids ) && count( $ids ) < $limit ) {
-		$intersection_query = techzei_tt5_editorial_query(
-			array(
-				'posts_per_page' => $limit - count( $ids ),
-				'post__not_in'   => $exclude,
-				'fields'         => 'ids',
-				'orderby'        => array( 'date' => 'DESC', 'ID' => 'DESC' ),
-				'date_query'     => $freshness_date_query,
-				'tax_query'      => array(
-					'relation' => 'AND',
-					array( 'taxonomy' => 'post_tag', 'field' => 'term_id', 'terms' => $tag_ids, 'operator' => 'IN', 'include_children' => false ),
-					array( 'taxonomy' => 'category', 'field' => 'term_id', 'terms' => $category_ids, 'operator' => 'IN', 'include_children' => false ),
-				),
-			)
-		);
-		$intersection_matches = techzei_tt5_normalize_editorial_ids( $intersection_query->posts, $limit - count( $ids ), $exclude );
-		$ids                  = array_merge( $ids, $intersection_matches );
-		$exclude              = array_merge( $exclude, $intersection_matches );
+	$cache_key = techzei_tt5_editorial_cache_key( 'related', $post_id, array( 'limit' => $limit, 'mode' => $mode, 'editorial_first' => $editorial_first, 'categories' => $category_ids, 'tags' => $tag_ids, 'freshness' => $freshness_date_query ) );
+	$cached = techzei_tt5_editorial_ids_cache_get( $cache_key );
+	if ( null !== $cached ) {
+		return techzei_tt5_normalize_editorial_ids( apply_filters( 'techzei_tt5_related_story_ids', $cached, $post_id, $limit ), $limit, array( $post_id ) );
 	}
-
-	if ( ! empty( $tag_ids ) && count( $ids ) < $limit ) {
-		$tag_query = techzei_tt5_editorial_query(
-			array(
-				'posts_per_page' => min( 18, max( $limit, $limit * 3 ) ),
-				'post__not_in'   => $exclude,
-				'fields'        => 'ids',
-				'orderby'       => array(
-					'date' => 'DESC',
-					'ID'   => 'DESC',
-				),
-				'date_query'     => $freshness_date_query,
-				'tax_query'     => array(
-					array(
-						'taxonomy'         => 'post_tag',
-						'field'            => 'term_id',
-						'terms'            => $tag_ids,
-						'operator'         => 'IN',
-						'include_children' => false,
-					),
-				),
-			)
-		);
-		$tag_matches = techzei_tt5_normalize_editorial_ids( $tag_query->posts, $limit - count( $ids ), $exclude );
-		$ids         = array_merge( $ids, $tag_matches );
-		$exclude     = array_merge( $exclude, $tag_matches );
+	$ids     = array();
+	$exclude = array( $post_id );
+	if ( $editorial_first ) {
+		$selection = apply_filters( 'techzei_tt5_editorial_selection', get_option( 'sticky_posts', array() ), $post_id, $limit );
+		$editorial_ids = techzei_tt5_editorial_selection_ids( $selection, $limit, $exclude );
+		$ids = array_merge( $ids, $editorial_ids );
+		$exclude = array_merge( $exclude, $editorial_ids );
 	}
-
-	foreach ( $category_ids as $category_id ) {
-		if ( count( $ids ) >= $limit ) {
-			break;
+	$tax_query = array( 'relation' => 'OR' );
+	if ( ! empty( $tag_ids ) ) {
+		$tax_query[] = array( 'taxonomy' => 'post_tag', 'field' => 'term_id', 'terms' => $tag_ids, 'operator' => 'IN', 'include_children' => false );
+	}
+	if ( ! empty( $category_ids ) ) {
+		$tax_query[] = array( 'taxonomy' => 'category', 'field' => 'term_id', 'terms' => $category_ids, 'operator' => 'IN', 'include_children' => false );
+	}
+	if ( count( $tax_query ) > 1 && count( $ids ) < $limit ) {
+		$candidate_query = techzei_tt5_editorial_query( array( 'posts_per_page' => min( 30, max( 12, $limit * 5 ) ), 'post__not_in' => $exclude, 'orderby' => array( 'date' => 'DESC', 'ID' => 'DESC' ), 'date_query' => $freshness_date_query, 'tax_query' => $tax_query ) );
+		techzei_tt5_prime_editorial_posts( $candidate_query );
+		$tag_lookup = array_fill_keys( $tag_ids, true );
+		$category_lookup = array_fill_keys( $category_ids, true );
+		$ranked = array();
+		foreach ( $candidate_query->posts as $candidate ) {
+			$candidate_tags = wp_get_post_terms( $candidate->ID, 'post_tag', array( 'fields' => 'ids' ) );
+			$candidate_categories = wp_get_post_terms( $candidate->ID, 'category', array( 'fields' => 'ids' ) );
+			$candidate_tags = is_wp_error( $candidate_tags ) ? array() : $candidate_tags;
+			$candidate_categories = is_wp_error( $candidate_categories ) ? array() : $candidate_categories;
+			$shared_tags = count( array_intersect( $candidate_tags, array_keys( $tag_lookup ) ) );
+			$shared_categories = count( array_intersect( $candidate_categories, array_keys( $category_lookup ) ) );
+			$depth = 0;
+			foreach ( $candidate_categories as $candidate_category ) {
+				if ( isset( $category_lookup[ $candidate_category ] ) ) {
+					$depth = max( $depth, count( get_ancestors( $candidate_category, 'category', 'taxonomy' ) ) );
+				}
+			}
+			$ranked[] = array( 'post' => $candidate, 'score' => ( $shared_tags * 100 ) + ( $shared_categories * 35 ) + ( $depth * 5 ) + ( has_post_thumbnail( $candidate->ID ) ? 10 : 0 ) );
 		}
-
-		$category_query = techzei_tt5_editorial_query(
-			array(
-				'posts_per_page' => $limit - count( $ids ),
-				'post__not_in'   => $exclude,
-				'fields'        => 'ids',
-				'orderby'       => array(
-					'date' => 'DESC',
-					'ID'   => 'DESC',
-				),
-				'date_query'     => $freshness_date_query,
-				'tax_query'     => array(
-					array(
-						'taxonomy'         => 'category',
-						'field'            => 'term_id',
-						'terms'            => array( $category_id ),
-						'operator'         => 'IN',
-						'include_children' => false,
-					),
-				),
-			)
-		);
-		$category_matches = techzei_tt5_normalize_editorial_ids( $category_query->posts, $limit - count( $ids ), $exclude );
-		$ids              = array_merge( $ids, $category_matches );
-		$exclude          = array_merge( $exclude, $category_matches );
+		usort( $ranked, function ( $left, $right ) {
+			if ( $left['score'] === $right['score'] ) {
+				$left_date = isset( $left['post']->post_date_gmt ) ? $left['post']->post_date_gmt : '';
+				$right_date = isset( $right['post']->post_date_gmt ) ? $right['post']->post_date_gmt : '';
+				if ( $left_date === $right_date ) {
+					return $left['post']->ID === $right['post']->ID ? 0 : ( $left['post']->ID > $right['post']->ID ? -1 : 1 );
+				}
+				return $left_date > $right_date ? -1 : 1;
+			}
+			return $left['score'] > $right['score'] ? -1 : 1;
+		} );
+		foreach ( $ranked as $item ) {
+			if ( count( $ids ) >= $limit ) {
+				break;
+			}
+			$ids[] = $item['post']->ID;
+			$exclude[] = $item['post']->ID;
+		}
 	}
-
-	$ids = apply_filters( 'techzei_tt5_related_story_ids', $ids, $post_id, $limit );
-
-	return techzei_tt5_normalize_editorial_ids( $ids, $limit, array( $post_id ) );
+	$ids = techzei_tt5_normalize_editorial_ids( $ids, $limit, array( $post_id ) );
+	techzei_tt5_editorial_ids_cache_set( $cache_key, $ids );
+	return techzei_tt5_normalize_editorial_ids( apply_filters( 'techzei_tt5_related_story_ids', $ids, $post_id, $limit ), $limit, array( $post_id ) );
 }
 
 /**
@@ -650,18 +750,13 @@ function techzei_tt5_related_stories( $atts = array() ) {
 	$post_id = get_the_ID();
 	$limit   = min( 6, max( 2, absint( techzei_tt5_get_editorial_setting( 'articles.related_count', 3 ) ) ) );
 	$ids     = techzei_tt5_related_story_ids( $post_id, $limit );
+	$GLOBALS['techzei_tt5_rendered_related_ids'][ $post_id ] = $ids;
 
 	if ( empty( $ids ) ) {
 		return '';
 	}
 
-	$posts = techzei_tt5_editorial_query(
-		array(
-			'posts_per_page' => $limit,
-			'post__in'       => $ids,
-			'orderby'        => 'post__in',
-		)
-	);
+	$posts = techzei_tt5_editorial_posts_by_ids( $ids );
 
 	$atts = shortcode_atts( array( 'heading' => '1' ), $atts, 'techzei_related_stories' );
 	if ( in_array( sanitize_key( (string) $atts['heading'] ), array( '0', 'false', 'no', 'none' ), true ) ) {
@@ -671,6 +766,17 @@ function techzei_tt5_related_stories( $atts = array() ) {
 	return techzei_tt5_render_story_list( $posts, 'tz-related-stories', __( 'Keep reading', 'techzei-magazine-theme' ), __( 'More on this topic', 'techzei-magazine-theme' ) );
 }
 add_shortcode( 'techzei_related_stories', 'techzei_tt5_related_stories' );
+
+/** Return IDs reserved by the in-flow related module for overlap prevention. */
+function techzei_tt5_inflow_related_exclusions( $post_id ) {
+	$post_id = absint( $post_id );
+	$ids = isset( $GLOBALS['techzei_tt5_rendered_related_ids'][ $post_id ] ) ? $GLOBALS['techzei_tt5_rendered_related_ids'][ $post_id ] : array();
+	if ( empty( $ids ) && techzei_tt5_get_editorial_setting( 'articles.related_stories', true ) ) {
+		$limit = min( 6, max( 2, absint( techzei_tt5_get_editorial_setting( 'articles.related_count', 3 ) ) ) );
+		$ids = techzei_tt5_related_story_ids( $post_id, $limit );
+	}
+	return techzei_tt5_normalize_editorial_ids( $ids, 6, array( $post_id ) );
+}
 
 /**
  * Return a topic-aware title for the sidebar discovery module.
@@ -690,86 +796,41 @@ function techzei_tt5_more_in_topic_heading( $term ) {
 	return array( $term->name, __( 'More in this topic', 'techzei-magazine-theme' ) );
 }
 
-/**
- * Render current-topic stories, preferring candidates with featured images.
- *
- * The second bounded query fills an otherwise sparse category while the
- * renderer supplies a deliberate no-thumbnail state when necessary.
- *
- * @param array $atts Optional count override.
- * @return string
- */
 function techzei_tt5_more_in_topic( $atts = array() ) {
 	if ( ! is_singular( 'post' ) || ! techzei_tt5_get_editorial_setting( 'sidebar.more_in_topic', true ) ) {
 		return '';
 	}
-
 	$post_id = get_the_ID();
-	$term    = techzei_tt5_primary_category( $post_id );
+	$term = techzei_tt5_primary_category( $post_id );
 	if ( ! $term ) {
 		return '';
 	}
-
-	$atts  = shortcode_atts( array( 'count' => techzei_tt5_get_editorial_setting( 'sidebar.more_topic_count', 4 ) ), $atts, 'techzei_more_in_topic' );
+	$atts = shortcode_atts( array( 'count' => techzei_tt5_get_editorial_setting( 'sidebar.more_topic_count', 4 ) ), $atts, 'techzei_more_in_topic' );
 	$limit = min( 6, max( 2, absint( $atts['count'] ) ) );
-	$args  = array(
-		'posts_per_page' => $limit,
-		'post__not_in'   => array( $post_id ),
-		'orderby'        => 'date',
-		'order'          => 'DESC',
-		'tax_query'      => array(
-			array(
-				'taxonomy'         => 'category',
-				'field'            => 'term_id',
-				'terms'            => array( $term->term_id ),
-				'include_children' => true,
-			),
-		),
-	);
-
-	$with_thumbnails = techzei_tt5_editorial_query(
-		wp_parse_args(
-			array(
-				'meta_query' => array(
-					array(
-						'key'     => '_thumbnail_id',
-						'compare' => 'EXISTS',
-					),
-				),
-				'fields' => 'ids',
-			),
-			$args
-		)
-	);
-	$ids = techzei_tt5_normalize_editorial_ids( $with_thumbnails->posts, $limit, array( $post_id ) );
-
-	if ( count( $ids ) < $limit ) {
-		$fallback = techzei_tt5_editorial_query(
-			wp_parse_args(
-				array(
-					'posts_per_page' => $limit - count( $ids ),
-					'post__not_in'   => array_merge( array( $post_id ), $ids ),
-					'fields'         => 'ids',
-				),
-				$args
-			)
-		);
-		$ids = array_merge( $ids, techzei_tt5_normalize_editorial_ids( $fallback->posts, $limit - count( $ids ), array_merge( array( $post_id ), $ids ) ) );
+	$exclude = array_merge( array( $post_id ), techzei_tt5_inflow_related_exclusions( $post_id ) );
+	$cache_key = techzei_tt5_editorial_cache_key( 'topic', $post_id, array( 'term' => $term->term_id, 'limit' => $limit, 'exclude' => $exclude ) );
+	$ids = techzei_tt5_editorial_ids_cache_get( $cache_key );
+	if ( null === $ids ) {
+		$query = techzei_tt5_editorial_query( array( 'posts_per_page' => min( 24, max( 10, $limit * 4 ) ), 'post__not_in' => $exclude, 'orderby' => array( 'date' => 'DESC', 'ID' => 'DESC' ), 'tax_query' => array( array( 'taxonomy' => 'category', 'field' => 'term_id', 'terms' => array( $term->term_id ), 'include_children' => true ) ) ) );
+		techzei_tt5_prime_editorial_posts( $query );
+		$ranked = array();
+		foreach ( $query->posts as $candidate ) {
+			$ranked[] = array( 'id' => $candidate->ID, 'has_thumbnail' => has_post_thumbnail( $candidate->ID ) );
+		}
+		usort( $ranked, function ( $left, $right ) {
+			if ( $left['has_thumbnail'] === $right['has_thumbnail'] ) {
+				return 0;
+			}
+			return $left['has_thumbnail'] ? -1 : 1;
+		} );
+		$ids = techzei_tt5_normalize_editorial_ids( wp_list_pluck( $ranked, 'id' ), $limit, $exclude );
+		techzei_tt5_editorial_ids_cache_set( $cache_key, $ids );
 	}
-
 	if ( empty( $ids ) ) {
 		return '';
 	}
-
-	$posts = techzei_tt5_editorial_query(
-		array(
-			'posts_per_page' => $limit,
-			'post__in'       => $ids,
-			'orderby'        => 'post__in',
-		)
-	);
+	$posts = techzei_tt5_editorial_posts_by_ids( $ids );
 	$heading = techzei_tt5_more_in_topic_heading( $term );
-
 	return techzei_tt5_render_story_list( $posts, 'tz-more-in-topic', $heading[0], $heading[1] );
 }
 add_shortcode( 'techzei_more_in_topic', 'techzei_tt5_more_in_topic' );
@@ -783,18 +844,17 @@ function techzei_tt5_latest_stories() {
 	if ( ! techzei_tt5_get_editorial_setting( 'sidebar.latest_stories', true ) ) {
 		return '';
 	}
-
 	$current_post_id = get_the_ID();
-	$posts           = techzei_tt5_editorial_query(
-		array(
-			'posts_per_page' => min( 6, max( 3, absint( techzei_tt5_get_editorial_setting( 'sidebar.latest_count', 5 ) ) ) ),
-			'post__not_in'   => array( $current_post_id ),
-			'orderby'        => 'date',
-			'order'          => 'DESC',
-		)
-	);
-
-	return techzei_tt5_render_story_list( $posts, 'tz-latest-stories' );
+	$limit = min( 6, max( 3, absint( techzei_tt5_get_editorial_setting( 'sidebar.latest_count', 5 ) ) ) );
+	$cache_key = techzei_tt5_editorial_cache_key( 'latest', $current_post_id, array( 'limit' => $limit ) );
+	$ids = techzei_tt5_editorial_ids_cache_get( $cache_key );
+	if ( null === $ids ) {
+		$query = techzei_tt5_editorial_query( array( 'posts_per_page' => $limit, 'post__not_in' => array( $current_post_id ), 'orderby' => 'date', 'order' => 'DESC' ) );
+		techzei_tt5_prime_editorial_posts( $query );
+		$ids = techzei_tt5_normalize_editorial_ids( wp_list_pluck( $query->posts, 'ID' ), $limit, array( $current_post_id ) );
+		techzei_tt5_editorial_ids_cache_set( $cache_key, $ids );
+	}
+	return techzei_tt5_render_story_list( techzei_tt5_editorial_posts_by_ids( $ids ), 'tz-latest-stories' );
 }
 add_shortcode( 'techzei_latest_stories', 'techzei_tt5_latest_stories' );
 
@@ -803,51 +863,29 @@ function techzei_tt5_latest_reviews() {
 	if ( ! techzei_tt5_get_editorial_setting( 'sidebar.reviews', true ) ) {
 		return '';
 	}
-
 	$current_post_id = get_the_ID();
 	$settings_loaded = function_exists( 'techzei_tt5_get_settings' ) || function_exists( 'techzei_tt5_get_setting' );
-	$review_term_id  = absint( techzei_tt5_get_editorial_setting( 'sidebar.review_category', 0 ) );
-
+	$review_term_id = absint( techzei_tt5_get_editorial_setting( 'sidebar.review_category', 0 ) );
 	if ( $settings_loaded ) {
 		$review_term = $review_term_id ? get_term( $review_term_id, 'category' ) : false;
 		if ( ! $review_term || is_wp_error( $review_term ) ) {
 			return '';
 		}
-		$review_tax_query = array(
-			array(
-				'taxonomy' => 'category',
-				'field'    => 'term_id',
-				'terms'    => array( $review_term_id ),
-			),
-		);
+		$review_tax_query = array( array( 'taxonomy' => 'category', 'field' => 'term_id', 'terms' => array( $review_term_id ) ) );
 	} else {
-		$review_tax_query = array(
-			array(
-				'taxonomy' => 'category',
-				'field'    => 'slug',
-				'terms'    => array( 'review' ),
-			),
-		);
+		$review_tax_query = array( array( 'taxonomy' => 'category', 'field' => 'slug', 'terms' => array( 'review' ) ) );
 	}
-
 	$max_age = min( 10, max( 1, absint( techzei_tt5_get_editorial_setting( 'sidebar.review_max_age', 5 ) ) ) );
-	$reviews = techzei_tt5_editorial_query(
-		array(
-			'posts_per_page' => min( 6, max( 2, absint( techzei_tt5_get_editorial_setting( 'sidebar.review_count', 4 ) ) ) ),
-			'post__not_in'   => array( $current_post_id ),
-			'orderby'        => 'date',
-			'order'          => 'DESC',
-			'tax_query'      => $review_tax_query,
-			'date_query'     => array(
-				array(
-					'after'     => gmdate( 'Y-m-d', strtotime( '-' . $max_age . ' years' ) ),
-					'inclusive' => true,
-				),
-			),
-		)
-	);
-
-	return techzei_tt5_render_story_list( $reviews, 'tz-latest-reviews', __( 'Reviews', 'techzei-magazine-theme' ), __( 'Latest reviews', 'techzei-magazine-theme' ) );
+	$limit = min( 6, max( 2, absint( techzei_tt5_get_editorial_setting( 'sidebar.review_count', 4 ) ) ) );
+	$cache_key = techzei_tt5_editorial_cache_key( 'reviews', $current_post_id, array( 'limit' => $limit, 'term' => $review_term_id, 'max_age' => $max_age ) );
+	$ids = techzei_tt5_editorial_ids_cache_get( $cache_key );
+	if ( null === $ids ) {
+		$query = techzei_tt5_editorial_query( array( 'posts_per_page' => $limit, 'post__not_in' => array( $current_post_id ), 'orderby' => 'date', 'order' => 'DESC', 'tax_query' => $review_tax_query, 'date_query' => array( array( 'after' => gmdate( 'Y-m-d', strtotime( '-' . $max_age . ' years' ) ), 'inclusive' => true ) ) ) );
+		techzei_tt5_prime_editorial_posts( $query );
+		$ids = techzei_tt5_normalize_editorial_ids( wp_list_pluck( $query->posts, 'ID' ), $limit, array( $current_post_id ) );
+		techzei_tt5_editorial_ids_cache_set( $cache_key, $ids );
+	}
+	return techzei_tt5_render_story_list( techzei_tt5_editorial_posts_by_ids( $ids ), 'tz-latest-reviews', __( 'Reviews', 'techzei-magazine-theme' ), __( 'Latest reviews', 'techzei-magazine-theme' ) );
 }
 add_shortcode( 'techzei_latest_reviews', 'techzei_tt5_latest_reviews' );
 
@@ -880,31 +918,31 @@ add_shortcode( 'techzei_follow_techzei', 'techzei_tt5_follow_techzei' );
  * @return string
  */
 function techzei_tt5_render_story_list( $posts, $class, $kicker = '', $heading = '' ) {
-	if ( ! $posts->have_posts() ) {
+	if ( $posts instanceof WP_Query ) {
+		if ( ! $posts->have_posts() ) {
+			return '';
+		}
+	} elseif ( ! is_array( $posts ) || empty( $posts ) ) {
 		return '';
 	}
-
 	$output = $heading ? '<section class="' . esc_attr( $class ) . '">' : '<ol class="' . esc_attr( $class ) . '">';
-
 	if ( $heading ) {
 		$output .= '<p class="tz-section-kicker">' . esc_html( $kicker ) . '</p>';
 		$output .= '<h2>' . esc_html( $heading ) . '</h2><ol>';
 	}
-
-	while ( $posts->have_posts() ) {
-		$posts->the_post();
+	if ( $posts instanceof WP_Query ) {
+		$items = $posts->posts;
+	} else {
+		$items = $posts;
+	}
+	foreach ( $items as $post ) {
+		if ( ! $post instanceof WP_Post ) {
+			continue;
+		}
+		$GLOBALS['post'] = $post;
+		setup_postdata( $post );
 		$image_size = 'tz-related-stories' === $class ? '(max-width: 600px) 88px, 132px' : '88px';
-		$thumbnail = get_the_post_thumbnail(
-			get_the_ID(),
-			'techzei-feed',
-			array(
-				'class'    => 'tz-story-thumb-image',
-				'alt'      => '',
-				'loading'  => 'lazy',
-				'decoding' => 'async',
-				'sizes'    => $image_size,
-			)
-		);
+		$thumbnail = get_the_post_thumbnail( get_the_ID(), 'techzei-feed', array( 'class' => 'tz-story-thumb-image', 'alt' => '', 'loading' => 'lazy', 'decoding' => 'async', 'sizes' => $image_size ) );
 		$thumbnail = $thumbnail ? techzei_tt5_process_image_html( $thumbnail, 'list-card', $image_size ) : '';
 		$output .= '<li>';
 		if ( $thumbnail ) {
@@ -915,8 +953,6 @@ function techzei_tt5_render_story_list( $posts, $class, $kicker = '', $heading =
 		$output .= '<div class="tz-story-copy"><a href="' . esc_url( get_permalink() ) . '">' . esc_html( get_the_title() ) . '</a>';
 		$output .= '<time datetime="' . esc_attr( get_the_date( DATE_W3C ) ) . '">' . esc_html( get_the_date() ) . '</time></div></li>';
 	}
-
 	wp_reset_postdata();
-
 	return $heading ? $output . '</ol></section>' : $output . '</ol>';
 }
