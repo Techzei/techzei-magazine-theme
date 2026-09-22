@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.5.9 - Unreleased
+
+- Rebalance the homepage featured grid so the lead story stays prominent while more secondary stories appear in the initial viewport.
+- Place single-post category labels below the author, date, and reading-time metadata, including saved-template compatibility styling.
+
 ## 3.5.8 - Unreleased
 
 - Add lightweight inline social marks and platform-appropriate colors to the WhatsApp-first share controls.

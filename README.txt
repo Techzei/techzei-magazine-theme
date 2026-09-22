@@ -2,7 +2,7 @@
 Requires at least: 6.7
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 3.4.1
+Stable tag: 3.5.9
 License: GPLv2 or later
 
 == Required Parent Theme ==
@@ -15,6 +15,11 @@ This is a child theme of Twenty Twenty-Five. Install the official Twenty Twenty-
 4. Review the Header, Footer, Topic navigation, and article template parts in the Site Editor.
 5. Regenerate thumbnails once for older Media Library images.
 6. Clear all WordPress, host, and CDN caches.
+
+== Version 3.5.9 ==
+
+* Rebalance the homepage featured grid so the lead story stays prominent while more secondary stories appear in the initial viewport.
+* Place single-post category labels below the author, date, and reading-time metadata, including saved-template compatibility styling.
 
 == Version 3.4.1 ==
 
