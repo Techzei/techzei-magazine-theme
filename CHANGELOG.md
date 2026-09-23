@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.5.11 - Unreleased
+
+- Give the homepage sidebar its own “More to read” heading, compact story typography, and small featured-image thumbnails.
+- Start sidebar picks after the five-story feature and eight-story lead feed so the initial homepage sections do not repeat the same posts.
+- Add the existing Follow Techzei module below the homepage sidebar stories, respecting its Techzei Settings toggle.
+
+## 3.5.10 - Unreleased
+
+- Add an optional Logo alignment setting that centers the configured Site Logo while keeping the header search control on the right.
+
 ## 3.5.9 - Unreleased
 
 - Rebalance the homepage featured grid so the lead story stays prominent while more secondary stories appear in the initial viewport.

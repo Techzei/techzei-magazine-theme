@@ -2,7 +2,7 @@
 Requires at least: 6.7
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 3.5.9
+Stable tag: 3.5.11
 License: GPLv2 or later
 
 == Required Parent Theme ==
@@ -20,6 +20,15 @@ This is a child theme of Twenty Twenty-Five. Install the official Twenty Twenty-
 
 * Rebalance the homepage featured grid so the lead story stays prominent while more secondary stories appear in the initial viewport.
 * Place single-post category labels below the author, date, and reading-time metadata, including saved-template compatibility styling.
+
+== Version 3.5.11 ==
+
+* Give the homepage sidebar its own heading, compact story typography, and small featured-image thumbnails; skip stories already shown in the initial feature/feed sections.
+* Add the Follow Techzei module below the homepage sidebar stories, controlled by Techzei Settings.
+
+== Version 3.5.10 ==
+
+* Add an optional Logo alignment setting that centers the configured Site Logo while keeping the header search control on the right.
 
 == Version 3.4.1 ==
 

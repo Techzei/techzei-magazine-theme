@@ -51,7 +51,7 @@ Open **Appearance → Editor** after activation and review these items:
 
 ## Techzei Settings
 
-Use **Appearance → Techzei Settings** for theme behaviour: sticky header modes, header search and Topics visibility, homepage feature/feed/headline behaviour, default article layout, breadcrumbs, TOC, metadata/share/related controls, related-story selection mode, and article-sidebar discovery counts/categories including mobile visibility. The page uses one namespaced option and its reset action changes only that option. Its read-only diagnostics show active/parent theme versions and saved Site Editor template customisations with inspect links.
+Use **Appearance → Techzei Settings** for theme behaviour: sticky header modes, logo alignment, header search and Topics visibility, homepage feature/feed/headline behaviour, default article layout, breadcrumbs, TOC, metadata/share/related controls, related-story selection mode, and sidebar discovery counts/categories including Follow Techzei and mobile visibility. The page uses one namespaced option and its reset action changes only that option. Its read-only diagnostics show active/parent theme versions and saved Site Editor template customisations with inspect links.
 
 Use **Appearance → Editor → Styles** for colours, font families, typography, content/wide widths, and spacing. Keep the Site Editor as the owner of the logo, menus, footer copy, India mark, template composition, and section labels. Use the post editor’s **Template** control for a one-off article layout. See [the 3.1.0 settings contract](docs/3.1.0-settings.md), [the 3.2.0 settings additions](docs/3.2.0-settings.md), and [the 3.4.0 discovery notes](docs/3.4.0-discovery.md) for the full inventory and precedence rules.
 
@@ -133,9 +133,9 @@ Before publishing a release:
 
 Publishing a GitHub Release automatically runs the release workflow. It checks out the release tag, confirms that the tag matches the `Version` field in `style.css`, builds a clean WordPress upload ZIP, verifies its structure, and attaches it to the release.
 
-Use matching version tags, for example `v3.5.9` for theme version `3.5.9`. The resulting release asset is named `techzei-magazine-theme-3.5.9.zip` and contains exactly one top-level `techzei-magazine-theme/` folder.
+Use matching version tags, for example `v3.5.11` for theme version `3.5.11`. The resulting release asset is named `techzei-magazine-theme-3.5.11.zip` and contains exactly one top-level `techzei-magazine-theme/` folder.
 
-The current development metadata is **3.5.9** and is marked unreleased.
+The current development metadata is **3.5.11** and is marked unreleased.
 in the changelog. `Tested up to: 6.8` remains deliberate: production is
 currently running WordPress 7.1.1, but this repository does not yet have a
 repeatable WordPress 7.1 test environment, so 7.1 support is not claimed.

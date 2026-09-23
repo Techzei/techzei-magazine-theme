@@ -349,6 +349,10 @@ function techzei_tt5_featured_image_role( $block ) {
 		return 'homepage-lead';
 	}
 
+	if ( is_front_page() && techzei_tt5_has_class_token( $class_name, 'tz-home-sidebar-thumb' ) ) {
+		return 'homepage-sidebar';
+	}
+
 	if ( 'techzei-tile' === $size_slug || techzei_tt5_has_class_token( $class_name, 'tz-feature-card-small' ) ) {
 		return 'homepage-tile';
 	}
@@ -373,7 +377,8 @@ function techzei_tt5_featured_image_role( $block ) {
 function techzei_tt5_image_sizes_for_role( $role ) {
 	$sizes = array(
 		'article-hero'   => '(max-width: 900px) 100vw, 1220px',
-		'homepage-lead'  => '(max-width: 900px) 100vw, 708px',
+		'homepage-lead'   => '(max-width: 900px) 100vw, 708px',
+		'homepage-sidebar' => '(max-width: 600px) 92px, (max-width: 900px) 112px, 104px',
 		'homepage-tile'  => '(max-width: 900px) 50vw, 255px',
 		'list-card'      => '(max-width: 600px) 108px, 240px',
 		'hero'           => '(max-width: 900px) 100vw, 1220px',

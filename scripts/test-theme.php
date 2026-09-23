@@ -59,6 +59,7 @@ foreach ( array(
 	'TECHZEI_TT5_SETTINGS_OPTION',
 	"'header'   => array(",
 	"'sticky_mobile'",
+	"'logo_alignment'",
 	"'homepage' => array(",
 	"'headline_mode'",
 	"'articles' => array(",
@@ -128,6 +129,8 @@ foreach ( array( 'techzei_more_in_topic', 'techzei_breadcrumbs', 'techzei_articl
 }
 techzei_quality_assert( false !== strpos( $header, 'data-tz-reading-progress' ), 'Header is missing the article reading-progress marker.', $failures );
 techzei_quality_assert( false !== strpos( $header, 'tz-search-close-icon' ), 'Header is missing the animated search close icon.', $failures );
+techzei_quality_assert( false !== strpos( $settings, "'logo_alignment' => array( 'left', 'center' )" ), 'Logo alignment allowlist is missing.', $failures );
+techzei_quality_assert( false !== strpos( $style, '.tz-logo-center .tz-masthead' ), 'Centered logo styling is missing.', $failures );
 techzei_quality_assert( false !== strpos( $style, '.tz-js .tz-masthead .tz-header-search' ) && false !== strpos( $style, 'html:not(.tz-js) .tz-search-toggle' ), 'Search must be icon-first with a no-JavaScript fallback.', $failures );
 techzei_quality_assert( false !== strpos( $setup, 'tz-article-toc-sidebar-part' ) && false !== strpos( $setup, 'Saved Site Editor sidebar parts' ), 'Saved sidebar templates must receive the article TOC compatibility fallback.', $failures );
 techzei_quality_assert( false !== strpos( $script, 'initReadingProgress' ) && false !== strpos( $script, 'requestAnimationFrame' ), 'Motion script is missing the reading-progress frame loop.', $failures );

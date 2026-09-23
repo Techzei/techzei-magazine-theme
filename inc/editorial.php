@@ -889,9 +889,9 @@ function techzei_tt5_latest_reviews() {
 }
 add_shortcode( 'techzei_latest_reviews', 'techzei_tt5_latest_reviews' );
 
-/** Render a small provider-free follow module for the article sidebar. */
+/** Render a small provider-free follow module for article and homepage sidebars. */
 function techzei_tt5_follow_techzei() {
-	if ( ! is_singular( 'post' ) || ! techzei_tt5_get_editorial_setting( 'sidebar.follow_techzei', true ) ) {
+	if ( ( ! is_singular( 'post' ) && ! is_front_page() ) || ! techzei_tt5_get_editorial_setting( 'sidebar.follow_techzei', true ) ) {
 		return '';
 	}
 

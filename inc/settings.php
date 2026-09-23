@@ -26,7 +26,7 @@ if ( ! defined( 'TECHZEI_TT5_SETTINGS_PAGE' ) ) {
 }
 
 if ( ! defined( 'TECHZEI_TT5_SETTINGS_VERSION' ) ) {
-	define( 'TECHZEI_TT5_SETTINGS_VERSION', 2 );
+	define( 'TECHZEI_TT5_SETTINGS_VERSION', 3 );
 }
 
 /**
@@ -57,6 +57,7 @@ function techzei_tt5_settings_defaults() {
 				'sticky_mobile'  => true,
 				'show_search'    => true,
 				'show_topics'    => true,
+				'logo_alignment' => 'left',
 			),
 			'homepage' => array(
 				'show_featured_grid' => true,
@@ -157,6 +158,9 @@ function techzei_tt5_settings_normalize_values( $values ) {
 	}
 
 	$enums = array(
+		'header' => array(
+			'logo_alignment' => array( 'left', 'center' ),
+		),
 		'homepage' => array(
 			'headline_mode'   => array( 'hidden', 'static', 'marquee' ),
 			'headline_source' => array( 'latest', 'category' ),
@@ -352,6 +356,9 @@ function techzei_tt5_settings_sanitize( $input ) {
 	}
 
 	$enum_fields = array(
+		'header' => array(
+			'logo_alignment' => array( 'left', 'center' ),
+		),
 		'homepage' => array(
 			'headline_mode'   => array( 'hidden', 'static', 'marquee' ),
 			'headline_source' => array( 'latest', 'category' ),
@@ -554,6 +561,7 @@ function techzei_tt5_settings_register() {
 			'sticky_mobile'  => __( 'Sticky header — mobile', 'techzei-magazine-theme' ),
 			'show_search'    => __( 'Header search', 'techzei-magazine-theme' ),
 			'show_topics'    => __( 'Topics navigation', 'techzei-magazine-theme' ),
+			'logo_alignment' => __( 'Logo alignment', 'techzei-magazine-theme' ),
 		),
 		'techzei_homepage' => array(
 			'show_featured_grid' => __( 'Featured stories grid', 'techzei-magazine-theme' ),
@@ -679,6 +687,7 @@ function techzei_tt5_settings_field( $args ) {
 		'sticky_mobile'      => __( 'Keep the compact header visible below the mobile breakpoint.', 'techzei-magazine-theme' ),
 		'show_search'        => __( 'Show the desktop search and mobile search toggle together.', 'techzei-magazine-theme' ),
 		'show_topics'        => __( 'Show the secondary Topics navigation; it does not change the primary menu.', 'techzei-magazine-theme' ),
+		'logo_alignment'     => __( 'Choose whether the configured Site Logo sits at the left or the visual center of the header. The search control remains on the right.', 'techzei-magazine-theme' ),
 		'show_featured_grid' => __( 'Hide the complete lead-and-tile section; those posts return to the main feed.', 'techzei-magazine-theme' ),
 		'feed_count'         => __( 'Homepage feed only. This does not change archive or search pagination.', 'techzei-magazine-theme' ),
 		'headline_mode'      => __( 'Mobile and reduced-motion readers always receive a static, swipeable list.', 'techzei-magazine-theme' ),
@@ -755,6 +764,8 @@ function techzei_tt5_settings_field( $args ) {
 			'review_max_age' => array( 1, 10 ),
 		);
 		printf( '<input class="small-text" type="number" name="%1$s" value="%2$d" min="%3$d" max="%4$d" step="1"%5$s />', esc_attr( $name ), absint( $value ), $ranges[ $key ][0], $ranges[ $key ][1], disabled( $disabled, true, false ) );
+	} elseif ( 'logo_alignment' === $key ) {
+		techzei_tt5_settings_select( $name, $value, array( 'left' => __( 'Left', 'techzei-magazine-theme' ), 'center' => __( 'Center', 'techzei-magazine-theme' ) ), false );
 	} elseif ( 'headline_mode' === $key ) {
 		techzei_tt5_settings_select( $name, $value, array( 'hidden' => __( 'Hidden', 'techzei-magazine-theme' ), 'static' => __( 'Static list', 'techzei-magazine-theme' ), 'marquee' => __( 'Desktop marquee', 'techzei-magazine-theme' ) ), false );
 	} elseif ( 'headline_source' === $key ) {

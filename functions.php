@@ -33,3 +33,19 @@ function techzei_tt5_add_mobile_discovery_class( $classes ) {
 	return $classes;
 }
 add_filter( 'body_class', 'techzei_tt5_add_mobile_discovery_class' );
+
+/**
+ * Add the optional centered-logo header contract without replacing the logo
+ * or header composition owned by the Site Editor.
+ *
+ * @param array $classes Existing body classes.
+ * @return array
+ */
+function techzei_tt5_add_logo_alignment_class( $classes ) {
+	if ( function_exists( 'techzei_tt5_get_setting' ) && 'center' === techzei_tt5_get_setting( 'header', 'logo_alignment', 'left' ) ) {
+		$classes[] = 'tz-logo-center';
+	}
+
+	return $classes;
+}
+add_filter( 'body_class', 'techzei_tt5_add_logo_alignment_class' );

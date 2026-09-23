@@ -24,6 +24,8 @@ if ( false === $settings ) {
 		'breadcrumb key'       => "'breadcrumbs'          => true",
 		'toc key'              => "'toc'                  => true",
 		'mobile share dock key' => "'mobile_share_dock'    => true",
+		'logo alignment key' => "'logo_alignment' => 'left'",
+		'logo alignment allowlist' => "'logo_alignment' => array( 'left', 'center' )",
 		'more-in-topic key'    => "'more_in_topic'  => true",
 		'newsletter slot key'  => "'newsletter_slot' => false",
 		'review freshness key' => "'review_max_age' => 5",
