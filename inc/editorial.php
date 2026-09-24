@@ -277,8 +277,15 @@ function techzei_tt5_render_share_links( $mobile_dock = false ) {
 		return '';
 	}
 
-	$class  = $mobile_dock ? 'tz-mobile-share-dock' : 'tz-share-links';
-	$output = '<nav class="' . esc_attr( $class ) . '" aria-label="' . esc_attr__( 'Share this story', 'techzei-magazine-theme' ) . '">';
+	$class = $mobile_dock ? 'tz-mobile-share-dock' : 'tz-share-links';
+	// The in-flow row and the mobile dock can both be present on the same
+	// article at once (their settings are independent), so they need distinct
+	// accessible names — otherwise assistive tech reports two identically
+	// named "Share this story" landmarks with no way to tell them apart.
+	$label  = $mobile_dock
+		? __( 'Share this story (mobile)', 'techzei-magazine-theme' )
+		: __( 'Share this story', 'techzei-magazine-theme' );
+	$output = '<nav class="' . esc_attr( $class ) . '" aria-label="' . esc_attr( $label ) . '">';
 
 	foreach ( $destinations as $destination ) {
 		$output .= sprintf(

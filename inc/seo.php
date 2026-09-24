@@ -67,9 +67,12 @@ function techzei_tt5_output_meta_tags() {
 
 	$title       = wp_get_document_title();
 	$description = techzei_tt5_meta_description();
+	// The request URI, not just its path, matters here: a query-string-driven
+	// view (search, or an archive on the default, non-pretty permalink
+	// structure) has no distinct path of its own, so reporting the path alone
+	// collapses every such page to og:url = the homepage.
 	$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '/';
-	$request_path = wp_parse_url( $request_uri, PHP_URL_PATH );
-	$url         = is_singular() ? get_permalink() : ( is_front_page() ? home_url( '/' ) : home_url( $request_path ? $request_path : '/' ) );
+	$url         = is_singular() ? get_permalink() : ( is_front_page() ? home_url( '/' ) : home_url( $request_uri ) );
 	$url         = remove_query_arg( array( 'replytocom' ), $url );
 	$site_name   = get_bloginfo( 'name' );
 	$type        = is_singular( 'post' ) ? 'article' : 'website';
@@ -102,15 +105,27 @@ function techzei_tt5_output_meta_tags() {
 }
 add_action( 'wp_head', 'techzei_tt5_output_meta_tags', 1 );
 
-/** Give the front page a useful title when the SEO provider has no title. */
-function techzei_tt5_front_page_title( $title ) {
-	if ( ! is_front_page() || ! $title || techzei_tt5_has_seo_provider() ) {
-		return $title;
+/**
+ * Give the front page a useful title tagline when none is configured.
+ *
+ * wp_get_document_title() always builds the front-page title from a
+ * 'tagline' part sourced from the site's configured tagline (Settings >
+ * General), then drops empty parts before assembling the final string — so
+ * hooking the earlier pre_get_document_title filter, which only fires with
+ * an empty starting string, can never reach a site-name-only front page:
+ * that comparison never has anything to match against. document_title_parts
+ * fires after core has already assembled its parts, matching how the
+ * tagline is meant to be supplied.
+ *
+ * @param array $parts Document title parts.
+ * @return array
+ */
+function techzei_tt5_front_page_title( $parts ) {
+	if ( ! is_front_page() || ! empty( $parts['tagline'] ) || techzei_tt5_has_seo_provider() ) {
+		return $parts;
 	}
 
-	$site_name = get_bloginfo( 'name' );
-	return $site_name === wp_strip_all_tags( $title )
-		? sprintf( '%s — Independent technology journalism', $site_name )
-		: $title;
+	$parts['tagline'] = __( 'Independent technology journalism', 'techzei-magazine-theme' );
+	return $parts;
 }
-add_filter( 'pre_get_document_title', 'techzei_tt5_front_page_title', 20 );
+add_filter( 'document_title_parts', 'techzei_tt5_front_page_title' );
