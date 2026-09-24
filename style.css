@@ -1040,6 +1040,12 @@ body.single-post .tz-reading-progress-wrapper {
 	max-width: min(100%, 34rem);
 }
 
+.tz-breadcrumbs li:not(:last-child)::after {
+	content: "→";
+	margin-inline-start: .45rem;
+	color: var(--tz-line);
+}
+
 .tz-breadcrumbs li:last-child > span,
 .tz-breadcrumbs .breadcrumb_last {
 	display: block;
@@ -1060,7 +1066,6 @@ body.single-post .tz-reading-progress-wrapper {
 	text-decoration: underline;
 }
 
-.tz-breadcrumb-separator,
 .tz-breadcrumbs .separator {
 	color: var(--tz-line);
 }

@@ -26,10 +26,11 @@ jobs:
 
       - name: Validate release version
         shell: bash
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
           set -euo pipefail
-          release_version="${{ github.event.release.tag_name }}"
-          release_version="${release_version#v}"
+          release_version="${RELEASE_TAG#v}"
           theme_version="$(php scripts/validate-theme.php --print-version)"
 
           test -n "$theme_version"
@@ -50,10 +51,11 @@ jobs:
       - name: Build WordPress upload ZIP
         id: package
         shell: bash
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
           set -euo pipefail
-          release_version="${{ github.event.release.tag_name }}"
-          release_version="${release_version#v}"
+          release_version="${RELEASE_TAG#v}"
           asset_name="techzei-magazine-theme-${release_version}.zip"
           bash scripts/package-theme.sh --version "$release_version" --output "$asset_name"
           echo "asset_name=${asset_name}" >> "$GITHUB_OUTPUT"
@@ -61,4 +63,6 @@ jobs:
       - name: Attach package to the GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release upload "${{ github.event.release.tag_name }}" "${{ steps.package.outputs.asset_name }}" --clobber
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          ASSET_NAME: ${{ steps.package.outputs.asset_name }}
+        run: gh release upload "$RELEASE_TAG" "$ASSET_NAME" --clobber

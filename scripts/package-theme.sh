@@ -52,6 +52,7 @@ rsync -a --delete \
 	--exclude 'scripts/fixtures/***' \
 	--exclude 'scripts/test-theme.php' \
 	--exclude 'scripts/validate-settings.php' \
+	--exclude 'scripts/validate-theme.php' \
 	--exclude 'scripts/package-theme.sh' \
 	--exclude '.DS_Store' \
 	"$theme_root/" "$package_dir/"
