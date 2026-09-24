@@ -1,5 +1,22 @@
 # Changelog
 
+## 3.5.13 - 2026-09-24
+
+- Fix a settings-save bug where re-enabling Share links after saving it off could silently clear the chosen share destinations and the mobile share dock (#2).
+- Fix article table-of-contents anchors pointing at the wrong heading when a heading was left inside an HTML comment (#3).
+- Fix header/ticker control labels not receiving their translated text, and stop a debug notice from firing on every page load (#4).
+- Fix the front-page document title so the "Independent technology journalism" tagline reliably appears (#5).
+- Fix `og:url`/Twitter Card URLs on search and other non-singular pages reporting the homepage URL instead of the actual page (#6).
+- Fix duplicate "Share this story" landmarks when both the in-article share row and the mobile share dock render (#7).
+- Load the homepage featured-grid images eagerly instead of lazily, since they are always visible without scrolling (#8).
+- Stop legacy `column`/`alert`/`button`/`hr`/`pullquote`/`attention` shortcodes from silently overriding a plugin's own shortcode of the same name (#10).
+- Autoload the editorial cache-version option instead of costing an extra database query on most requests (#11).
+- Exclude the release-validation script from the packaged theme and add a CLI-only guard (#12).
+- Pass the release tag through `env:` in the release workflow instead of interpolating it into shell scripts (#13).
+- Detect The SEO Framework as a supported SEO plugin to avoid duplicate Open Graph tags (#14).
+- Avoid running the full content-rendering pipeline just to build a fallback meta description (#15).
+- Move the visible breadcrumb separator to styling so screen readers announce the correct number of breadcrumb items (#16).
+
 ## 3.5.12 - 2026-09-23
 
 - Remove the oversized empty area below related stories by eliminating padding from the comments wrapper when it has no visible comments.

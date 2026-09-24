@@ -2,7 +2,7 @@
 Requires at least: 6.7
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 3.5.12
+Stable tag: 3.5.13
 License: GPLv2 or later
 
 == Required Parent Theme ==
@@ -15,6 +15,22 @@ This is a child theme of Twenty Twenty-Five. Install the official Twenty Twenty-
 4. Review the Header, Footer, Topic navigation, and article template parts in the Site Editor.
 5. Regenerate thumbnails once for older Media Library images.
 6. Clear all WordPress, host, and CDN caches.
+
+== Version 3.5.13 ==
+
+* Fix a settings bug where turning Share links back on after saving it off could silently clear the chosen share destinations and the mobile share dock.
+* Fix article table-of-contents links that could point at the wrong heading when a heading was left inside an HTML comment.
+* Fix the header/ticker control labels not receiving their translated text, which also logged a debug notice on every page load.
+* Fix the front-page document title so it reliably includes the "Independent technology journalism" tagline.
+* Fix Open Graph/Twitter Card URLs on search and other non-singular pages so they no longer report the homepage URL.
+* Fix duplicate "Share this story" landmarks when both the in-article share row and the mobile share dock are shown.
+* Load the homepage's featured-grid images eagerly instead of lazily, since they are always visible without scrolling.
+* Avoid overriding a plugin's own shortcode of the same name (column, alert, button, hr, pullquote, attention).
+* Autoload the editorial cache-version option instead of costing an extra database query on most requests.
+* Move the visible breadcrumb separator to styling so screen readers announce the correct number of breadcrumb items.
+* Detect The SEO Framework as a supported SEO plugin to avoid duplicate Open Graph tags.
+* Avoid running the full content-rendering pipeline just to build a fallback meta description.
+* Exclude the release-validation script from the packaged theme and its own accidental web access.
 
 == Version 3.5.9 ==
 
