@@ -75,6 +75,27 @@ function techzei_tt5_enqueue_assets() {
 add_action( 'wp_enqueue_scripts', 'techzei_tt5_enqueue_assets' );
 
 /**
+ * Set the very next token's text, when that token is a text node.
+ *
+ * WP_HTML_Tag_Processor::set_modifiable_text() only accepts a fixed list of
+ * tags (SCRIPT, STYLE, TEXTAREA, TITLE, ...) when the processor is
+ * positioned on a matched opening tag of that kind — calling it while
+ * positioned on a SPAN or BUTTON is a silent no-op (WordPress logs
+ * "called incorrectly" via _doing_it_wrong() when WP_DEBUG is on). It does,
+ * however, accept any #text node regardless of which tag contains it.
+ * Advancing one token past a matched opening tag reaches that tag's own
+ * text content when it has one and nothing else comes first, without
+ * needing a full DOM walk to find it.
+ *
+ * @param WP_HTML_Tag_Processor $tags Processor positioned on a matched tag.
+ * @param string                $text Replacement text.
+ * @return bool Whether the text was set.
+ */
+function techzei_tt5_set_next_text_token( $tags, $text ) {
+	return $tags->next_token() && '#text' === $tags->get_token_type() && $tags->set_modifiable_text( $text );
+}
+
+/**
  * Translate the raw-HTML controls before the page reaches the browser.
  *
  * This keeps the no-JavaScript search fallback usable and gives the ticker
@@ -94,20 +115,16 @@ function techzei_tt5_translate_interaction_markup( $block_content, $block ) {
 
 	if ( $tags->next_tag( array( 'tag_name' => 'BUTTON', 'class_name' => 'tz-search-toggle' ) ) ) {
 		$tags->set_attribute( 'aria-label', $labels['openSearch'] );
-	}
-
-	$tags = new WP_HTML_Tag_Processor( $block_content );
-	if ( $tags->next_tag( array( 'tag_name' => 'BUTTON', 'class_name' => 'tz-search-toggle' ) ) ) {
-		while ( $tags->next_tag( array( 'tag_name' => 'SPAN', 'class_name' => 'screen-reader-text' ) ) ) {
-			$tags->set_modifiable_text( $labels['openSearch'] );
+		if ( $tags->next_tag( array( 'tag_name' => 'SPAN', 'class_name' => 'screen-reader-text' ) ) ) {
+			techzei_tt5_set_next_text_token( $tags, $labels['openSearch'] );
 		}
-		$block_content = $tags->get_updated_html();
+		return $tags->get_updated_html();
 	}
 
 	$tags = new WP_HTML_Tag_Processor( $block_content );
 	if ( $tags->next_tag( array( 'tag_name' => 'BUTTON', 'class_name' => 'tz-ticker-toggle' ) ) ) {
-		$tags->set_modifiable_text( $labels['pauseHeadlines'] );
-		$block_content = $tags->get_updated_html();
+		techzei_tt5_set_next_text_token( $tags, $labels['pauseHeadlines'] );
+		return $tags->get_updated_html();
 	}
 
 	return $block_content;
@@ -429,7 +446,16 @@ function techzei_tt5_process_image_html( $html, $role = 'unknown', $sizes = '', 
 	if ( $promoted ) {
 		$tags->set_attribute( 'loading', 'eager' );
 		$tags->set_attribute( 'fetchpriority', 'high' );
-	} elseif ( in_array( $role, array( 'homepage-tile', 'list-card' ), true ) ) {
+	} elseif ( 'homepage-tile' === $role ) {
+		// The 4 featured-grid tiles beside the hero image are always visible on
+		// load on every screen size (see templates/front-page.html) — lazy-loading
+		// them causes visible pop-in and hurts LCP for a page that likely has one
+		// of these, not the hero, as its actual largest paint. They don't get
+		// fetchpriority=high themselves: that stays reserved for the one real
+		// hero image above so multiple images don't compete for priority.
+		$tags->set_attribute( 'loading', 'eager' );
+		$tags->remove_attribute( 'fetchpriority' );
+	} elseif ( 'list-card' === $role ) {
 		$tags->set_attribute( 'loading', 'lazy' );
 		$tags->remove_attribute( 'fetchpriority' );
 	}
