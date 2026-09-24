@@ -2,7 +2,7 @@
 Requires at least: 6.7
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 3.5.11
+Stable tag: 3.5.12
 License: GPLv2 or later
 
 == Required Parent Theme ==
@@ -20,6 +20,10 @@ This is a child theme of Twenty Twenty-Five. Install the official Twenty Twenty-
 
 * Rebalance the homepage featured grid so the lead story stays prominent while more secondary stories appear in the initial viewport.
 * Place single-post category labels below the author, date, and reading-time metadata, including saved-template compatibility styling.
+
+== Version 3.5.12 ==
+
+* Reduce excessive blank space after related stories at the end of single posts.
 
 == Version 3.5.11 ==
 

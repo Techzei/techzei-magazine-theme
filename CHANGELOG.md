@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.5.12 - 2026-09-23
+
+- Remove the oversized empty area below related stories by eliminating padding from the comments wrapper when it has no visible comments.
+- Tighten the related-stories footer spacing and single-post bottom padding.
+
 ## 3.5.11 - Unreleased
 
 - Give the homepage sidebar its own “More to read” heading, compact story typography, and small featured-image thumbnails.
