@@ -18,7 +18,20 @@ function techzei_tt5_meta_description() {
 	$description = '';
 
 	if ( is_singular() ) {
-		$description = get_the_excerpt();
+		$post = get_post();
+		if ( $post && '' !== $post->post_excerpt ) {
+			// A manual excerpt is cheap: get_the_excerpt() returns it directly.
+			$description = get_the_excerpt( $post );
+		} elseif ( $post ) {
+			// Without one, get_the_excerpt() falls back to wp_trim_excerpt(),
+			// which runs the full 'the_content' filter chain (shortcodes,
+			// embeds, blocks) just to build a short meta description here —
+			// needless work on every request, and a real risk of an extra
+			// oEmbed HTTP request in wp_head for a post with an un-cached
+			// embed. Everything below already strips tags and truncates, so
+			// build this straight from the raw content instead.
+			$description = strip_shortcodes( $post->post_content );
+		}
 	} elseif ( is_category() || is_tag() || is_tax() ) {
 		$description = term_description();
 	} elseif ( is_search() ) {
@@ -52,7 +65,8 @@ function techzei_tt5_has_seo_provider() {
 		|| class_exists( 'WPSEO_Options' )
 		|| defined( 'RANK_MATH_VERSION' )
 		|| class_exists( 'AIOSEO\\Plugin\\Common\\Main' )
-		|| defined( 'SEOPRESS_VERSION' );
+		|| defined( 'SEOPRESS_VERSION' )
+		|| defined( 'THE_SEO_FRAMEWORK_VERSION' );
 }
 
 /**

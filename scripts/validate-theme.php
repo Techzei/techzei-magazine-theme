@@ -7,6 +7,17 @@
 
 declare( strict_types=1 );
 
+// This is a release-tooling script, not part of the theme's runtime. It is
+// excluded from the packaged release ZIP (see scripts/package-theme.sh), but
+// guard it here too in case it's ever reachable another way (an unpacked dev
+// checkout deployed as-is, a staging copy, ...): scanning and reading every
+// theme file on an arbitrary web request is unnecessary exposure even though
+// this script performs no writes or destructive operations.
+if ( 'cli' !== PHP_SAPI ) {
+	http_response_code( 403 );
+	exit( "This script is for command-line use only.\n" );
+}
+
 /**
  * Read the version from the theme metadata header.
  *

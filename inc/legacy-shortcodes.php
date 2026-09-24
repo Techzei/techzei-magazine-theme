@@ -164,9 +164,37 @@ function techzei_tt5_legacy_attention( $atts, $content = '' ) {
 	);
 }
 
-add_shortcode( 'column', 'techzei_tt5_legacy_column' );
-add_shortcode( 'alert', 'techzei_tt5_legacy_alert' );
-add_shortcode( 'button', 'techzei_tt5_legacy_button' );
-add_shortcode( 'pullquote', 'techzei_tt5_legacy_pullquote' );
-add_shortcode( 'hr', 'techzei_tt5_legacy_hr' );
-add_shortcode( 'attention', 'techzei_tt5_legacy_attention' );
+/**
+ * Register the legacy shortcodes without taking over a plugin's own tag of
+ * the same common name (column, alert, button, hr, ...).
+ *
+ * Deferred to a late `init` priority, after the default priority most
+ * plugins register their own shortcodes at, and guarded with
+ * shortcode_exists() so a plugin already using one of these names keeps it.
+ * A pre-relaunch post using one of these tags simply keeps rendering
+ * through whichever handler owns it in that case, same as it would have on
+ * the retired theme once that plugin was active there too.
+ *
+ * @return void
+ */
+function techzei_tt5_register_legacy_shortcodes() {
+	if ( ! shortcode_exists( 'column' ) ) {
+		add_shortcode( 'column', 'techzei_tt5_legacy_column' );
+	}
+	if ( ! shortcode_exists( 'alert' ) ) {
+		add_shortcode( 'alert', 'techzei_tt5_legacy_alert' );
+	}
+	if ( ! shortcode_exists( 'button' ) ) {
+		add_shortcode( 'button', 'techzei_tt5_legacy_button' );
+	}
+	if ( ! shortcode_exists( 'pullquote' ) ) {
+		add_shortcode( 'pullquote', 'techzei_tt5_legacy_pullquote' );
+	}
+	if ( ! shortcode_exists( 'hr' ) ) {
+		add_shortcode( 'hr', 'techzei_tt5_legacy_hr' );
+	}
+	if ( ! shortcode_exists( 'attention' ) ) {
+		add_shortcode( 'attention', 'techzei_tt5_legacy_attention' );
+	}
+}
+add_action( 'init', 'techzei_tt5_register_legacy_shortcodes', 20 );

@@ -49,7 +49,12 @@ function techzei_tt5_editorial_cache_version() {
 /** Bump the editorial cache namespace after relevant content changes. */
 function techzei_tt5_invalidate_editorial_cache() {
 	$version = techzei_tt5_editorial_cache_version();
-	update_option( 'techzei_tt5_editorial_cache_version', $version + 1, false );
+	// Autoloaded: this is read on every editorial cache-key computation (up to
+	// several times per single-post request), so it belongs in the one bulk
+	// options read WordPress already does on every request rather than
+	// costing its own dedicated query on a site with no persistent object
+	// cache.
+	update_option( 'techzei_tt5_editorial_cache_version', $version + 1, true );
 	unset( $GLOBALS['techzei_tt5_editorial_id_cache'], $GLOBALS['techzei_tt5_editorial_post_cache'], $GLOBALS['techzei_tt5_toc_items_cache'] );
 }
 
@@ -292,7 +297,13 @@ function techzei_tt5_render_share_links( $mobile_dock = false ) {
 			'<a class="tz-share-%1$s" href="%2$s" target="_blank" rel="noopener noreferrer" aria-label="%3$s"><span class="tz-share-icon" aria-hidden="true">%4$s</span><span class="tz-share-label">%5$s</span></a>',
 			esc_attr( $destination ),
 			esc_url( $available[ $destination ]['url'] ),
-			esc_attr( sprintf( __( 'Share on %s', 'techzei-magazine-theme' ), $available[ $destination ]['label'] ) ),
+			esc_attr(
+				sprintf(
+					/* translators: %s: share destination name, e.g. "X" or "WhatsApp". */
+					__( 'Share on %s', 'techzei-magazine-theme' ),
+					$available[ $destination ]['label']
+				)
+			),
 			techzei_tt5_share_icon( $destination ),
 			esc_html( $available[ $destination ]['label'] )
 		);
@@ -410,7 +421,11 @@ function techzei_tt5_visible_breadcrumbs() {
 		$items[] = '<span aria-current="page">' . esc_html( wp_strip_all_tags( get_the_archive_title() ) ) . '</span>';
 	}
 
-	return '<nav class="tz-breadcrumbs" aria-label="' . esc_attr__( 'Breadcrumb', 'techzei-magazine-theme' ) . '"><ol><li>' . implode( '</li><li aria-hidden="true" class="tz-breadcrumb-separator">→</li><li>', $items ) . '</li></ol></nav>';
+	// The separator is a CSS ::after on each non-last <li> (see style.css)
+	// rather than its own <li aria-hidden> node, so a screen reader announces
+	// this as a list of N real breadcrumb items instead of N plus N-1 hidden
+	// decorative ones inflating the reported list length.
+	return '<nav class="tz-breadcrumbs" aria-label="' . esc_attr__( 'Breadcrumb', 'techzei-magazine-theme' ) . '"><ol><li>' . implode( '</li><li>', $items ) . '</li></ol></nav>';
 }
 add_shortcode( 'techzei_breadcrumbs', 'techzei_tt5_visible_breadcrumbs' );
 
