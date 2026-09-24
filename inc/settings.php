@@ -318,6 +318,47 @@ function techzei_tt5_settings_has_input( $input, $group, $key ) {
 }
 
 /**
+ * Whether a settings field is disabled given a resolved settings value.
+ *
+ * Shared by the field renderer and the sanitize callback so both agree on
+ * which fields a browser would have rendered as non-interactive. A disabled
+ * checkbox or select is never submitted by the browser (its own hidden
+ * fallback, where one exists, is not disabled and would otherwise force the
+ * field back to its unchecked state on every save regardless of the stored
+ * value), so the sanitize callback uses this to leave such a field's stored
+ * value untouched instead of overwriting it from absent input.
+ *
+ * @param string $key      Setting key.
+ * @param array  $settings Resolved settings to evaluate the dependency against.
+ * @return bool
+ */
+function techzei_tt5_settings_field_disabled( $key, $settings ) {
+	if ( 'headline_category' === $key ) {
+		return 'category' !== $settings['homepage']['headline_source'];
+	}
+	if ( 'marquee_speed' === $key ) {
+		return 'marquee' !== $settings['homepage']['headline_mode'];
+	}
+	if ( in_array( $key, array( 'share_destinations', 'mobile_share_dock' ), true ) ) {
+		return ! $settings['articles']['share_links'];
+	}
+	if ( in_array( $key, array( 'related_count', 'related_mode' ), true ) ) {
+		return ! $settings['articles']['related_stories'];
+	}
+	if ( 'more_topic_count' === $key ) {
+		return ! $settings['sidebar']['more_in_topic'];
+	}
+	if ( 'latest_count' === $key ) {
+		return ! $settings['sidebar']['latest_stories'];
+	}
+	if ( in_array( $key, array( 'review_category', 'review_count', 'review_max_age' ), true ) ) {
+		return ! $settings['sidebar']['reviews'];
+	}
+
+	return false;
+}
+
+/**
  * Add a settings validation error.
  *
  * @param string $message Error message.
@@ -349,9 +390,18 @@ function techzei_tt5_settings_sanitize( $input ) {
 
 	foreach ( $boolean_fields as $group => $keys ) {
 		foreach ( $keys as $key ) {
-			if ( isset( $input[ $group ] ) && is_array( $input[ $group ] ) ) {
-				$output['values'][ $group ][ $key ] = ! empty( $input[ $group ][ $key ] );
+			if ( ! isset( $input[ $group ] ) || ! is_array( $input[ $group ] ) ) {
+				continue;
 			}
+			// A checkbox rendered disabled (its parent setting was off when this
+			// form was loaded) is never submitted by the browser, but its always-on
+			// hidden fallback still is. Without this guard that hidden `0` would
+			// silently force the field false on every save, discarding whatever an
+			// admin previously chose, even though they never touched the control.
+			if ( techzei_tt5_settings_field_disabled( $key, $current ) ) {
+				continue;
+			}
+			$output['values'][ $group ][ $key ] = ! empty( $input[ $group ][ $key ] );
 		}
 	}
 
@@ -474,7 +524,13 @@ function techzei_tt5_settings_sanitize( $input ) {
 		);
 	}
 
-	if ( isset( $input['articles'] ) && is_array( $input['articles'] ) && $output['values']['articles']['share_links'] ) {
+	// The destinations checkboxes are rendered disabled whenever share_links was
+	// off when this form was loaded, so submitting the form in the same request
+	// that turns share_links back on can never carry a real selection for them
+	// (the browser never sent one). Only replace the stored destinations when
+	// they were actually editable in the form that produced this submission.
+	if ( isset( $input['articles'] ) && is_array( $input['articles'] ) && $output['values']['articles']['share_links']
+		&& ! techzei_tt5_settings_field_disabled( 'share_destinations', $current ) ) {
 		$allowed = array( 'x', 'facebook', 'linkedin', 'whatsapp' );
 		$chosen = isset( $input['articles']['share_destinations'] ) && is_array( $input['articles']['share_destinations'] ) ? $input['articles']['share_destinations'] : array();
 		$chosen = array_filter(
@@ -721,24 +777,7 @@ function techzei_tt5_settings_field( $args ) {
 		'mobile_discovery'   => __( 'Controls the discovery sidebar on article layouts at mobile widths; it does not alter the Site Editor composition.', 'techzei-magazine-theme' ),
 	);
 
-	$disabled = false;
-	if ( 'headline_category' === $key ) {
-		$disabled = 'category' !== $settings['homepage']['headline_source'];
-	} elseif ( 'marquee_speed' === $key ) {
-		$disabled = 'marquee' !== $settings['homepage']['headline_mode'];
-	} elseif ( 'share_destinations' === $key ) {
-		$disabled = ! $settings['articles']['share_links'];
-	} elseif ( in_array( $key, array( 'related_count', 'related_mode' ), true ) ) {
-		$disabled = ! $settings['articles']['related_stories'];
-	} elseif ( 'mobile_share_dock' === $key ) {
-		$disabled = ! $settings['articles']['share_links'];
-	} elseif ( 'more_topic_count' === $key ) {
-		$disabled = ! $settings['sidebar']['more_in_topic'];
-	} elseif ( in_array( $key, array( 'latest_count' ), true ) ) {
-		$disabled = ! $settings['sidebar']['latest_stories'];
-	} elseif ( in_array( $key, array( 'review_category', 'review_count', 'review_max_age' ), true ) ) {
-		$disabled = ! $settings['sidebar']['reviews'];
-	}
+	$disabled = techzei_tt5_settings_field_disabled( $key, $settings );
 
 	if ( in_array( $key, array( 'sticky_desktop', 'sticky_mobile', 'show_search', 'show_topics', 'show_featured_grid', 'automatic_legacy', 'show_reading_time', 'reading_progress', 'breadcrumbs', 'toc', 'author_card', 'share_links', 'mobile_share_dock', 'related_stories', 'more_in_topic', 'latest_stories', 'newsletter_slot', 'reviews', 'follow_techzei', 'mobile_discovery' ), true ) ) {
 		printf( '<input type="hidden" name="%1$s" value="0" />', esc_attr( $name ) );

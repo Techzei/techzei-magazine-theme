@@ -50,7 +50,7 @@ function techzei_tt5_editorial_cache_version() {
 function techzei_tt5_invalidate_editorial_cache() {
 	$version = techzei_tt5_editorial_cache_version();
 	update_option( 'techzei_tt5_editorial_cache_version', $version + 1, false );
-	unset( $GLOBALS['techzei_tt5_editorial_id_cache'], $GLOBALS['techzei_tt5_editorial_post_cache'] );
+	unset( $GLOBALS['techzei_tt5_editorial_id_cache'], $GLOBALS['techzei_tt5_editorial_post_cache'], $GLOBALS['techzei_tt5_toc_items_cache'] );
 }
 
 /** Invalidate discovery IDs for a post mutation. */
@@ -473,9 +473,38 @@ function techzei_tt5_toc_heading_id( $label, $existing, &$used ) {
 	return $id;
 }
 
-/** Return readable H2/H3 items from post content for the article TOC. */
+/**
+ * Return readable H2/H3 items from post content for the article TOC.
+ *
+ * This scans raw post_content rather than post-render output, so the IDs
+ * this returns must line up positionally with the real H2/H3 tags that
+ * techzei_tt5_add_article_toc_ids() later finds in the rendered markup with
+ * WP_HTML_Tag_Processor, a real HTML parser. An HTML comment left behind
+ * from editing (e.g. `<!-- <h2>Draft heading</h2> -->`) is invisible to that
+ * parser but would otherwise still be matched by a naive regex scan here,
+ * silently shifting every anchor after it onto the wrong heading. Stripping
+ * comments first keeps the two passes in agreement for that case.
+ *
+ * A heading sourced from a synced pattern/reusable block, which post_content
+ * only references rather than containing, is a known remaining gap: it has
+ * no raw markup here to find at all, so it is omitted from the TOC rather
+ * than mismatched.
+ *
+ * Request-cached per post, since should-show, render, and ID-assignment
+ * each call this for the same post within one request.
+ *
+ * @param int $post_id Post ID.
+ * @return array
+ */
 function techzei_tt5_article_toc_items( $post_id ) {
-	$content = (string) get_post_field( 'post_content', absint( $post_id ) );
+	$post_id = absint( $post_id );
+
+	if ( isset( $GLOBALS['techzei_tt5_toc_items_cache'][ $post_id ] ) ) {
+		return $GLOBALS['techzei_tt5_toc_items_cache'][ $post_id ];
+	}
+
+	$content = (string) get_post_field( 'post_content', $post_id );
+	$content = preg_replace( '/<!--.*?-->/s', ' ', $content );
 	$matches = array();
 	$items   = array();
 	$used    = array();
@@ -495,6 +524,9 @@ function techzei_tt5_article_toc_items( $post_id ) {
 			'level' => absint( $match[1] ),
 		);
 	}
+
+	$GLOBALS['techzei_tt5_toc_items_cache'][ $post_id ] = $items;
+
 	return $items;
 }
 
