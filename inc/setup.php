@@ -446,16 +446,22 @@ function techzei_tt5_process_image_html( $html, $role = 'unknown', $sizes = '', 
 	if ( $promoted ) {
 		$tags->set_attribute( 'loading', 'eager' );
 		$tags->set_attribute( 'fetchpriority', 'high' );
-	} elseif ( 'homepage-tile' === $role ) {
-		// The 4 featured-grid tiles beside the hero image are always visible on
-		// load on every screen size (see templates/front-page.html) — lazy-loading
-		// them causes visible pop-in and hurts LCP for a page that likely has one
-		// of these, not the hero, as its actual largest paint. They don't get
-		// fetchpriority=high themselves: that stays reserved for the one real
-		// hero image above so multiple images don't compete for priority.
-		$tags->set_attribute( 'loading', 'eager' );
-		$tags->remove_attribute( 'fetchpriority' );
-	} elseif ( 'list-card' === $role ) {
+	} elseif ( in_array( $role, array( 'homepage-tile', 'list-card' ), true ) ) {
+		// The 4 featured-grid tiles beside the hero image are above the fold on
+		// desktop, where .tz-hero lays the hero and tile grid out side by side —
+		// but below 900px (see the .tz-hero flex-direction: column rule in
+		// style.css) the hero stacks above the tile grid instead, and the hero
+		// card alone is tall enough on a phone viewport to push most or all of
+		// these tiles below the fold. Eager-loading them unconditionally (as an
+		// earlier version of this function did) competes for bandwidth with the
+		// one real LCP candidate, the hero image, for tiles the visitor on that
+		// viewport hasn't scrolled to yet — the opposite of the intended fix.
+		//
+		// Lazy stays correct here rather than trying to special-case eager for
+		// a device class PHP can't reliably know at render time: native
+		// loading="lazy" uses a distance-from-viewport threshold rather than a
+		// strict viewport check, so on desktop these still fetch promptly with
+		// minimal visible delay, while on mobile they're correctly deferred.
 		$tags->set_attribute( 'loading', 'lazy' );
 		$tags->remove_attribute( 'fetchpriority' );
 	}
