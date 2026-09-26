@@ -46,6 +46,12 @@ Text Domain: techzei-magazine-theme
 	--tz-header-offset: 0px;
 }
 
+/* Cross-document view transitions. Progressive enhancement: browsers without
+ * support ignore this at-rule entirely and navigate exactly as before. */
+@view-transition {
+	navigation: auto;
+}
+
 html {
 	scroll-behavior: smooth;
 }
@@ -449,6 +455,7 @@ body.single-post .tz-reading-progress-wrapper {
 	inset: 0;
 	height: 100%;
 	margin: 0;
+	background: var(--tz-card-placeholder);
 }
 
 .tz-feature-card .wp-block-post-featured-image a,
@@ -485,6 +492,17 @@ body.single-post .tz-reading-progress-wrapper {
 .tz-js .tz-motion-reveal.is-visible {
 	opacity: 1;
 	transform: none;
+}
+
+/* Soften the pop when a lazy image finishes loading. Gated on .tz-js so
+ * images stay visible with no fade if the script never runs; JS marks
+ * .tz-img-loaded on load (or immediately if already cached/complete). */
+img[loading="lazy"] {
+	transition: opacity var(--tz-motion-duration) var(--tz-motion-ease);
+}
+
+.tz-js img[loading="lazy"]:not(.tz-img-loaded) {
+	opacity: 0;
 }
 
 .tz-feature-card::after {
@@ -1132,6 +1150,7 @@ body.single-post .tz-reading-progress-wrapper {
 	aspect-ratio: 16 / 9;
 	overflow: hidden;
 	margin-top: clamp(1rem, 2vw, 1.5rem) !important;
+	background: var(--tz-card-placeholder);
 }
 
 .tz-feature-image img {
@@ -1305,6 +1324,35 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 	font-family: var(--wp--preset--font-family--editorial, Georgia, serif);
 	font-size: 1.05rem;
 	line-height: 1.2;
+}
+
+.tz-post-navigation-inner a[rel="prev"]::before,
+.tz-post-navigation-inner a[rel="next"]::after {
+	display: inline-block;
+	color: var(--tz-line);
+}
+
+.tz-post-navigation-inner a[rel="prev"]::before {
+	content: "← ";
+}
+
+.tz-post-navigation-inner a[rel="next"]::after {
+	content: " →";
+}
+
+@media (hover: hover) {
+	.tz-post-navigation-inner a[rel="prev"]::before,
+	.tz-post-navigation-inner a[rel="next"]::after {
+		transition: transform var(--tz-motion-fast) var(--tz-motion-ease);
+	}
+
+	.tz-post-navigation-inner a[rel="prev"]:hover::before {
+		transform: translateX(-3px);
+	}
+
+	.tz-post-navigation-inner a[rel="next"]:hover::after {
+		transform: translateX(3px);
+	}
 }
 
 .tz-comments-area {
@@ -1964,6 +2012,10 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 }
 
 @media (prefers-reduced-motion: reduce) {
+	@view-transition {
+		navigation: none;
+	}
+
 	html {
 		scroll-behavior: auto;
 	}
@@ -1979,5 +2031,9 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 	.tz-js .tz-motion-reveal {
 		opacity: 1;
 		transform: none;
+	}
+
+	.tz-js img[loading="lazy"] {
+		opacity: 1;
 	}
 }
