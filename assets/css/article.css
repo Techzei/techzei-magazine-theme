@@ -275,6 +275,10 @@
 	border-radius: var(--tz-card-radius, .35rem);
 }
 
+.tz-story-thumb {
+	background: var(--tz-card-placeholder, #e5e1d8);
+}
+
 .tz-story-thumb-image {
 	object-fit: cover;
 }

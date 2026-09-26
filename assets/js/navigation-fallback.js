@@ -306,6 +306,27 @@
 		});
 	}
 
+	/* Mark each lazy image loaded so CSS can fade it in; images already
+	 * complete (served from cache) are marked immediately since 'load'
+	 * will not fire again for them. */
+	function initLazyImageFade() {
+		var images = doc.querySelectorAll('img[loading="lazy"]');
+
+		forEachNode(images, function (img) {
+			function markLoaded() {
+				img.classList.add('tz-img-loaded');
+			}
+
+			if (img.complete) {
+				markLoaded();
+				return;
+			}
+
+			img.addEventListener('load', markLoaded, { once: true });
+			img.addEventListener('error', markLoaded, { once: true });
+		});
+	}
+
 	function getMediaQuery(query, fallback) {
 		if (!win.matchMedia) {
 			return {
@@ -618,6 +639,7 @@
 		forEachNode(progressRoots, initReadingProgress);
 		forEachNode(tickerRoots, initTicker);
 		initRevealMotion();
+		initLazyImageFade();
 	}
 
 	if ('loading' === doc.readyState) {
