@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.5.14 - 2026-09-27
+
+- Add progressive cross-page view transitions in browsers that support them, while respecting reduced-motion preferences.
+- Add a soft fade-in as lazy-loaded images finish loading, with neutral placeholders behind featured images and story thumbnails.
+- Add subtle directional arrow movement to previous/next article navigation on hover-capable devices.
+
 ## 3.5.13 - 2026-09-24
 
 - Fix a settings-save bug where re-enabling Share links after saving it off could silently clear the chosen share destinations and the mobile share dock (#2).

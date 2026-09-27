@@ -2,7 +2,7 @@
 Requires at least: 6.7
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 3.5.13
+Stable tag: 3.5.14
 License: GPLv2 or later
 
 == Required Parent Theme ==
@@ -15,6 +15,12 @@ This is a child theme of Twenty Twenty-Five. Install the official Twenty Twenty-
 4. Review the Header, Footer, Topic navigation, and article template parts in the Site Editor.
 5. Regenerate thumbnails once for older Media Library images.
 6. Clear all WordPress, host, and CDN caches.
+
+== Version 3.5.14 ==
+
+* Add progressive cross-page view transitions in supported browsers and respect reduced-motion preferences.
+* Fade lazy-loaded images in after they load, with neutral placeholders behind featured images and story thumbnails.
+* Add subtle directional movement to previous/next article navigation arrows on hover-capable devices.
 
 == Version 3.5.13 ==
 
