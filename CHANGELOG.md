@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.5.15 - 2026-09-29
+
+- Add a responsive “A few good reads” section to the custom 404 page, showing the three latest published stories with featured images and category links.
+
 ## 3.5.14 - 2026-09-27
 
 - Add progressive cross-page view transitions in browsers that support them, while respecting reduced-motion preferences.

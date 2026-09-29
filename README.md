@@ -133,9 +133,9 @@ Before publishing a release:
 
 Publishing a GitHub Release automatically runs the release workflow. It checks out the release tag, confirms that the tag matches the `Version` field in `style.css`, builds a clean WordPress upload ZIP, verifies its structure, and attaches it to the release.
 
-Use matching version tags, for example `v3.5.14` for theme version `3.5.14`. The resulting release asset is named `techzei-magazine-theme-3.5.14.zip` and contains exactly one top-level `techzei-magazine-theme/` folder.
+Use matching version tags, for example `v3.5.15` for theme version `3.5.15`. The resulting release asset is named `techzei-magazine-theme-3.5.15.zip` and contains exactly one top-level `techzei-magazine-theme/` folder.
 
-The current theme metadata is **3.5.14**. `Tested up to: 6.8` remains deliberate: production is currently running WordPress 7.1.1, but this repository does not yet have a repeatable WordPress 7.1 test environment, so 7.1 support is not claimed in the changelog.
+The current theme metadata is **3.5.15**. `Tested up to: 6.8` remains deliberate: production is currently running WordPress 7.1.1, but this repository does not yet have a repeatable WordPress 7.1 test environment, so 7.1 support is not claimed in the changelog.
 
 ## License
 

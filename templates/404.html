@@ -32,4 +32,37 @@
 	<!-- /wp:group -->
 </main>
 <!-- /wp:group -->
+<!-- wp:group {"tagName":"section","align":"full","className":"tz-404-recommendations","layout":{"type":"default"}} -->
+<section class="wp-block-group alignfull tz-404-recommendations">
+	<!-- wp:group {"align":"wide","className":"tz-shell","layout":{"type":"constrained"}} -->
+	<div class="wp-block-group alignwide tz-shell">
+		<!-- wp:paragraph {"className":"tz-section-kicker"} -->
+		<p class="tz-section-kicker">Keep reading</p>
+		<!-- /wp:paragraph -->
+		<!-- wp:heading {"level":2,"className":"tz-404-recommendations-title"} -->
+		<h2 class="wp-block-heading tz-404-recommendations-title">A few good reads</h2>
+		<!-- /wp:heading -->
+		<!-- wp:query {"queryId":24,"query":{"perPage":3,"pages":0,"offset":0,"postType":"post","order":"desc","orderBy":"date","author":"","search":"","exclude":[],"sticky":"exclude","inherit":false},"className":"tz-404-story-query"} -->
+		<div class="wp-block-query tz-404-story-query">
+			<!-- wp:post-template {"layout":{"type":"grid","columnCount":3}} -->
+				<!-- wp:group {"className":"tz-404-story-card","layout":{"type":"default"}} -->
+				<div class="wp-block-group tz-404-story-card">
+					<!-- wp:post-featured-image {"isLink":true,"aspectRatio":"3/2","sizeSlug":"techzei-feed","className":"tz-404-story-image"} /-->
+					<!-- wp:post-terms {"term":"category","className":"tz-section-kicker"} /-->
+					<!-- wp:post-title {"isLink":true,"level":3} /-->
+					<!-- wp:post-date {"className":"tz-meta"} /-->
+				</div>
+				<!-- /wp:group -->
+			<!-- /wp:post-template -->
+			<!-- wp:query-no-results -->
+				<!-- wp:paragraph -->
+				<p>No recent stories to show just yet.</p>
+				<!-- /wp:paragraph -->
+			<!-- /wp:query-no-results -->
+		</div>
+		<!-- /wp:query -->
+	</div>
+	<!-- /wp:group -->
+</section>
+<!-- /wp:group -->
 <!-- wp:template-part {"slug":"footer","tagName":"footer"} /-->
