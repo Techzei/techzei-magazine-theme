@@ -42,10 +42,14 @@ jobs:
           set -euo pipefail
           find . -type f -name '*.php' -print0 | xargs -0 -n1 php -l
           node --check assets/js/navigation-fallback.js
+          node --check assets/js/code-blocks.js
+          node --check assets/js/code-blocks.min.js
           php scripts/validate-theme.php
           php scripts/test-theme.php
           php scripts/validate-settings.php
           php tests/editorial-static.php
+          php tests/code-blocks-static.php
+          php tests/code-blocks-enlighter-active.php
           ! grep -R --line-number --fixed-strings 'setInterval' assets/js inc
 
       - name: Build WordPress upload ZIP

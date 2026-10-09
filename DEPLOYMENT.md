@@ -17,7 +17,7 @@ Use this checklist when moving Techzei to a new release.
 
 ## Clear inherited editor overrides
 
-The old Valenti home-page assignment and Site Editor customizations can override files included with this theme.
+An outdated Home page template assignment and saved Site Editor customizations can override files included with this theme.
 
 1. Go to **Appearance → Editor → Templates**.
 2. For Home, Front Page, Single Posts, and Archive templates, open the options menu and choose **Clear customizations** when it is available.

@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.6.0 - 2026-10-09
+
+- Replace Enlighter front-end rendering after plugin deactivation with a theme-owned, self-hosted Prism.js code-block renderer and a single accessible Copy control.
+- Keep Enlighter shortcode, saved block, inline code, core Code, and core Preformatted content readable without editing posts; leave legacy plain and Crayon-style `<pre>` output unchanged.
+- Load code CSS and scripts only where code is rendered, with language grammars loaded from local theme assets and a plain-text fallback when a grammar is unavailable.
+- Keep the feature dormant while Enlighter is active and provide a filter kill switch for rollback.
+
 ## 3.5.16 - 2026-10-09
 
 - Relax Georgia headline tracking and leading without changing article title sizes or layout widths.
@@ -174,7 +181,7 @@
 
 ## 2.6.0 — 2026-09-03
 
-- Build an automatic legacy-post treatment for pre-relaunch and Valenti-shortcode articles.
+- Build an automatic legacy-post treatment for older article content.
 - Restore the article-end sequence of share links, post navigation, author profile, related reading, and comments.
 - Add a classic desktop sidebar with current stories and latest reviews.
 
@@ -285,7 +292,7 @@
 
 ## 2.1.0 — 2026-09-03
 
-- Added responsive compatibility handlers for legacy Valenti column, alert, and button shortcodes.
+- Added responsive compatibility handling for older structured article content.
 - Added safe handling for external button targets and legacy callout variants.
 
 ## 2.0.5 — 2026-09-03
