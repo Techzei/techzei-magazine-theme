@@ -2,7 +2,7 @@
 Requires at least: 6.7
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 3.5.16
+Stable tag: 3.6.0
 License: GPLv2 or later
 
 == Required Parent Theme ==
@@ -15,6 +15,12 @@ This is a child theme of Twenty Twenty-Five. Install the official Twenty Twenty-
 4. Review the Header, Footer, Topic navigation, and article template parts in the Site Editor.
 5. Regenerate thumbnails once for older Media Library images.
 6. Clear all WordPress, host, and CDN caches.
+
+== Version 3.6.0 ==
+
+* Add a locally hosted code-block renderer with accessible copy controls and conditional language highlighting.
+* Preserve existing post content and keep the renderer dormant while a compatible code-highlighting plugin is active.
+* Load code assets only on pages that render supported code blocks, with a plain-text fallback when a language grammar is unavailable.
 
 == Version 3.5.16 ==
 
@@ -186,7 +192,7 @@ WordPress 7.1.1 is used by the production site but is not claimed as a tested ve
 
 == Version 2.1.0 ==
 
-* Added responsive compatibility handlers for legacy Valenti column, alert, and button shortcodes.
+* Added responsive compatibility handling for older structured article content.
 
 == Version 2.0.5 ==
 
@@ -211,7 +217,7 @@ WordPress 7.1.1 is used by the production site but is not claimed as a tested ve
 == Version 2.0.0 ==
 This is a cohesive editorial rebuild rather than an incremental patch. It reorganizes the theme into setup and editorial PHP modules, replaces compressed CSS with a documented responsive layout system, and unifies the header, footer, archives, search pages, discovery sidebar, and article components.
 
-After updating, visit Appearance > Editor > Templates. If the Home template does not change, open the template options menu and choose Clear customizations so WordPress uses the updated theme template. Also edit the existing Home page and set its Template to Default; this removes the legacy Valenti Builder assignment left in the database.
+After updating, visit Appearance > Editor > Templates. If the Home template does not change, open the template options menu and choose Clear customizations so WordPress uses the updated theme template. Also edit the existing Home page and set its Template to Default to remove any outdated page-template assignment.
 
 == Performance ==
 The child theme adds no JavaScript, external font, icon library, page builder, tracker, or front-end framework. It inherits Twenty Twenty-Five’s locally hosted variable fonts, responsive blocks, image markup, accessibility behavior, and editor support. WordPress chooses responsive image sources and loading priority.

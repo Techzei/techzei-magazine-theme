@@ -18,7 +18,7 @@ The current theme uses **Reading Charcoal** (`#575555`) for post/page content, w
 - Topic-aware article discovery: current-topic stories, latest stories, an optional newsletter CTA slot, freshness-limited reviews, and compact follow links.
 - Correct responsive image crops for hero, tile, feed, related-story, and sidebar contexts.
 - Yoast-friendly metadata behavior: when Yoast SEO is active, it owns titles, descriptions, canonical URLs, and social cards. A small server-rendered fallback is used only when no supported SEO plugin is active.
-- Legacy Valenti content compatibility for `column`, `alert`, `button`, `pullquote`, `hr`, and `attention` shortcodes.
+- Older article content remains readable without altering stored posts.
 - Footer navigation, RSS, social links, Techzei’s original India mark, and the site credit.
 - Curated local Gadget Icons in topic navigation, with no frontend icon-library or CDN dependency.
 
@@ -65,20 +65,9 @@ With the Breadcrumbs setting on, the theme renders Yoast’s breadcrumb output w
 
 On mobile articles, the optional sticky share dock keeps WhatsApp first while preserving the normal in-flow share row. It appears only when sharing and at least one destination are enabled.
 
-## Legacy article support
+## Article layout compatibility
 
-Older Techzei posts created with Valenti shortcode content remain readable without modifying their database content. The theme supports:
-
-| Legacy shortcode | Current output |
-| --- | --- |
-| `[column]` | Responsive two-, three-, and four-column content that stacks on mobile |
-| `[alert]` | Accessible coloured notice |
-| `[button]` | Styled, safe external/internal link button |
-| `[pullquote]` | Editorial pull quote |
-| `[hr]` | Horizontal divider |
-| `[attention]` | Highlighted attention notice |
-
-Posts published before 2024, or posts containing these shortcodes, automatically use the denser legacy article treatment when Automatic legacy styling is enabled. Editors can choose **Article with sidebar** or **Article without sidebar** for individual posts; explicit post templates take precedence over the site default.
+Older article content remains readable without modifying stored posts. When Automatic legacy styling is enabled, older posts can use the denser article treatment. Editors can choose **Article with sidebar** or **Article without sidebar** for individual posts; explicit post templates take precedence over the site default.
 
 ## Image performance
 
@@ -121,9 +110,9 @@ cache, TOC, shortcode, settings-invalidation, and image-filter contracts.
 
 ## Development and releases
 
-**Current release: 3.5.16.** It refines headline spacing, metadata, mobile featured cards, article prose and tables, and replaces the two-line mobile menu glyph with a familiar three-line hamburger. It keeps the existing Georgia/system stacks, Reading Charcoal and article widths. See [the typography verification notes](docs/3.5.16-typography.md) for browser evidence and the limits of snapshot-based testing.
+**Current release: 3.6.0.** It adds a locally hosted, conditionally loaded code renderer with accessible copy controls for code blocks. Existing post content remains unchanged, and the renderer stays dormant while a compatible code-highlighting plugin is active. See [the code-block implementation notes](docs/3.6.0-code-blocks.md).
 
-**3.6.0 is in development.** It adds a local, conditional code renderer for Enlighter shortcodes and saved code blocks. Existing Enlighter content remains untouched in the database; the theme takes over only after Enlighter is deactivated. See [the 3.6.0 code-block implementation notes](docs/3.6.0-code-blocks.md).
+The previous release refined headline spacing, metadata, mobile featured cards, article prose and tables, and the mobile menu icon. It retained the Georgia/system stacks, Reading Charcoal and article widths. See [the typography verification notes](docs/3.5.16-typography.md) for browser evidence and the limits of snapshot-based testing.
 
 The source folder must keep this exact name: `techzei-magazine-theme`. WordPress expects the folder at the root of the upload ZIP, alongside `style.css`.
 
@@ -133,15 +122,15 @@ Before publishing a release:
 2. Check PHP syntax, JavaScript syntax, and `theme.json` validity.
 3. Build a ZIP containing one top-level `techzei-magazine-theme/` folder.
 4. Verify the ZIP contents and test it on a staging site with Twenty Twenty-Five installed.
-5. Check the homepage, a current post, a legacy-shortcode post, an archive, search, 404, desktop navigation, and mobile navigation/search.
+5. Check the homepage, a current post, an older post, an archive, search, 404, desktop navigation, and mobile navigation/search.
 
 ### GitHub Releases
 
 Publishing a GitHub Release automatically runs the release workflow. It checks out the release tag, confirms that the tag matches the `Version` field in `style.css`, builds a clean WordPress upload ZIP, verifies its structure, and attaches it to the release.
 
-Use matching version tags, for example `v3.5.16` for theme version `3.5.16`. The resulting release asset is named `techzei-magazine-theme-3.5.16.zip` and contains exactly one top-level `techzei-magazine-theme/` folder.
+Use matching version tags, for example `v3.6.0` for theme version `3.6.0`. The resulting release asset is named `techzei-magazine-theme-3.6.0.zip` and contains exactly one top-level `techzei-magazine-theme/` folder.
 
-The current theme release is **3.5.16**. `Tested up to: 6.8` remains deliberate: the live-site review observed WordPress 7.1.3 assets, but this repository does not have a repeatable WordPress 7.1 test environment, so 7.1 support is not claimed.
+The current theme release is **3.6.0**. `Tested up to: 6.8` remains deliberate: the live site runs a newer WordPress version, but this repository does not have a repeatable test environment for it, so support beyond 6.8 is not claimed.
 
 ## License
 
