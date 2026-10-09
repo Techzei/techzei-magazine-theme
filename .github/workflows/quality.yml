@@ -32,7 +32,10 @@ jobs:
           find . -type f -name '*.php' -print0 | xargs -0 -n1 php -l
 
       - name: Check JavaScript syntax
-        run: node --check assets/js/navigation-fallback.js
+        run: |
+          node --check assets/js/navigation-fallback.js
+          node --check assets/js/code-blocks.js
+          node --check assets/js/code-blocks.min.js
 
       - name: Run static validation
         run: php scripts/validate-theme.php
@@ -44,3 +47,5 @@ jobs:
         run: |
           php scripts/validate-settings.php
           php tests/editorial-static.php
+          php tests/code-blocks-static.php
+          php tests/code-blocks-enlighter-active.php

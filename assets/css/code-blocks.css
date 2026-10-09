@@ -1,0 +1,130 @@
+.tz-code {
+	position: relative;
+	margin: 1.5rem 0;
+}
+
+.tz-code .tz-code__pre {
+	margin: 0;
+	padding: 2.5rem 1.25rem 1.25rem;
+	border-radius: var(--tz-card-radius, .35rem);
+	background: var(--tz-dark, #20201f);
+	color: var(--tz-paper, #f7f5f0);
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	font-size: .85rem;
+	line-height: 1.6;
+	white-space: pre;
+	tab-size: 2;
+	overflow: auto;
+}
+
+.tz-code .tz-code__pre code {
+	padding: 0;
+	background: transparent;
+	color: inherit;
+	font: inherit;
+}
+
+.tz-code-live {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+.tz-code__copy {
+	position: absolute;
+	top: .5rem;
+	right: .5rem;
+	z-index: 1;
+	padding: .25rem .55rem;
+	border: 1px solid rgba(255, 255, 255, .22);
+	border-radius: var(--tz-card-radius, .35rem);
+	background: rgba(255, 255, 255, .08);
+	color: var(--tz-paper, #f7f5f0);
+	font: 600 .75rem/1.4 system-ui, sans-serif;
+	cursor: pointer;
+	transition: background-color var(--tz-motion-duration, 220ms) ease, border-color var(--tz-motion-duration, 220ms) ease;
+}
+
+.tz-code__copy:hover,
+.tz-code__copy:active {
+	border-color: var(--tz-accent, #25a7b5);
+	background: var(--tz-accent, #25a7b5);
+	color: #171716;
+}
+
+.tz-article-content .tz-code-inline {
+	padding: .08em .28em;
+	border-radius: .2em;
+	background: var(--tz-surface, #ebe7df);
+	color: var(--tz-ink, #171716);
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	font-size: .88em;
+}
+
+.tz-code .token.comment,
+.tz-code .token.prolog {
+	color: #b4afa6;
+	font-style: italic;
+}
+
+.tz-code .token.keyword,
+.tz-code .token.builtin,
+.tz-code .token.important {
+	color: #4fc3cf;
+}
+
+.tz-code .token.string,
+.tz-code .token.attr-value,
+.tz-code .token.char {
+	color: #8bcb5a;
+}
+
+.tz-code .token.number,
+.tz-code .token.boolean,
+.tz-code .token.constant {
+	color: #ffb09a;
+}
+
+.tz-code .token.function,
+.tz-code .token.class-name {
+	color: #e6d58a;
+}
+
+.tz-code .token.property,
+.tz-code .token.tag,
+.tz-code .token.selector {
+	color: #7fb2e6;
+}
+
+.tz-code .token.operator,
+.tz-code .token.punctuation {
+	color: #cfcac0;
+}
+
+.tz-code .token.variable,
+.tz-code .token.parameter {
+	color: #f0b3d6;
+}
+
+@media print {
+	.tz-code__copy {
+		display: none;
+	}
+
+	.tz-code .tz-code__pre {
+		background: #fff;
+		color: #111;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.tz-code__copy {
+		transition: none;
+	}
+}

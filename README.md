@@ -121,7 +121,9 @@ cache, TOC, shortcode, settings-invalidation, and image-filter contracts.
 
 ## Development and releases
 
-**Version 3.5.16** refines headline spacing, metadata, mobile featured cards, article prose and tables, and replaces the two-line mobile menu glyph with a familiar three-line hamburger. It keeps the existing Georgia/system stacks, Reading Charcoal and article widths. See [the typography verification notes](docs/3.5.16-typography.md) for browser evidence and the limits of snapshot-based testing.
+**Current release: 3.5.16.** It refines headline spacing, metadata, mobile featured cards, article prose and tables, and replaces the two-line mobile menu glyph with a familiar three-line hamburger. It keeps the existing Georgia/system stacks, Reading Charcoal and article widths. See [the typography verification notes](docs/3.5.16-typography.md) for browser evidence and the limits of snapshot-based testing.
+
+**3.6.0 is in development.** It adds a local, conditional code renderer for Enlighter shortcodes and saved code blocks. Existing Enlighter content remains untouched in the database; the theme takes over only after Enlighter is deactivated. See [the 3.6.0 code-block implementation notes](docs/3.6.0-code-blocks.md).
 
 The source folder must keep this exact name: `techzei-magazine-theme`. WordPress expects the folder at the root of the upload ZIP, alongside `style.css`.
 

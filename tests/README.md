@@ -12,8 +12,16 @@ WP_TESTS_DIR=/path/to/wordpress-tests-lib vendor/bin/phpunit -c tests/phpunit.xm
 The suite creates posts and taxonomy terms in the test database. It covers
 discovery ID caching, overlap suppression, TOC anchor matching, settings-cache
 invalidation, featured-image filter registration, and legacy shortcode
-registration. It is not part of the release ZIP and is not a substitute for
-the manual browser checks in `DEPLOYMENT.md`.
+registration, plus the optional `CodeBlocksTest.php` WordPress renderer tests.
+It is not part of the release ZIP and is not a substitute for the manual
+browser checks in `DEPLOYMENT.md`.
+
+Code-rendering compatibility fixtures can be run independently with
+`php tests/code-blocks-static.php`; Enlighter's active-plugin guard can be
+checked with `php tests/code-blocks-enlighter-active.php`. The fixture check
+exercises rendering callbacks with minimal WordPress API stubs, while
+`CodeBlocksTest.php` uses the optional WordPress integration bootstrap. The
+fixture checks are included in both quality and release workflows.
 
 ## Typography browser probe
 

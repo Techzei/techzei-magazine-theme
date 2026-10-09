@@ -3,4 +3,9 @@
 *.zip
 node_modules/
 vendor/
+!assets/vendor/
+assets/vendor/*
+!assets/vendor/prism/
+assets/vendor/prism/*
+!assets/vendor/prism/**
 dist/typography-*/

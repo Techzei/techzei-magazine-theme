@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.6.0 - Unreleased
+
+- Replace Enlighter front-end rendering after plugin deactivation with a theme-owned, self-hosted Prism.js code-block renderer and a single accessible Copy control.
+- Keep Enlighter shortcode, saved block, inline code, core Code, and core Preformatted content readable without editing posts; leave legacy plain and Crayon-style `<pre>` output unchanged.
+- Load code CSS and scripts only where code is rendered, with language grammars loaded from local theme assets and a plain-text fallback when a grammar is unavailable.
+- Keep the feature dormant while Enlighter is active and provide a filter kill switch for rollback.
+
 ## 3.5.16 - 2026-10-09
 
 - Relax Georgia headline tracking and leading without changing article title sizes or layout widths.
