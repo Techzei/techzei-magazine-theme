@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.5.16 - 2026-10-09
+
+- Relax Georgia headline tracking and leading without changing article title sizes or layout widths.
+- Enlarge mobile secondary featured headlines and improve metadata/date legibility, including light dates over featured-card gradients.
+- Refine article prose to 19px desktop / 18px mobile with balanced line spacing, retaining Reading Charcoal and the existing font families.
+- Keep prices and model numbers intact in article tables, use 15px table text, and retain local horizontal scrolling for wide content.
+- Replace the two-stroke mobile menu glyph with a clear three-line hamburger while preserving the core Navigation block's open/close and focus behavior.
+
 ## 3.5.15 - 2026-09-29
 
 - Add a responsive “A few good reads” section to the custom 404 page, showing the three latest published stories with featured images and category links.

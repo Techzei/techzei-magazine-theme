@@ -3,7 +3,7 @@ Theme Name: Techzei Magazine Theme
 Theme URI: https://techzei.com/
 Author: Techzei
 Description: A fast, editorial technology publication child theme for Twenty Twenty-Five.
-Version: 3.5.15
+Version: 3.5.16
 Template: twentytwentyfive
 Requires at least: 6.7
 Tested up to: 6.8
@@ -390,6 +390,30 @@ body.single-post .tz-reading-progress-wrapper {
 	min-height: 44px;
 }
 
+/* Keep WordPress in control of the menu button, but use a familiar three-line glyph. */
+.tz-nav-wrap .wp-block-navigation__responsive-container-open {
+	position: relative;
+}
+
+.tz-nav-wrap .wp-block-navigation__responsive-container-open svg {
+	opacity: 0;
+}
+
+.tz-nav-wrap .wp-block-navigation__responsive-container-open::before {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 24px;
+	height: 18px;
+	background:
+		linear-gradient(currentColor, currentColor) 0 0 / 24px 2px no-repeat,
+		linear-gradient(currentColor, currentColor) 0 8px / 24px 2px no-repeat,
+		linear-gradient(currentColor, currentColor) 0 16px / 24px 2px no-repeat;
+	content: "";
+	transform: translate(-50%, -50%);
+	pointer-events: none;
+}
+
 @media (max-width: 600px) {
 	.tz-nav-wrap .wp-block-navigation__responsive-container {
 		position: fixed;
@@ -540,8 +564,8 @@ img[loading="lazy"] {
 	font-family: var(--wp--preset--font-family--editorial, Georgia, serif);
 	font-size: clamp(2rem, 4vw, 3.35rem);
 	font-weight: 400;
-	letter-spacing: -.045em;
-	line-height: .97;
+	letter-spacing: -.025em;
+	line-height: 1.12;
 }
 
 .tz-feature-card-small .tz-card-copy {
@@ -549,16 +573,23 @@ img[loading="lazy"] {
 }
 
 .tz-feature-card-small .wp-block-post-title {
-	font-size: clamp(1.1rem, 2vw, 1.5rem);
+	font-size: clamp(1.25rem, 2vw, 1.5rem);
+	line-height: 1.15;
 }
 
 .tz-meta {
 	display: flex;
 	gap: .7rem;
-	font-size: .68rem;
+	font-size: .78rem;
 	letter-spacing: .06em;
 	text-transform: uppercase;
-	opacity: .72;
+	opacity: 1;
+}
+
+/* Dates sit over the card gradient, not the paper-colour page background. */
+.tz-card-copy .tz-meta {
+	color: #f7f5f0;
+	opacity: 1;
 }
 
 .tz-meta p {
@@ -861,7 +892,7 @@ img[loading="lazy"] {
 	margin: .4rem 0 0;
 	color: var(--tz-muted);
 	font-family: var(--wp--preset--font-family--system, system-ui, sans-serif);
-	font-size: .72rem;
+	font-size: .78rem;
 	line-height: 1.2;
 }
 
@@ -1129,7 +1160,8 @@ img[loading="lazy"] {
 	max-width: 1040px;
 	margin: .3rem auto .25rem;
 	font-size: clamp(2.25rem, 4.4vw, 4.1rem);
-	line-height: .98;
+	letter-spacing: -.025em;
+	line-height: 1.1;
 }
 
 .tz-article-deck {
@@ -1176,8 +1208,8 @@ img[loading="lazy"] {
 
 .tz-article-content {
 	font-family: var(--wp--preset--font-family--editorial, Georgia, serif);
-	font-size: 1.14rem;
-	line-height: 1.78;
+	font-size: 1.1875rem;
+	line-height: 1.68;
 	overflow-wrap: anywhere;
 }
 
@@ -1272,7 +1304,7 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 .tz-legacy-post .tz-layout-sidebar .tz-article-title {
 	max-width: 980px;
 	font-size: clamp(2.35rem, 4.7vw, 4.25rem);
-	letter-spacing: -.05em;
+	letter-spacing: -.025em;
 }
 
 .tz-legacy-post .tz-layout-sidebar .tz-article-head .tz-meta {
@@ -2005,7 +2037,7 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 	.tz-article-title {
 		max-width: 100%;
 		font-size: clamp(2rem, 9.5vw, 3.25rem);
-		line-height: 1;
+		line-height: 1.1;
 		overflow-wrap: break-word;
 		word-break: normal;
 	}
@@ -2015,7 +2047,7 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 	}
 
 	.tz-article-content {
-		font-size: 1.06rem;
+		font-size: 1.125rem;
 	}
 
 	.tz-feature-image {

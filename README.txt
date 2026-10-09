@@ -2,7 +2,7 @@
 Requires at least: 6.7
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 3.5.15
+Stable tag: 3.5.16
 License: GPLv2 or later
 
 == Required Parent Theme ==
@@ -15,6 +15,14 @@ This is a child theme of Twenty Twenty-Five. Install the official Twenty Twenty-
 4. Review the Header, Footer, Topic navigation, and article template parts in the Site Editor.
 5. Regenerate thumbnails once for older Media Library images.
 6. Clear all WordPress, host, and CDN caches.
+
+== Version 3.5.16 ==
+
+* Relax headline spacing while preserving the existing font families and article layout.
+* Improve mobile featured headlines, metadata and featured-card date contrast.
+* Use 19px desktop / 18px mobile article prose with Reading Charcoal retained.
+* Improve table readability and prevent prices/model numbers splitting across lines.
+* Replace the two-line mobile menu glyph with a three-line hamburger while retaining WordPress navigation behavior.
 
 == Version 3.5.15 ==
 

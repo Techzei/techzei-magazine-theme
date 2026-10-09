@@ -119,6 +119,8 @@ cache, TOC, shortcode, settings-invalidation, and image-filter contracts.
 
 ## Development and releases
 
+**Version 3.5.16** refines headline spacing, metadata, mobile featured cards, article prose and tables, and replaces the two-line mobile menu glyph with a familiar three-line hamburger. It keeps the existing Georgia/system stacks, Reading Charcoal and article widths. See [the typography verification notes](docs/3.5.16-typography.md) for browser evidence and the limits of snapshot-based testing.
+
 The source folder must keep this exact name: `techzei-magazine-theme`. WordPress expects the folder at the root of the upload ZIP, alongside `style.css`.
 
 Before publishing a release:
@@ -133,9 +135,9 @@ Before publishing a release:
 
 Publishing a GitHub Release automatically runs the release workflow. It checks out the release tag, confirms that the tag matches the `Version` field in `style.css`, builds a clean WordPress upload ZIP, verifies its structure, and attaches it to the release.
 
-Use matching version tags, for example `v3.5.15` for theme version `3.5.15`. The resulting release asset is named `techzei-magazine-theme-3.5.15.zip` and contains exactly one top-level `techzei-magazine-theme/` folder.
+Use matching version tags, for example `v3.5.16` for theme version `3.5.16`. The resulting release asset is named `techzei-magazine-theme-3.5.16.zip` and contains exactly one top-level `techzei-magazine-theme/` folder.
 
-The current theme metadata is **3.5.15**. `Tested up to: 6.8` remains deliberate: production is currently running WordPress 7.1.1, but this repository does not yet have a repeatable WordPress 7.1 test environment, so 7.1 support is not claimed in the changelog.
+The current theme release is **3.5.16**. `Tested up to: 6.8` remains deliberate: the live-site review observed WordPress 7.1.3 assets, but this repository does not have a repeatable WordPress 7.1 test environment, so 7.1 support is not claimed.
 
 ## License
 

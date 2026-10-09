@@ -203,7 +203,12 @@
 	overflow-x: auto;
 	border-collapse: collapse;
 	font-family: var(--wp--preset--font-family--system, system-ui, sans-serif);
-	font-size: .88rem;
+	font-size: .9375rem;
+	line-height: 1.5;
+	/* Prose wraps long strings anywhere; tables must retain intact prices,
+	 * model numbers and words, scrolling within the table when necessary. */
+	overflow-wrap: normal;
+	word-break: normal;
 }
 
 .tz-article-content th,
@@ -308,7 +313,7 @@
 	align-self: center;
 	color: var(--tz-muted);
 	font-family: var(--wp--preset--font-family--system, system-ui, sans-serif);
-	font-size: .72rem;
+	font-size: .78rem;
 	white-space: nowrap;
 }
 
@@ -361,7 +366,7 @@
 	margin-top: .35rem;
 	color: var(--tz-muted);
 	font-family: var(--wp--preset--font-family--system, system-ui, sans-serif);
-	font-size: .7rem;
+	font-size: .78rem;
 }
 
 .tz-article-sidebar .tz-more-in-topic,
