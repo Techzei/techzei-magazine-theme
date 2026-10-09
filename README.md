@@ -1,6 +1,8 @@
 # Techzei Magazine Theme
 
-![Techzei Magazine Theme preview](screenshot.png)
+![Techzei production homepage screenshot](screenshot.png)
+
+*Production homepage capture; the WordPress admin toolbar is visible.*
 
 Techzei Magazine Theme is a lightweight WordPress block child theme for [Techzei](https://techzei.com/). It keeps the direct, image-led character of the previous magazine site while using modern WordPress templates, responsive images, and the Site Editor instead of a page builder.
 
