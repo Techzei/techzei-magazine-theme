@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.6.1 - 2026-10-14
+
+- Render every `[enlighter]` shortcode as a full code block, including one-line commands, with a Copy control.
+- Correctly extract nested saved Code markup and unwrap redundant `<code>` wrappers so rendered commands and copied text contain only the source.
+- Give article tags clear spacing and a restrained pill treatment for easier scanning.
+
 ## 3.6.0 - 2026-10-09
 
 - Replace Enlighter front-end rendering after plugin deactivation with a theme-owned, self-hosted Prism.js code-block renderer and a single accessible Copy control.

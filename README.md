@@ -110,7 +110,7 @@ cache, TOC, shortcode, settings-invalidation, and image-filter contracts.
 
 ## Development and releases
 
-**Current release: 3.6.0.** It adds a locally hosted, conditionally loaded code renderer with accessible copy controls for code blocks. Existing post content remains unchanged, and the renderer stays dormant while a compatible code-highlighting plugin is active. See [the code-block implementation notes](docs/3.6.0-code-blocks.md).
+**Current release: 3.6.1.** It renders one-line Enlighter shortcodes as copyable code blocks, unwraps redundant nested Code tags in legacy saved content, and presents article tags as distinct, spaced pills. The renderer remains local and conditionally loaded, and stays dormant while a compatible code-highlighting plugin is active. See [the code-block implementation notes](docs/3.6.0-code-blocks.md).
 
 The previous release refined headline spacing, metadata, mobile featured cards, article prose and tables, and the mobile menu icon. It retained the Georgia/system stacks, Reading Charcoal and article widths. See [the typography verification notes](docs/3.5.16-typography.md) for browser evidence and the limits of snapshot-based testing.
 
@@ -128,9 +128,9 @@ Before publishing a release:
 
 Publishing a GitHub Release automatically runs the release workflow. It checks out the release tag, confirms that the tag matches the `Version` field in `style.css`, builds a clean WordPress upload ZIP, verifies its structure, and attaches it to the release.
 
-Use matching version tags, for example `v3.6.0` for theme version `3.6.0`. The resulting release asset is named `techzei-magazine-theme-3.6.0.zip` and contains exactly one top-level `techzei-magazine-theme/` folder.
+Use matching version tags, for example `v3.6.1` for theme version `3.6.1`. The resulting release asset is named `techzei-magazine-theme-3.6.1.zip` and contains exactly one top-level `techzei-magazine-theme/` folder.
 
-The current theme release is **3.6.0**. `Tested up to: 6.8` remains deliberate: the live site runs a newer WordPress version, but this repository does not have a repeatable test environment for it, so support beyond 6.8 is not claimed.
+The current theme release is **3.6.1**. `Tested up to: 6.8` remains deliberate: the live site runs a newer WordPress version, but this repository does not have a repeatable test environment for it, so support beyond 6.8 is not claimed.
 
 ## License
 

@@ -62,7 +62,7 @@ function wp_unique_id( $prefix = '' ) {
 function wp_get_theme() {
 	return new class {
 		public function get( $field ) {
-			return '3.6.0';
+			return '3.6.1';
 		}
 	};
 }
@@ -128,13 +128,18 @@ tz_code_assert( false !== strpos( $restored, 'role="group" aria-label="Code: Bas
 tz_code_assert( $source === tz_code_extract_text( $restored ), 'Shortcode output changed code text, special characters, blank lines or trailing spaces.' );
 tz_code_assert( false === strpos( $restored, '<p><div class="tz-code"' ), 'wpautop paragraph wrapper was not removed.' );
 
-$inline = techzei_tt5_code_shortcode( array(), 'opencode mcp list' );
-tz_code_assert( false !== strpos( $inline, '<code class="tz-code-inline language-bash">' ), 'One-line shortcode without a language did not default to inline Bash.' );
-tz_code_assert( false === strpos( $inline, 'tz-code__copy' ), 'Inline code received an unwanted Copy button placeholder.' );
+$one_line_shortcode = techzei_tt5_code_shortcode( array(), 'opencode mcp list' );
+tz_code_assert( false !== strpos( $one_line_shortcode, '<div class="tz-code" data-lang="bash"' ), 'One-line Enlighter shortcode did not render as a code block.' );
+tz_code_assert( isset( $GLOBALS['tz_code_test_scripts']['techzei-code-blocks'] ), 'One-line Enlighter shortcode did not enqueue the Copy control runtime.' );
+tz_code_assert( 'opencode mcp list' === tz_code_extract_text( $one_line_shortcode ), 'One-line Enlighter shortcode changed its command text.' );
 $inline_detection = techzei_tt5_code_detect_content( '[enlighter lang="json"]{"ok":true}[/enlighter]' );
-tz_code_assert( ! $inline_detection['block'] && $inline_detection['inline'] && in_array( 'json', $inline_detection['languages'], true ), 'Single-line shortcode was not detected as inline-only content.' );
+tz_code_assert( $inline_detection['block'] && ! $inline_detection['inline'] && in_array( 'json', $inline_detection['languages'], true ), 'Single-line Enlighter shortcode was not detected as a code block.' );
 $block_detection = techzei_tt5_code_detect_content( "[enlighter]\nline one\nline two\n[/enlighter]" );
 tz_code_assert( $block_detection['block'] && in_array( 'bash', $block_detection['languages'], true ), 'Multiline shortcode without a language did not pre-detect default Bash.' );
+$one_line_content = techzei_tt5_code_strip_shortcodes( '[enlighter lang="bash"]opencode mcp list[/enlighter]' );
+tz_code_assert( 1 === preg_match( '/<pre>\{\{TZCODE[A-Z0-9]+\}\}<\/pre>/', $one_line_content ), 'One-line shortcode was not protected as a block before text filters.' );
+$one_line_restored = techzei_tt5_code_restore_shortcodes( '<p>' . $one_line_content . '</p>' );
+tz_code_assert( false !== strpos( $one_line_restored, '<div class="tz-code" data-lang="bash"' ) && 'opencode mcp list' === tz_code_extract_text( $one_line_restored ), 'One-line shortcode pipeline did not restore a complete block.' );
 
 $enlighter_block = techzei_tt5_code_render_block(
 	'<pre class="EnlighterJSRAW" data-enlighter-language="json">{&quot;name&quot;:&quot;MCP&quot;,&quot;enabled&quot;:true}</pre>',
@@ -151,6 +156,13 @@ $core_code = techzei_tt5_code_render_block(
 tz_code_assert( false !== strpos( $core_code, 'data-lang="plain"' ), 'Unlabelled core Code did not fall back to plain text.' );
 tz_code_assert( false !== strpos( $core_code, 'class="tz-code tz-custom"' ) && false !== strpos( $core_code, 'language-plain wp-block-code' ) && false !== strpos( $core_code, 'id="code-example"' ), 'Saved core block classes or anchor were discarded.' );
 tz_code_assert( '<value> & "quoted"' === tz_code_extract_text( $core_code ), 'Core Code text was corrupted or double-escaped.' );
+
+$nested_core_code = techzei_tt5_code_render_block(
+	'<pre class="wp-block-code"><code><code>pmset -g assertions</code></code></pre>',
+	array( 'blockName' => 'core/code', 'attrs' => array() )
+);
+tz_code_assert( 'pmset -g assertions' === tz_code_extract_text( $nested_core_code ), 'Nested Code markup leaked into the rendered command text.' );
+tz_code_assert( 1 === substr_count( $nested_core_code, '<code' ) && false === strpos( $nested_core_code, '&lt;code' ), 'Nested Code markup was not unwrapped before rendering and copying.' );
 
 $unknown = techzei_tt5_code_markup( '<not-a-tag>', 'not-installed-language' );
 tz_code_assert( false !== strpos( $unknown, 'data-lang="plain"' ), 'Unknown language did not fall back to plain text.' );

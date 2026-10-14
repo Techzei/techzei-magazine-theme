@@ -77,6 +77,24 @@ CODE;
 		$this->assertStringNotContainsString( 'tz-code__copy', $markup );
 	}
 
+	public function test_one_line_enlighter_shortcode_is_a_copyable_code_block() {
+		$markup = techzei_tt5_code_shortcode( array( 'lang' => 'bash' ), 'opencode mcp list' );
+
+		$this->assertStringContainsString( '<div class="tz-code" data-lang="bash"', $markup );
+		$this->assertStringContainsString( 'tz-code__pre', $markup );
+		$this->assertSame( 'opencode mcp list', html_entity_decode( techzei_tt5_code_inner_html( $markup, 'code' ), ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
+	}
+
+	public function test_nested_code_tags_are_unwrapped_from_legacy_core_code_blocks() {
+		$markup = techzei_tt5_code_render_block(
+			'<pre class="wp-block-code"><code><code>pmset -g assertions</code></code></pre>',
+			array( 'blockName' => 'core/code', 'attrs' => array() )
+		);
+
+		$this->assertSame( 'pmset -g assertions', html_entity_decode( techzei_tt5_code_inner_html( $markup, 'code' ), ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
+		$this->assertSame( 1, substr_count( $markup, '<code' ) );
+	}
+
 	public function test_unrelated_legacy_pre_markup_is_unchanged() {
 		$legacy = '<pre class="toolbar:2 nums:false lang:c decode:true">printf(&quot;ok&quot;);</pre>';
 

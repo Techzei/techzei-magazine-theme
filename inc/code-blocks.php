@@ -111,8 +111,34 @@ function techzei_tt5_code_get_attribute( $html, $tag, $name ) {
  * @return string|false Escaped inner content, or false when absent.
  */
 function techzei_tt5_code_inner_html( $html, $tag ) {
-	if ( preg_match( '~<' . preg_quote( $tag, '~' ) . '\b[^>]*>([\s\S]*?)</' . preg_quote( $tag, '~' ) . '\s*>~i', $html, $match ) ) {
-		return $match[1];
+	$tag_pattern = preg_quote( $tag, '~' );
+	if ( ! preg_match_all( '~</?' . $tag_pattern . '\b[^>]*>~i', (string) $html, $matches, PREG_OFFSET_CAPTURE ) ) {
+		return false;
+	}
+
+	$depth = 0;
+	$content_start = null;
+	foreach ( $matches[0] as $match ) {
+		$token = $match[0];
+		$offset = $match[1];
+
+		if ( 0 === $depth ) {
+			if ( preg_match( '~^</~', $token ) ) {
+				continue;
+			}
+			$content_start = $offset + strlen( $token );
+			$depth = 1;
+			continue;
+		}
+
+		if ( preg_match( '~^</~', $token ) ) {
+			--$depth;
+			if ( 0 === $depth ) {
+				return substr( (string) $html, $content_start, $offset - $content_start );
+			}
+		} elseif ( ! preg_match( '~/\s*>$~', $token ) ) {
+			++$depth;
+		}
 	}
 
 	return false;
@@ -125,7 +151,17 @@ function techzei_tt5_code_inner_html( $html, $tag ) {
  * @return string
  */
 function techzei_tt5_code_escape_saved_html( $saved_html ) {
-	return esc_html( html_entity_decode( (string) $saved_html, ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
+	$saved_html = (string) $saved_html;
+	$depth = 0;
+
+	// Some legacy posts saved a Code block inside another Code block. Unwrap
+	// only complete nested wrappers so their tags do not become visible/copied.
+	while ( $depth < 8 && preg_match( '~^(\s*)<code\b[^>]*>([\s\S]*)</code\s*>(\s*)$~i', $saved_html, $match ) ) {
+		$saved_html = $match[1] . $match[2] . $match[3];
+		++$depth;
+	}
+
+	return esc_html( html_entity_decode( $saved_html, ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
 }
 
 /**
@@ -286,10 +322,8 @@ function techzei_tt5_code_shortcode( $attributes, $content = '' ) {
 	$code = preg_replace( '/^\r?\n/', '', $code );
 	$code = preg_replace( '/\r?\n$/', '', $code );
 
-	if ( false === strpos( $code, "\n" ) && false === strpos( $code, "\r" ) ) {
-		return techzei_tt5_code_markup( $code, $language, false, false );
-	}
-
+	// Enlighter shortcodes represent code blocks even when their source has
+	// only one line. Inline snippets use Enlighter's dedicated inline markup.
 	return techzei_tt5_code_markup( $code, $language );
 }
 
@@ -315,12 +349,11 @@ function techzei_tt5_code_strip_shortcodes( $content ) {
 			$language = is_array( $attributes ) && ! empty( $attributes['lang'] ) ? $attributes['lang'] : 'bash';
 			$code = preg_replace( '/^\r?\n/', '', $matches[3] );
 			$code = preg_replace( '/\r?\n$/', '', $code );
-			$inline = false === strpos( $code, "\n" ) && false === strpos( $code, "\r" );
-			$markup = techzei_tt5_code_markup( $code, $language, false, ! $inline );
+			$markup = techzei_tt5_code_markup( $code, $language );
 			$token = strtoupper( str_replace( '-', '', wp_unique_id( 'tzcode-' ) ) );
 			$GLOBALS['techzei_tt5_code_buffers'][ $token ] = $markup;
 
-			return '<' . ( $inline ? 'code' : 'pre' ) . '>{{' . $token . '}}</' . ( $inline ? 'code' : 'pre' ) . '>';
+			return '<pre>{{' . $token . '}}</pre>';
 		},
 		$content
 	);
@@ -447,11 +480,7 @@ function techzei_tt5_code_detect_content( $content ) {
 			$code = preg_replace( '/^\r?\n/', '', $shortcode[3] );
 			$code = preg_replace( '/\r?\n$/', '', $code );
 			$result['languages'][] = is_array( $attributes ) && ! empty( $attributes['lang'] ) ? $attributes['lang'] : 'bash';
-			if ( false === strpos( $code, "\n" ) && false === strpos( $code, "\r" ) ) {
-				$result['inline'] = true;
-			} else {
-				$result['block'] = true;
-			}
+			$result['block'] = true;
 		}
 	}
 

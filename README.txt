@@ -2,7 +2,7 @@
 Requires at least: 6.7
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 3.6.0
+Stable tag: 3.6.1
 License: GPLv2 or later
 
 == Required Parent Theme ==
@@ -15,6 +15,12 @@ This is a child theme of Twenty Twenty-Five. Install the official Twenty Twenty-
 4. Review the Header, Footer, Topic navigation, and article template parts in the Site Editor.
 5. Regenerate thumbnails once for older Media Library images.
 6. Clear all WordPress, host, and CDN caches.
+
+== Version 3.6.1 ==
+
+* Render one-line Enlighter shortcodes as full code blocks with Copy controls.
+* Unwrap redundant nested Code tags in saved code blocks before display and copy.
+* Improve article tag spacing and scanning with a restrained pill treatment.
 
 == Version 3.6.0 ==
 
