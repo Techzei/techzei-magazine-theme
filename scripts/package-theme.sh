@@ -49,6 +49,7 @@ rsync -a --delete \
 	--exclude 'dist' \
 	--exclude '*.zip' \
 	--exclude 'tests/***' \
+	--exclude 'docs/***' \
 	--exclude 'scripts/fixtures/***' \
 	--exclude 'scripts/test-theme.php' \
 	--exclude 'scripts/validate-settings.php' \

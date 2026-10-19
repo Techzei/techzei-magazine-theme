@@ -640,6 +640,7 @@
 		forEachNode(tickerRoots, initTicker);
 		initRevealMotion();
 		initLazyImageFade();
+		doc.documentElement.classList.add('tz-interactions-ready');
 	}
 
 	if ('loading' === doc.readyState) {

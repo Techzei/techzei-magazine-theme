@@ -23,6 +23,31 @@ exercises rendering callbacks with minimal WordPress API stubs, while
 `CodeBlocksTest.php` uses the optional WordPress integration bootstrap. The
 fixture checks are included in both quality and release workflows.
 
+## Author portfolios: optional real-site integration runner
+
+No PHPUnit dependency is required for this additional runner. Use an isolated,
+disposable local WordPress install with Twenty Twenty-Five and this child theme
+active. Its wp-config.php must define `WP_ENVIRONMENT_TYPE` as `local` and
+`TECHZEI_AUTHOR_TEST_SITE` as `true`. Never target production or a valuable
+development database. The runner creates temporary users/posts/terms and removes
+only its own tracked fixtures in a `finally` block.
+
+```sh
+TECHZEI_WP_TEST_ROOT=/absolute/path/to/disposable/wordpress php tests/authors-wordpress.php
+```
+
+It exercises published-only aggregation, distinct review counts, first-story
+ordering, cold/warm query counts, persistent transients without an external object
+cache, author-specific coverage, native query filtering and pagination, malformed
+controls, profile validation/nonce/capabilities, selected-work ownership/status,
+queried-author identity, actual block-template shortcode formatting, empty
+authors, responsive image priority and status/author/taxonomy/deletion invalidation.
+It is a real WordPress API integration runner, not the PHPUnit suite above.
+
+Locally verified on WordPress 6.8.3 with official SQLite Database Integration
+3.1.0 and PHP 8.5.10. MySQL/MariaDB, PHP 7.4 runtime, newer WordPress releases and
+third-party avatar/translation/SEO combinations still need staging verification.
+
 ## Typography browser probe
 
 `typography-browser.mjs` exports `auditTypography()`, a dependency-free function

@@ -13,6 +13,7 @@ It is deliberately small: no external fonts, front-end framework, analytics, ad 
 The current theme uses **Reading Charcoal** (`#575555`) for post/page content, with darker headings. Change it through the Site Editor palette and Post Content block styles. Existing saved Global Styles and explicitly colored blocks take precedence. Prose links are underlined, including internal links, and long strings wrap within the reading column.
 
 - Editorial homepage with lead coverage, supporting stories, a compact trending rail, latest stories, and a discovery sidebar.
+- Editorial author portfolios with public profiles, cached publication statistics, optional selected work, and native topic/year archive filters.
 - Responsive desktop and mobile article layouts, including sticky navigation, logo-first mobile header, and a compact search control.
 - Article essentials: visible breadcrumbs, optional How To/Explainer table of contents, featured image, author profile, sharing, post navigation, related stories with thumbnails, tags, and native comments.
 - Topic-aware article discovery: current-topic stories, latest stories, an optional newsletter CTA slot, freshness-limited reviews, and compact follow links.
@@ -65,6 +66,34 @@ With the Breadcrumbs setting on, the theme renders Yoast’s breadcrumb output w
 
 On mobile articles, the optional sticky share dock keeps WhatsApp first while preserving the normal in-flow share row. It appears only when sharing and at least one destination are enabled.
 
+## Author portfolios
+
+Author archives use an editorial portfolio: portrait, biography, public links,
+published-work statistics, optional Selected work, and a complete chronological
+article archive with Topic and Year filters. The sidebar shows author-specific
+coverage, optional personal interests and the first surviving published story.
+On mobile it stacks beneath the archive. No new frontend JavaScript is needed.
+
+Under **Users → Profile → Techzei author portfolio**, optionally set the public
+editorial role, up to five favourite categories, and up to three links to that
+author's own published articles. Portrait, biography and website reuse the
+existing WordPress profile; X links reuse the existing `twitter` profile field.
+No email address or WordPress permission role is exposed. Blank optional fields
+omit their sections rather than inventing achievements or recommendations.
+
+Counts use published posts only, not drafts, private posts, pages or another
+author's work. “First archived story” means the earliest surviving published
+article, not a claimed employment start date. “Most covered” is calculated;
+“Favourite topics” is explicitly chosen. Selected work does not remove stories
+from the complete chronological archive. Two cached aggregate queries resolve
+statistics on a cold cache and none on a warm cache; the normal archive query
+and optional selected-work query are separate.
+
+The Site Editor owns composition through **Author**, **Author header** and
+**Author discovery**. Saved author templates or more-specific author templates
+still take precedence and are never reset automatically. See
+[the implementation and verification notes](docs/3.7.0-author-portfolios.md).
+
 ## Article layout compatibility
 
 Older article content remains readable without modifying stored posts. When Automatic legacy styling is enabled, older posts can use the denser article treatment. Editors can choose **Article with sidebar** or **Article without sidebar** for individual posts; explicit post templates take precedence over the site default.
@@ -110,7 +139,9 @@ cache, TOC, shortcode, settings-invalidation, and image-filter contracts.
 
 ## Development and releases
 
-**Current release: 3.6.1.** It renders one-line Enlighter shortcodes as copyable code blocks, unwraps redundant nested Code tags in legacy saved content, and presents article tags as distinct, spaced pills. The renderer remains local and conditionally loaded, and stays dormant while a compatible code-highlighting plugin is active. See [the code-block implementation notes](docs/3.6.0-code-blocks.md).
+**Current release: 3.7.2.** This release brings the editorial author portfolio (3.7.0), its mobile/accessibility follow-up (3.7.1), and a no-JavaScript mobile navigation fallback to GitHub in one installable package. The fallback reuses Site Editor-owned links rather than introducing a second menu; the normal interactive menu is unchanged. Install ZIPs exclude development documentation and test scripts, which remain in this repository.
+
+The 3.6.1 code-block renderer stays local and conditionally loaded, and remains dormant while a compatible highlighting plugin is active. See [the code-block implementation notes](docs/3.6.0-code-blocks.md).
 
 The previous release refined headline spacing, metadata, mobile featured cards, article prose and tables, and the mobile menu icon. It retained the Georgia/system stacks, Reading Charcoal and article widths. See [the typography verification notes](docs/3.5.16-typography.md) for browser evidence and the limits of snapshot-based testing.
 
@@ -128,9 +159,9 @@ Before publishing a release:
 
 Publishing a GitHub Release automatically runs the release workflow. It checks out the release tag, confirms that the tag matches the `Version` field in `style.css`, builds a clean WordPress upload ZIP, verifies its structure, and attaches it to the release.
 
-Use matching version tags, for example `v3.6.1` for theme version `3.6.1`. The resulting release asset is named `techzei-magazine-theme-3.6.1.zip` and contains exactly one top-level `techzei-magazine-theme/` folder.
+Use matching version tags, for example `v3.7.2` for theme version `3.7.2`. The resulting release asset is named `techzei-magazine-theme-3.7.2.zip` and contains exactly one top-level `techzei-magazine-theme/` folder.
 
-The current theme release is **3.6.1**. `Tested up to: 6.8` remains deliberate: the live site runs a newer WordPress version, but this repository does not have a repeatable test environment for it, so support beyond 6.8 is not claimed.
+`Tested up to: 6.8` remains deliberate: the live site runs a newer WordPress version, but this repository does not have a repeatable test environment for it, so support beyond 6.8 is not claimed. The no-JavaScript menu was checked in a representative browser fixture; real WordPress checks at 320px and 375px remain part of deployment verification.
 
 ## License
 

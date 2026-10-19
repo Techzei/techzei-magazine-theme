@@ -2,7 +2,7 @@
 Requires at least: 6.7
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 3.6.1
+Stable tag: 3.7.2
 License: GPLv2 or later
 
 == Required Parent Theme ==
@@ -15,6 +15,23 @@ This is a child theme of Twenty Twenty-Five. Install the official Twenty Twenty-
 4. Review the Header, Footer, Topic navigation, and article template parts in the Site Editor.
 5. Regenerate thumbnails once for older Media Library images.
 6. Clear all WordPress, host, and CDN caches.
+
+== Version 3.7.2 ==
+
+* Keep the existing Site Editor mobile navigation links available without JavaScript, without changing the interactive menu.
+
+== Version 3.7.1 ==
+
+* Stabilize the mobile header before first paint; preserve no-JavaScript search access.
+* Fix narrow 404 search overflow and nested footer markup.
+* Clean up author website/X links, square portraits, heading hierarchy, filter URLs, and card keyboard focus.
+
+== Version 3.7.0 ==
+
+* Add an editable editorial author portfolio with portrait, biography, public links and optional selected work.
+* Show cached published-article totals, earliest archived story and author-specific topic coverage.
+* Add native topic/year archive filters and pagination without frontend JavaScript.
+* Add optional editorial role, favourite topics and selected article links under Users > Profile.
 
 == Version 3.6.1 ==
 

@@ -1,0 +1,56 @@
+<!-- wp:template-part {"slug":"header","tagName":"header","className":"tz-sticky-header"} /-->
+
+<!-- wp:group {"tagName":"main","align":"wide","className":"tz-shell tz-author-main","layout":{"type":"default"}} -->
+<main class="wp-block-group alignwide tz-shell tz-author-main">
+	<!-- wp:template-part {"slug":"breadcrumbs"} /-->
+	<!-- wp:template-part {"slug":"author-header"} /-->
+	<!-- wp:group {"className":"tz-author-columns","layout":{"type":"default"}} -->
+	<div class="wp-block-group tz-author-columns">
+		<!-- wp:group {"className":"tz-author-work-column","layout":{"type":"default"}} -->
+		<div class="wp-block-group tz-author-work-column">
+			<!-- wp:shortcode -->[techzei_author_selected_work]<!-- /wp:shortcode -->
+			<!-- wp:group {"className":"tz-author-archive","layout":{"type":"default"}} -->
+			<div class="wp-block-group tz-author-archive">
+				<!-- wp:shortcode -->[techzei_author_archive_controls]<!-- /wp:shortcode -->
+				<!-- wp:query {"queryId":37,"query":{"inherit":true},"className":"tz-feed tz-author-feed"} -->
+				<div class="wp-block-query tz-feed tz-author-feed">
+					<!-- wp:post-template -->
+						<!-- wp:group {"className":"tz-feed-card tz-story-card","layout":{"type":"default"}} -->
+						<div class="wp-block-group tz-feed-card tz-story-card">
+							<!-- wp:post-featured-image {"isLink":false,"aspectRatio":"3/2","sizeSlug":"techzei-feed","className":"tz-card-media tz-author-feed-image"} /-->
+							<!-- wp:group {"className":"tz-card-body","layout":{"type":"constrained"}} -->
+							<div class="wp-block-group tz-card-body">
+								<!-- wp:post-title {"isLink":true,"level":3,"className":"tz-card-title"} /-->
+								<!-- wp:post-excerpt {"moreText":"","className":"tz-card-excerpt"} /-->
+								<!-- wp:post-date {"className":"tz-meta tz-card-meta"} /-->
+								<!-- wp:post-terms {"term":"category","className":"tz-section-kicker tz-card-kicker"} /-->
+							</div>
+							<!-- /wp:group -->
+						</div>
+						<!-- /wp:group -->
+					<!-- /wp:post-template -->
+					<!-- wp:query-pagination {"className":"tz-pagination","layout":{"type":"flex","justifyContent":"space-between"}} -->
+						<!-- wp:query-pagination-previous /-->
+						<!-- wp:query-pagination-numbers /-->
+						<!-- wp:query-pagination-next /-->
+					<!-- /wp:query-pagination -->
+					<!-- wp:query-no-results -->
+						<!-- wp:shortcode -->[techzei_author_empty]<!-- /wp:shortcode -->
+					<!-- /wp:query-no-results -->
+				</div>
+				<!-- /wp:query -->
+			</div>
+			<!-- /wp:group -->
+		</div>
+		<!-- /wp:group -->
+		<!-- wp:group {"tagName":"aside","className":"tz-author-rail","layout":{"type":"default"}} -->
+		<aside class="wp-block-group tz-author-rail">
+			<!-- wp:template-part {"slug":"author-discovery"} /-->
+		</aside>
+		<!-- /wp:group -->
+	</div>
+	<!-- /wp:group -->
+</main>
+<!-- /wp:group -->
+
+<!-- wp:template-part {"slug":"footer","tagName":"footer"} /-->

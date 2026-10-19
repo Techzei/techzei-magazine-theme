@@ -40,6 +40,34 @@ An outdated Home page template assignment and saved Site Editor customizations c
 4. Check at desktop and mobile widths. Verify the menu overlay, search, reading time, related stories, share links, footer RSS/social links, and comments.
 5. Confirm images are served at their intended crop sizes after regeneration.
 
+## Author portfolio verification (3.7.1)
+
+1. Test the candidate ZIP before production deployment. The candidate
+   does not migrate posts, update profiles or reset saved Site Editor content.
+2. Open an author's archive. In Appearance → Editor, inspect any saved Author,
+   author-slug or author-ID template before changing it: a more-specific or saved
+   template can override the new file. Do not clear customisations automatically.
+3. In Users → Profile, review the existing biography, avatar, website and X field.
+   Optionally add an editorial role, up to five favourite topics and up to three
+   links to the author's own published articles. No curated selections are seeded
+   by the theme. Repeat per author where useful.
+4. Verify topic/year filters, pagination, empty author, missing portrait/thumbnail,
+   and a profile without selected work at 375px and desktop. Lifetime counts must
+   not change when filters are applied. Check menu/search with the user logged out.
+5. Verify a single, homepage, category, search and 404 retain their existing layout.
+   Author CSS must load only on author archives (also available in the editor).
+6. Clear applicable page caches after profile edits. Statistics invalidate through
+   the editorial namespace; rendered author HTML is not stored by the theme.
+
+## Mobile navigation verification (3.7.2)
+
+At 320px and 375px, disable JavaScript and confirm every link in the saved Site
+Editor Navigation block is visible, keyboard-reachable, and usable. The menu
+button should be hidden, the expanded header should not stick over content,
+and the page should have no horizontal overflow. Repeat with JavaScript enabled:
+the normal menu must open and close, Escape and focus return must work, and no
+duplicate menu should appear. Check the homepage, a post, an archive, and 404.
+
 ## Rollback
 
 If a problem appears, activate the last working theme from **Appearance → Themes**, clear caches again, and restore the database backup only if settings or content were changed during the deployment.

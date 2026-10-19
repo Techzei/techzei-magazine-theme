@@ -3,7 +3,7 @@ Theme Name: Techzei Magazine Theme
 Theme URI: https://techzei.com/
 Author: Techzei
 Description: A fast, editorial technology publication child theme for Twenty Twenty-Five.
-Version: 3.6.1
+Version: 3.7.2
 Template: twentytwentyfive
 Requires at least: 6.7
 Tested up to: 6.8
@@ -440,6 +440,60 @@ body.single-post .tz-reading-progress-wrapper {
 	.tz-nav-wrap .wp-block-navigation__responsive-container.is-menu-open .wp-block-navigation-item__content {
 		padding: .75rem 0;
 		font-size: 1rem;
+	}
+
+	/* With scripts disabled, show the Navigation block's own Site Editor links
+	 * in flow instead of leaving them behind WordPress's inert menu button. */
+	html:not(.tz-js) .tz-sticky-header {
+		position: static !important;
+	}
+
+	html:not(.tz-js) .tz-nav-wrap .wp-block-navigation__responsive-container {
+		display: block !important;
+		position: static;
+		inset: auto;
+		z-index: auto;
+		width: 100%;
+		min-width: 0;
+		height: auto;
+		overflow: visible;
+	}
+
+	html:not(.tz-js) .tz-nav-wrap .wp-block-navigation__responsive-container-open,
+	html:not(.tz-js) .tz-nav-wrap .wp-block-navigation__responsive-container-close {
+		display: none !important;
+	}
+
+	html:not(.tz-js) .tz-nav-wrap .wp-block-navigation__responsive-close,
+	html:not(.tz-js) .tz-nav-wrap .wp-block-navigation__responsive-dialog,
+	html:not(.tz-js) .tz-nav-wrap .wp-block-navigation__responsive-container-content {
+		width: 100%;
+		min-width: 0;
+	}
+
+	html:not(.tz-js) .tz-nav-wrap .wp-block-navigation__responsive-container-content {
+		display: block;
+		padding: 0;
+	}
+
+	html:not(.tz-js) .tz-nav-wrap .wp-block-navigation__container {
+		width: 100%;
+		min-width: 0;
+		align-items: stretch;
+		flex-direction: column;
+		gap: 0;
+	}
+
+	html:not(.tz-js) .tz-nav-wrap .wp-block-navigation-item,
+	html:not(.tz-js) .tz-nav-wrap .wp-block-navigation-item__content {
+		width: 100%;
+		min-width: 0;
+	}
+
+	html:not(.tz-js) .tz-nav-wrap .wp-block-navigation-item__content {
+		display: block;
+		padding: .75rem .9rem;
+		overflow-wrap: anywhere;
 	}
 }
 
@@ -1912,6 +1966,8 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 	.tz-404-copy {
 		flex-basis: auto;
 		max-width: 38rem;
+		min-width: 0;
+		width: 100%;
 	}
 }
 

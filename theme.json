@@ -73,6 +73,8 @@
     { "name": "footer", "title": "Footer", "area": "footer" },
     { "name": "topic-nav", "title": "Topic navigation", "area": "uncategorized" },
     { "name": "author-profile", "title": "Author profile", "area": "uncategorized" },
+    { "name": "author-header", "title": "Author portfolio header", "area": "uncategorized" },
+    { "name": "author-discovery", "title": "Author portfolio coverage", "area": "uncategorized" },
     { "name": "share", "title": "Share links", "area": "uncategorized" },
     { "name": "mobile-share-dock", "title": "Mobile share dock", "area": "uncategorized" },
     { "name": "breadcrumbs", "title": "Breadcrumbs", "area": "uncategorized" },

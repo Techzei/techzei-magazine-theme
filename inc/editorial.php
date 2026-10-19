@@ -417,6 +417,8 @@ function techzei_tt5_visible_breadcrumbs() {
 		if ( $category ) {
 			$items[] = '<a href="' . esc_url( get_category_link( $category ) ) . '">' . esc_html( $category->name ) . '</a>';
 		}
+	} elseif ( is_author() && get_queried_object() instanceof WP_User ) {
+		$items[] = '<span aria-current="page">' . esc_html( get_queried_object()->display_name ) . '</span>';
 	} else {
 		$items[] = '<span aria-current="page">' . esc_html( wp_strip_all_tags( get_the_archive_title() ) ) . '</span>';
 	}

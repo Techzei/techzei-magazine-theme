@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function techzei_tt5_setup() {
 	load_child_theme_textdomain( 'techzei-magazine-theme', get_stylesheet_directory() . '/languages' );
-	add_editor_style( array( 'style.css', 'assets/css/article.css' ) );
+	add_editor_style( array( 'style.css', 'assets/css/article.css', 'assets/css/author.css' ) );
 
 	add_image_size( 'techzei-hero', 1440, 810, true );
 	add_image_size( 'techzei-tile', 720, 540, true );
@@ -73,6 +73,19 @@ function techzei_tt5_enqueue_assets() {
 	);
 }
 add_action( 'wp_enqueue_scripts', 'techzei_tt5_enqueue_assets' );
+
+/**
+ * Apply the enhanced header layout before the first paint.
+ *
+ * The deferred interaction script used to add this class in the footer. On
+ * phones that briefly laid out the full no-JavaScript search form, then
+ * removed it, shifting every page below the header. If scripts are disabled,
+ * this head script never runs and the visible search form remains available.
+ */
+function techzei_tt5_mark_js_before_paint() {
+	wp_print_inline_script_tag( "document.documentElement.classList.add('tz-js');window.addEventListener('load',function(){if(!document.documentElement.classList.contains('tz-interactions-ready')){document.documentElement.classList.remove('tz-js');}});" );
+}
+add_action( 'wp_head', 'techzei_tt5_mark_js_before_paint', 1 );
 
 /**
  * Set the very next token's text, when that token is a text node.
@@ -374,6 +387,10 @@ function techzei_tt5_featured_image_role( $block ) {
 		return 'homepage-tile';
 	}
 
+	if ( techzei_tt5_has_class_token( $class_name, 'tz-author-feed-image' ) && is_author() ) {
+		return 'author-list-card';
+	}
+
 	if ( 'techzei-feed' === $size_slug || techzei_tt5_has_class_token( $class_name, 'tz-feed-card' ) ) {
 		return 'list-card';
 	}
@@ -398,6 +415,7 @@ function techzei_tt5_image_sizes_for_role( $role ) {
 		'homepage-sidebar' => '(max-width: 600px) 92px, (max-width: 900px) 112px, 104px',
 		'homepage-tile'  => '(max-width: 900px) 50vw, 255px',
 		'list-card'      => '(max-width: 600px) 108px, 240px',
+		'author-list-card' => '(max-width: 600px) 96px, 155px',
 		'hero'           => '(max-width: 900px) 100vw, 1220px',
 	);
 
@@ -446,7 +464,7 @@ function techzei_tt5_process_image_html( $html, $role = 'unknown', $sizes = '', 
 	if ( $promoted ) {
 		$tags->set_attribute( 'loading', 'eager' );
 		$tags->set_attribute( 'fetchpriority', 'high' );
-	} elseif ( in_array( $role, array( 'homepage-tile', 'list-card' ), true ) ) {
+	} elseif ( in_array( $role, array( 'homepage-tile', 'list-card', 'author-list-card' ), true ) ) {
 		// The 4 featured-grid tiles beside the hero image are above the fold on
 		// desktop, where .tz-hero lays the hero and tile grid out side by side —
 		// but below 900px (see the .tz-hero flex-direction: column rule in

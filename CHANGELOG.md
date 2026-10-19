@@ -1,5 +1,26 @@
 # Changelog
 
+## 3.7.2 - 2026-10-19
+
+- Keep the Site Editor's mobile Navigation links usable when JavaScript is unavailable, without duplicating menus or changing the normal interactive menu.
+- Show the no-JavaScript menu in document flow and disable sticky positioning so its expanded links do not cover article content.
+
+## 3.7.1 - 2026-10-15
+
+- Keep the enhanced mobile header layout stable from first paint while retaining a search form when JavaScript is unavailable.
+- Remove 404 search-form overflow at narrow phone widths and eliminate the nested footer landmark.
+- Make author portraits square on mobile, suppress self-referential website and duplicate X links, and correct first-story heading hierarchy.
+- Reject invalid author topic/year filters with a redirect to the corresponding valid archive URL; make each author story card one primary keyboard stop.
+
+## 3.7.0 - 2026-10-14
+
+- Add an editorial author portfolio with existing WordPress portraits, biographies, public links and optional editorial-role wording.
+- Show published-article totals, review counts, first archived publication and author-specific topic coverage using cached aggregate queries.
+- Add optional, explicitly curated selected work and favourite topics under Users → Profile, with ownership/status validation and nonce/capability checks.
+- Retain the native author Query Loop and pagination, adding accessible GET-based topic/year filters and clean empty states.
+- Add scoped, responsive author styling and editable author header/discovery template parts without changing saved templates or introducing frontend dependencies.
+- Add real WordPress author integration checks and exclude development documentation from installation ZIPs.
+
 ## 3.6.1 - 2026-10-14
 
 - Render every `[enlighter]` shortcode as a full code block, including one-line commands, with a Copy control.
