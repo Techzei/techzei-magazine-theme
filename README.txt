@@ -2,7 +2,7 @@
 Requires at least: 6.7
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 3.7.2
+Stable tag: 3.7.3
 License: GPLv2 or later
 
 == Required Parent Theme ==
@@ -15,6 +15,10 @@ This is a child theme of Twenty Twenty-Five. Install the official Twenty Twenty-
 4. Review the Header, Footer, Topic navigation, and article template parts in the Site Editor.
 5. Regenerate thumbnails once for older Media Library images.
 6. Clear all WordPress, host, and CDN caches.
+
+== Version 3.7.3 ==
+
+* Stop a mobile layout shift on first paint: the collapsed, icon-only search header is now the default state instead of depending on JavaScript having run, so critical-CSS optimizers no longer paint the open search form and then collapse it. No-JavaScript and script-blocked fallbacks are unchanged. Regenerate any critical-CSS snapshot after updating.
 
 == Version 3.7.2 ==
 
