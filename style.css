@@ -266,7 +266,14 @@ select:focus-visible {
 	display: none;
 }
 
-.tz-js .tz-masthead .tz-header-search {
+/* Collapsed-by-default: the icon-first header must not depend on the .tz-js
+ * class. Critical-CSS tools generate their inline CSS from a render without
+ * JavaScript and drop `.tz-js …` rules, which painted the open search form
+ * first and then collapsed it, shifting the whole page. The no-JavaScript
+ * fallback below restores the in-flow form. `.wp-block-search` keeps the
+ * specificity the old `.tz-js` selector had so the mobile width rules still
+ * lose to this block exactly as before. */
+.tz-masthead .tz-header-search.wp-block-search {
 	position: absolute;
 	top: calc(100% + .5rem);
 	right: 0;
@@ -286,12 +293,30 @@ select:focus-visible {
 	transition: opacity var(--tz-motion-duration) var(--tz-motion-ease), transform var(--tz-motion-duration) var(--tz-motion-ease), visibility 0s linear var(--tz-motion-duration);
 }
 
-.tz-js .tz-masthead.is-search-open .tz-header-search {
+.tz-masthead.is-search-open .tz-header-search.wp-block-search {
 	visibility: visible;
 	opacity: 1;
 	pointer-events: auto;
 	transform: none;
 	transition-delay: 0s;
+}
+
+/* No JavaScript (or the interaction script failed to load): keep the full
+ * search form in flow. */
+html:not(.tz-js) .tz-masthead .tz-header-search.wp-block-search {
+	position: static;
+	z-index: auto;
+	width: 300px;
+	max-width: 300px;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	box-shadow: none;
+	visibility: visible;
+	opacity: 1;
+	pointer-events: auto;
+	transform: none;
+	transition: none;
 }
 
 .tz-masthead .wp-block-search__inside-wrapper,
@@ -2066,9 +2091,11 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 		flex-wrap: wrap !important;
 	}
 
-	html:not(.tz-js) .tz-masthead .tz-header-search {
+	html:not(.tz-js) .tz-masthead .tz-header-search.wp-block-search {
 		order: 3;
 		flex: 1 0 100%;
+		width: 100%;
+		max-width: 100%;
 	}
 
 	.tz-masthead .wp-block-search__input {
