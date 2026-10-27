@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.7.3 - 2026-10-27
+
+- Fix a mobile layout shift (CLS ~0.24) on first paint. The collapsed, icon-only search header is now the default state rather than a rule that depends on the `.tz-js` class, so critical-CSS optimizers that generate their snapshot without JavaScript no longer paint the open search form and then collapse it when the full stylesheet loads. The open form remains the fallback when JavaScript is unavailable or the interaction script fails to load.
+- Add a quality check that fails if the collapsed search header is made dependent on `.tz-js` again.
+- If a critical-CSS optimizer (for example Jetpack Boost) is in use, regenerate its snapshot after updating so the new rules reach the first paint.
+
 ## 3.7.2 - 2026-10-19
 
 - Keep the Site Editor's mobile Navigation links usable when JavaScript is unavailable, without duplicating menus or changing the normal interactive menu.

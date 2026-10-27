@@ -139,7 +139,9 @@ cache, TOC, shortcode, settings-invalidation, and image-filter contracts.
 
 ## Development and releases
 
-**Current release: 3.7.2.** This release brings the editorial author portfolio (3.7.0), its mobile/accessibility follow-up (3.7.1), and a no-JavaScript mobile navigation fallback to GitHub in one installable package. The fallback reuses Site Editor-owned links rather than introducing a second menu; the normal interactive menu is unchanged. Install ZIPs exclude development documentation and test scripts, which remain in this repository.
+**Current release: 3.7.3.** This release removes a mobile layout shift caused by the search header being collapsed only after JavaScript-dependent CSS loaded: the collapsed header is now the default state, with the open search form kept as the no-JavaScript fallback. If you use a critical-CSS optimizer such as Jetpack Boost, regenerate its snapshot after updating.
+
+**3.7.2** brought the editorial author portfolio (3.7.0), its mobile/accessibility follow-up (3.7.1), and a no-JavaScript mobile navigation fallback to GitHub in one installable package. The fallback reuses Site Editor-owned links rather than introducing a second menu; the normal interactive menu is unchanged. Install ZIPs exclude development documentation and test scripts, which remain in this repository.
 
 The 3.6.1 code-block renderer stays local and conditionally loaded, and remains dormant while a compatible highlighting plugin is active. See [the code-block implementation notes](docs/3.6.0-code-blocks.md).
 
@@ -159,7 +161,7 @@ Before publishing a release:
 
 Publishing a GitHub Release automatically runs the release workflow. It checks out the release tag, confirms that the tag matches the `Version` field in `style.css`, builds a clean WordPress upload ZIP, verifies its structure, and attaches it to the release.
 
-Use matching version tags, for example `v3.7.2` for theme version `3.7.2`. The resulting release asset is named `techzei-magazine-theme-3.7.2.zip` and contains exactly one top-level `techzei-magazine-theme/` folder.
+Use matching version tags, for example `v3.7.3` for theme version `3.7.3`. The resulting release asset is named `techzei-magazine-theme-3.7.3.zip` and contains exactly one top-level `techzei-magazine-theme/` folder.
 
 `Tested up to: 6.8` remains deliberate: the live site runs a newer WordPress version, but this repository does not have a repeatable test environment for it, so support beyond 6.8 is not claimed. The no-JavaScript menu was checked in a representative browser fixture; real WordPress checks at 320px and 375px remain part of deployment verification.
 
