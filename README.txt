@@ -2,7 +2,7 @@
 Requires at least: 6.7
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 3.7.3
+Stable tag: 3.7.4
 License: GPLv2 or later
 
 == Required Parent Theme ==
@@ -15,6 +15,11 @@ This is a child theme of Twenty Twenty-Five. Install the official Twenty Twenty-
 4. Review the Header, Footer, Topic navigation, and article template parts in the Site Editor.
 5. Regenerate thumbnails once for older Media Library images.
 6. Clear all WordPress, host, and CDN caches.
+
+== Version 3.7.4 ==
+
+* Keep the full-bleed featured image inside narrow article viewports. WordPress's constrained-layout margins no longer push the image 15px beyond the screen.
+* Add a browser regression check for sidebar and no-sidebar article layouts at 320px through 768px.
 
 == Version 3.7.3 ==
 

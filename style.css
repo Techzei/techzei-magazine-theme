@@ -3,7 +3,7 @@ Theme Name: Techzei Magazine Theme
 Theme URI: https://techzei.com/
 Author: Techzei
 Description: A fast, editorial technology publication child theme for Twenty Twenty-Five.
-Version: 3.7.3
+Version: 3.7.4
 Template: twentytwentyfive
 Requires at least: 6.7
 Tested up to: 6.8
@@ -2165,13 +2165,16 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 	}
 
 	.tz-feature-image {
-		width: calc(100% + 30px);
-		margin-left: -15px !important;
+		width: calc(100% + (var(--tz-gutter) * 2));
+		/* WordPress centers alignwide blocks with important margins, so an
+		 * offset (not a negative margin) keeps the full-bleed hero in view. */
+		position: relative;
+		left: calc(-1 * var(--tz-gutter));
 	}
 
 	.tz-layout-no-sidebar .tz-feature-image {
 		width: 100%;
-		margin-left: 0 !important;
+		left: 0;
 	}
 
 	.tz-post-navigation-inner {

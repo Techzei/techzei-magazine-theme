@@ -39,6 +39,7 @@ An outdated Home page template assignment and saved Site Editor customizations c
 3. Test the homepage, a post with a featured image, a post with no image, a topic archive, search results, and a 404 page.
 4. Check at desktop and mobile widths. Verify the menu overlay, search, reading time, related stories, share links, footer RSS/social links, and comments.
 5. Confirm images are served at their intended crop sizes after regeneration.
+6. For 3.7.4, check a sidebar article and a no-sidebar article at 320px and 375px: the featured image should reach the viewport edges on the sidebar layout without horizontal scrolling; the no-sidebar image should retain its inset.
 
 ## Author portfolio verification (3.7.1)
 

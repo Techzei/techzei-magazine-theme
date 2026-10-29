@@ -48,6 +48,22 @@ Locally verified on WordPress 6.8.3 with official SQLite Database Integration
 3.1.0 and PHP 8.5.10. MySQL/MariaDB, PHP 7.4 runtime, newer WordPress releases and
 third-party avatar/translation/SEO combinations still need staging verification.
 
+## Mobile article viewport regression
+
+With Playwright Chromium available locally, run:
+
+```sh
+node tests/article-viewport-browser.mjs
+```
+
+This optional fixture check loads the actual theme stylesheet with a simulated
+WordPress constrained-layout rule and asserts that sidebar and no-sidebar
+article heroes stay inside 320, 375, 390, 600, 601, and 768px viewports. It
+also checks that the sidebar hero retains its full-bleed mobile treatment.
+The old negative-margin rule fails the 320px case with a 335px page; the
+corrected relative offset does not. Test a real post as well, since saved
+Site Editor templates and plugin CSS can differ from the fixture.
+
 ## Typography browser probe
 
 `typography-browser.mjs` exports `auditTypography()`, a dependency-free function

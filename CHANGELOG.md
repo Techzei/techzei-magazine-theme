@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.7.4 - 2026-10-29
+
+- Keep the full-bleed featured image inside narrow article viewports even when WordPress's constrained-layout margins center the `alignwide` block; add a browser geometry regression for 320–768px article layouts.
+
 ## 3.7.3 - 2026-10-27
 
 - Fix a mobile layout shift (CLS ~0.24) on first paint. The collapsed, icon-only search header is now the default state rather than a rule that depends on the `.tz-js` class, so critical-CSS optimizers that generate their snapshot without JavaScript no longer paint the open search form and then collapse it when the full stylesheet loads. The open form remains the fallback when JavaScript is unavailable or the interaction script fails to load.
