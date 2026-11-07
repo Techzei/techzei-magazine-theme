@@ -3,7 +3,7 @@ Theme Name: Techzei Magazine Theme
 Theme URI: https://techzei.com/
 Author: Techzei
 Description: A fast, editorial technology publication child theme for Twenty Twenty-Five.
-Version: 3.7.4
+Version: 3.7.5
 Template: twentytwentyfive
 Requires at least: 6.7
 Tested up to: 6.8
@@ -1420,14 +1420,25 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 	max-width: 780px;
 }
 
-.tz-post-navigation-inner {
-	gap: 2rem;
+.tz-post-navigation {
+	padding-block: 1rem !important;
+}
+
+.tz-post-navigation-inner,
+.tz-post-navigation-inner.is-layout-flex {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 1.5rem;
 	width: 100%;
 }
 
 .tz-post-navigation-inner > * {
 	min-width: 0;
-	max-width: 48%;
+	max-width: none;
+}
+
+.tz-post-navigation-inner > .post-navigation-link-next:only-child {
+	grid-column: 2;
 }
 
 .tz-post-navigation-inner a {
@@ -1513,11 +1524,14 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 	flex-wrap: wrap;
 	align-items: center;
 	gap: .5rem .6rem;
-	margin: 1.5rem 0 0;
+	margin: 0;
 	padding-top: 1rem;
-	border-top: 1px solid var(--tz-line);
 	color: var(--tz-muted);
 	font-size: .78rem;
+}
+
+.tz-article-flow .tz-post-tags {
+	margin-block-start: 0;
 }
 
 .tz-post-tags .wp-block-post-terms__separator {
@@ -1556,9 +1570,14 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 }
 
 .tz-author-profile {
-	margin-top: 2rem;
+	margin-top: 0;
 	padding: 1.5rem 0;
+	border-top: 0;
 	background: var(--tz-paper);
+}
+
+.tz-article-flow .tz-author-profile {
+	margin-block-start: 0;
 }
 
 .tz-author-profile > .tz-section-kicker {
@@ -1645,6 +1664,12 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 	border-color: #25d366;
 	background: #25d366;
 	color: #fff;
+}
+
+.tz-share-links .tz-share-reddit,
+.tz-mobile-share-dock .tz-share-reddit {
+	border-color: #ff4500;
+	color: #b53400;
 }
 
 .tz-share-links a:hover {
@@ -2177,13 +2202,18 @@ body.tz-default-no-sidebar .tz-layout-sidebar .tz-article-content {
 		left: 0;
 	}
 
-	.tz-post-navigation-inner {
+	.tz-post-navigation-inner,
+	.tz-post-navigation-inner.is-layout-flex {
+		grid-template-columns: 1fr;
 		gap: 1rem;
 	}
 
 	.tz-post-navigation-inner > * {
-		flex: 1 1 14rem;
 		min-width: 0;
+	}
+
+	.tz-post-navigation-inner > .post-navigation-link-next:only-child {
+		grid-column: 1;
 	}
 
 	.tz-post-navigation-inner .has-text-align-right {

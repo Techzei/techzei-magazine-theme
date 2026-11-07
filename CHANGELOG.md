@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.7.5 - 2026-11-07
+
+- Add a Reddit article share destination and retain WhatsApp-first mobile sharing. Existing sites using the previous default share selection receive Reddit without overriding custom selections.
+- Remove doubled separators between article sharing, author details, and tags; keep previous and next story links in a compact two-column row on wider screens, stacking only on narrow screens.
+
 ## 3.7.4 - 2026-10-29
 
 - Keep the full-bleed featured image inside narrow article viewports even when WordPress's constrained-layout margins center the `alignwide` block; add a browser geometry regression for 320–768px article layouts.

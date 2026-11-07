@@ -139,7 +139,9 @@ cache, TOC, shortcode, settings-invalidation, and image-filter contracts.
 
 ## Development and releases
 
-**Current release: 3.7.4.** This focused update keeps the full-bleed article featured image inside the mobile viewport. A WordPress constrained-layout margin had cancelled the theme's negative margin, making a 375px article 390px wide. The 3.7.4 browser regression covers sidebar and no-sidebar article layouts from 320px to 768px; it does not alter the article content or desktop layout.
+**Current release: 3.7.5.** Article sharing now includes Reddit, while WhatsApp remains first on the mobile dock. Existing sites with the former default four-network selection gain Reddit automatically; custom selections stay intact and Reddit can be deselected in Techzei Settings. The article footer now uses one divider between sections, and Previous/Next story links share a compact row on wider screens while stacking on phones. A local browser fixture checks the footer at 320px, 375px, 768px, and desktop widths; it is not a substitute for testing a rendered WordPress post after installation.
+
+**3.7.4** kept the full-bleed article featured image inside the mobile viewport. A WordPress constrained-layout margin had cancelled the theme's negative margin, making a 375px article 390px wide. The 3.7.4 browser regression covers sidebar and no-sidebar article layouts from 320px to 768px; it does not alter the article content or desktop layout.
 
 **3.7.3** removed a mobile layout shift caused by the search header being collapsed only after JavaScript-dependent CSS loaded: the collapsed header is now the default state, with the open search form kept as the no-JavaScript fallback. If you use a critical-CSS optimizer such as Jetpack Boost, regenerate its snapshot after updating.
 
@@ -163,7 +165,7 @@ Before publishing a release:
 
 Publishing a GitHub Release automatically runs the release workflow. It checks out the release tag, confirms that the tag matches the `Version` field in `style.css`, builds a clean WordPress upload ZIP, verifies its structure, and attaches it to the release.
 
-Use matching version tags, for example `v3.7.4` for theme version `3.7.4`. The resulting release asset is named `techzei-magazine-theme-3.7.4.zip` and contains exactly one top-level `techzei-magazine-theme/` folder.
+Use matching version tags, for example `v3.7.5` for theme version `3.7.5`. The resulting release asset is named `techzei-magazine-theme-3.7.5.zip` and contains exactly one top-level `techzei-magazine-theme/` folder.
 
 `Tested up to: 6.8` remains deliberate: the live site runs a newer WordPress version, but this repository does not have a repeatable test environment for it, so support beyond 6.8 is not claimed. The no-JavaScript menu was checked in a representative browser fixture; real WordPress checks at 320px and 375px remain part of deployment verification.
 

@@ -50,6 +50,12 @@ third-party avatar/translation/SEO combinations still need staging verification.
 
 ## Mobile article viewport regression
 
+The article-footer share, border, and previous/next layout fixture can be run
+with `node tests/article-chrome-browser.mjs`. It checks 320px, 375px, 768px,
+and desktop widths against the actual stylesheet and a simulated later
+WordPress flex-layout rule. This is a local geometry check, not a production
+WordPress render.
+
 With Playwright Chromium available locally, run:
 
 ```sh

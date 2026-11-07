@@ -13,6 +13,37 @@ if ( ! class_exists( 'WP_UnitTestCase' ) ) {
 }
 
 class Techzei_Editorial_Test extends WP_UnitTestCase {
+	public function test_reddit_share_setting_migrates_only_the_previous_default() {
+		$old = techzei_tt5_settings_defaults();
+		$old['version'] = 3;
+		$old['values']['articles']['share_destinations'] = array( 'x', 'facebook', 'linkedin', 'whatsapp' );
+		update_option( TECHZEI_TT5_SETTINGS_OPTION, $old );
+		$this->assertSame( array( 'x', 'facebook', 'linkedin', 'whatsapp', 'reddit' ), techzei_tt5_get_setting( 'articles', 'share_destinations' ) );
+
+		$old['values']['articles']['share_destinations'] = array( 'whatsapp', 'x' );
+		update_option( TECHZEI_TT5_SETTINGS_OPTION, $old );
+		$this->assertSame( array( 'x', 'whatsapp' ), techzei_tt5_get_setting( 'articles', 'share_destinations' ) );
+
+		$current = techzei_tt5_settings_defaults();
+		$current['values']['articles']['share_destinations'] = array( 'whatsapp' );
+		update_option( TECHZEI_TT5_SETTINGS_OPTION, $current );
+		$this->assertSame( array( 'whatsapp' ), techzei_tt5_get_setting( 'articles', 'share_destinations' ) );
+	}
+
+	public function test_reddit_share_url_and_icon_are_available() {
+		$post_id = self::factory()->post->create();
+		$this->go_to( get_permalink( $post_id ) );
+		$data = techzei_tt5_share_destination_data();
+		$this->assertStringStartsWith( 'https://www.reddit.com/submit?url=', $data['reddit']['url'] );
+		$this->assertStringContainsString( 'title=', $data['reddit']['url'] );
+		$this->assertStringContainsString( '<svg', techzei_tt5_share_icon( 'reddit' ) );
+		$this->assertStringContainsString( 'tz-share-reddit', techzei_tt5_render_share_links() );
+		$mobile = techzei_tt5_render_share_links( true );
+		$this->assertStringContainsString( 'tz-share-reddit', $mobile );
+		$this->assertSame( 1, preg_match( '/<a class="tz-share-([^"]+)"/', $mobile, $matches ) );
+		$this->assertSame( 'whatsapp', $matches[1] );
+	}
+
 	public function test_related_ids_are_cached_and_sidebar_excludes_in_flow_results() {
 		$category = self::factory()->category->create( array( 'name' => 'How To', 'slug' => 'how-to' ) );
 		$tag      = self::factory()->term->create( array( 'taxonomy' => 'post_tag', 'name' => 'iPhone' ) );

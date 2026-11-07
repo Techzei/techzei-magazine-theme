@@ -26,7 +26,7 @@ if ( ! defined( 'TECHZEI_TT5_SETTINGS_PAGE' ) ) {
 }
 
 if ( ! defined( 'TECHZEI_TT5_SETTINGS_VERSION' ) ) {
-	define( 'TECHZEI_TT5_SETTINGS_VERSION', 3 );
+	define( 'TECHZEI_TT5_SETTINGS_VERSION', 4 );
 }
 
 /**
@@ -78,7 +78,7 @@ function techzei_tt5_settings_defaults() {
 				'author_card'          => true,
 				'share_links'          => true,
 				'mobile_share_dock'    => true,
-				'share_destinations'   => array( 'x', 'facebook', 'linkedin', 'whatsapp' ),
+				'share_destinations'   => array( 'x', 'facebook', 'linkedin', 'whatsapp', 'reddit' ),
 				'related_stories'      => true,
 				'related_mode'         => 'automatic',
 				'related_count'        => 3,
@@ -110,12 +110,31 @@ function techzei_tt5_settings_stored_values() {
 
 	$version = isset( $stored['version'] ) ? absint( $stored['version'] ) : 0;
 	// Earlier records use the same nested schema. Keep their recognised values
-	// while the normalizer supplies defaults for fields introduced in 3.4.0.
+	// while the normalizer supplies defaults for fields introduced later.
 	if ( ! is_array( $stored ) || $version < 1 || $version > TECHZEI_TT5_SETTINGS_VERSION ) {
 		return array();
 	}
 
-	return isset( $stored['values'] ) && is_array( $stored['values'] ) ? $stored['values'] : array();
+	$values = isset( $stored['values'] ) && is_array( $stored['values'] ) ? $stored['values'] : array();
+
+	// Existing sites with the former unmodified four-network default should
+	// receive Reddit too. Preserve every custom selection, including an empty
+	// list, and never write a setting from a frontend request. Saving the form
+	// records version 4 so an editor can opt out of Reddit permanently.
+	if ( $version < 4 && isset( $values['articles']['share_destinations'] ) && is_array( $values['articles']['share_destinations'] ) ) {
+		$old_default = array( 'x', 'facebook', 'linkedin', 'whatsapp' );
+		$selected    = $values['articles']['share_destinations'];
+		if (
+			count( $selected ) === count( $old_default )
+			&& count( array_filter( $selected, 'is_scalar' ) ) === count( $old_default )
+			&& ! array_diff( $old_default, $selected )
+			&& ! array_diff( $selected, $old_default )
+		) {
+			$values['articles']['share_destinations'][] = 'reddit';
+		}
+	}
+
+	return $values;
 }
 
 /**
@@ -214,7 +233,7 @@ function techzei_tt5_settings_normalize_values( $values ) {
 	}
 
 	if ( isset( $values['articles']['share_destinations'] ) && is_array( $values['articles']['share_destinations'] ) ) {
-		$allowed = array( 'x', 'facebook', 'linkedin', 'whatsapp' );
+		$allowed = array( 'x', 'facebook', 'linkedin', 'whatsapp', 'reddit' );
 		$chosen  = array();
 		foreach ( $values['articles']['share_destinations'] as $destination ) {
 			if ( is_scalar( $destination ) ) {
@@ -531,7 +550,7 @@ function techzei_tt5_settings_sanitize( $input ) {
 	// they were actually editable in the form that produced this submission.
 	if ( isset( $input['articles'] ) && is_array( $input['articles'] ) && $output['values']['articles']['share_links']
 		&& ! techzei_tt5_settings_field_disabled( 'share_destinations', $current ) ) {
-		$allowed = array( 'x', 'facebook', 'linkedin', 'whatsapp' );
+		$allowed = array( 'x', 'facebook', 'linkedin', 'whatsapp', 'reddit' );
 		$chosen = isset( $input['articles']['share_destinations'] ) && is_array( $input['articles']['share_destinations'] ) ? $input['articles']['share_destinations'] : array();
 		$chosen = array_filter(
 			array_map(
@@ -760,7 +779,7 @@ function techzei_tt5_settings_field( $args ) {
 		'author_card'        => __( 'The title-area byline remains even when this card is hidden.', 'techzei-magazine-theme' ),
 		'share_links'        => __( 'With no destinations selected, the complete share row is omitted.', 'techzei-magazine-theme' ),
 		'mobile_share_dock'  => __( 'Keeps WhatsApp first on small-screen article share controls without changing the normal share row.', 'techzei-magazine-theme' ),
-		'share_destinations' => __( 'Fixed display order: X, Facebook, LinkedIn, WhatsApp.', 'techzei-magazine-theme' ),
+		'share_destinations' => __( 'Fixed display order: X, Facebook, LinkedIn, WhatsApp, Reddit. WhatsApp appears first in the mobile dock.', 'techzei-magazine-theme' ),
 		'related_stories'    => __( 'Uses shared categories and excludes the current article.', 'techzei-magazine-theme' ),
 		'related_mode'       => __( 'Automatic ranks by taxonomy relevance; Editorial-first lets an editorial integration provide an ordered set before automatic results.', 'techzei-magazine-theme' ),
 		'related_count'      => __( 'A smaller result set is allowed; unrelated fallback stories are not inserted.', 'techzei-magazine-theme' ),
@@ -788,6 +807,7 @@ function techzei_tt5_settings_field( $args ) {
 			'facebook' => 'Facebook',
 			'linkedin' => 'LinkedIn',
 			'whatsapp' => 'WhatsApp',
+			'reddit'   => 'Reddit',
 		);
 		foreach ( $choices as $choice => $label ) {
 			printf( '<label style="margin-right:1.25em"><input type="checkbox" name="%1$s[]" value="%2$s" %3$s%4$s /> %5$s</label>', esc_attr( $name ), esc_attr( $choice ), checked( in_array( $choice, (array) $value, true ), true, false ), disabled( $disabled, true, false ), esc_html( $label ) );
