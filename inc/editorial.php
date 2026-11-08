@@ -220,7 +220,9 @@ function techzei_tt5_get_editorial_setting( $key, $default ) {
  */
 function techzei_tt5_share_destination_data() {
 	$url   = rawurlencode( get_permalink() );
-	$title = rawurlencode( get_the_title() );
+	// Titles may contain HTML entities after WordPress title filters. Share
+	// destinations expect readable plain text, not encoded entity names.
+	$title = rawurlencode( wp_strip_all_tags( html_entity_decode( get_the_title(), ENT_QUOTES | ENT_HTML5, get_bloginfo( 'charset' ) ) ) );
 
 	return array(
 		'x'        => array( 'label' => 'X', 'url' => 'https://twitter.com/intent/tweet?url=' . $url . '&text=' . $title ),

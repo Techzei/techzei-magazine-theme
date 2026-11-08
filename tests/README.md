@@ -23,6 +23,10 @@ exercises rendering callbacks with minimal WordPress API stubs, while
 `CodeBlocksTest.php` uses the optional WordPress integration bootstrap. The
 fixture checks are included in both quality and release workflows.
 
+Run `php tests/share-urls-fixture.php` to exercise the share URL builder with
+entity-encoded titles without a WordPress bootstrap. The optional
+`EditorialTest.php` also covers this behavior under WordPress.
+
 ## Author portfolios: optional real-site integration runner
 
 No PHPUnit dependency is required for this additional runner. Use an isolated,

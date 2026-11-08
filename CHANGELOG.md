@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Decode HTML entities in article titles before building X, WhatsApp, and Reddit share URLs, so shared text shows punctuation and ampersands correctly.
+
 ## 3.7.5 - 2026-11-07
 
 - Add a Reddit article share destination and retain WhatsApp-first mobile sharing. Existing sites using the previous default share selection receive Reddit without overriding custom selections.

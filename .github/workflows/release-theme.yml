@@ -50,6 +50,7 @@ jobs:
           php scripts/test-theme.php
           php scripts/validate-settings.php
           php tests/editorial-static.php
+          php tests/share-urls-fixture.php
           php tests/code-blocks-static.php
           php tests/code-blocks-enlighter-active.php
           ! grep -R --line-number --fixed-strings 'setInterval' assets/js inc

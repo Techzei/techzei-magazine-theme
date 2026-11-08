@@ -44,6 +44,29 @@ class Techzei_Editorial_Test extends WP_UnitTestCase {
 		$this->assertSame( 'whatsapp', $matches[1] );
 	}
 
+	public function test_share_urls_use_decoded_plain_text_titles() {
+		$post_id = self::factory()->post->create();
+		$this->go_to( get_permalink( $post_id ) );
+		$filtered_title = function ( $title, $id ) use ( $post_id ) {
+			return (int) $id === (int) $post_id ? 'Canva&#8217;s &amp; Craft <em>guide</em>' : $title;
+		};
+		add_filter( 'the_title', $filtered_title, 99, 2 );
+
+		try {
+			$data = techzei_tt5_share_destination_data();
+		} finally {
+			remove_filter( 'the_title', $filtered_title, 99 );
+		}
+
+		foreach ( array( 'x' => 'text', 'reddit' => 'title' ) as $destination => $parameter ) {
+			parse_str( wp_parse_url( $data[ $destination ]['url'], PHP_URL_QUERY ), $query );
+			$this->assertSame( 'Canva’s & Craft guide', $query[ $parameter ] );
+		}
+
+		parse_str( wp_parse_url( $data['whatsapp']['url'], PHP_URL_QUERY ), $whatsapp_query );
+		$this->assertStringStartsWith( 'Canva’s & Craft guide https://', $whatsapp_query['text'] );
+	}
+
 	public function test_related_ids_are_cached_and_sidebar_excludes_in_flow_results() {
 		$category = self::factory()->category->create( array( 'name' => 'How To', 'slug' => 'how-to' ) );
 		$tag      = self::factory()->term->create( array( 'taxonomy' => 'post_tag', 'name' => 'iPhone' ) );
