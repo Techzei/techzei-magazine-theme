@@ -92,6 +92,17 @@
 	line-height: 1.25;
 }
 
+/* A long guide can have dozens of headings. Keep the article opening short on
+ * phones even when a reader chooses to expand the native details control. */
+@media (max-width: 900px) {
+	.tz-article-toc-part .tz-article-toc ol {
+		max-height: min(55vh, 26rem);
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		padding-right: .5rem;
+	}
+}
+
 .tz-article-toc li::before {
 	padding-top: .2em;
 	color: var(--tz-accent-ink);
@@ -155,6 +166,11 @@
 
 	.tz-article-toc-sidebar-part .tz-article-toc ol {
 		margin-top: .75rem;
+		max-height: max(12rem, calc(100vh - var(--tz-header-offset) - 8rem));
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		padding-right: .5rem;
+		scrollbar-width: thin;
 	}
 
 	.tz-article-toc-sidebar-part .tz-article-toc li {
@@ -197,6 +213,22 @@
 	max-width: 100%;
 }
 
+/* WordPress table blocks need a scroll container around the real table. If
+ * the table itself is a block, the browser squeezes columns to phone width
+ * and can split ordinary words even though the page does not overflow. */
+.tz-article-content figure.wp-block-table {
+	max-width: 100%;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+.tz-article-content figure.wp-block-table table {
+	display: table;
+	width: 100%;
+	table-layout: auto;
+	overflow: visible;
+}
+
 .tz-article-content table {
 	display: block;
 	max-width: 100%;
@@ -216,6 +248,18 @@
 	padding: .7rem .85rem;
 	border: 1px solid var(--tz-line);
 	text-align: left;
+	overflow-wrap: normal;
+	word-break: normal;
+}
+
+@media (max-width: 600px) {
+	.tz-article-content figure.wp-block-table:has(tr > :nth-child(3)) table {
+		min-width: 34rem;
+	}
+
+	.tz-article-content figure.wp-block-table:has(tr > :nth-child(4)) table {
+		min-width: 43rem;
+	}
 }
 
 .tz-article-content th {
@@ -241,6 +285,37 @@
 .tz-article-content ul,
 .tz-article-content ol {
 	padding-left: 1.4rem;
+}
+
+/* Editor-inserted context and caution patterns: deliberately quieter than a
+ * marketing card, and identified by text rather than colour alone. */
+.tz-article-content .tz-editorial-callout {
+	margin-block: 1.75rem;
+	padding: .9rem 1.15rem 1rem;
+	border: 1px solid var(--tz-line);
+	border-left: 3px solid var(--tz-accent);
+}
+
+.tz-article-content .tz-editorial-callout--important {
+	border-left-color: var(--tz-accent-ink);
+}
+
+.tz-article-content .tz-editorial-callout .tz-callout-label {
+	margin: 0;
+	color: var(--tz-accent-ink);
+	font-family: var(--wp--preset--font-family--system, system-ui, sans-serif);
+	font-size: .72rem;
+	font-weight: 700;
+	letter-spacing: .12em;
+	line-height: 1.3;
+	text-transform: uppercase;
+}
+
+.tz-article-content .tz-editorial-callout .tz-callout-body {
+	margin: .45rem 0 0;
+	color: var(--wp--preset--color--reading, #575555);
+	font-size: 1rem;
+	line-height: 1.55;
 }
 
 .tz-related-stories {

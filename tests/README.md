@@ -16,6 +16,16 @@ registration, plus the optional `CodeBlocksTest.php` WordPress renderer tests.
 It is not part of the release ZIP and is not a substitute for the manual
 browser checks in `DEPLOYMENT.md`.
 
+The TOC test also checks the default collapsed shortcode and the explicit
+`expanded="1"` sidebar variant. To check article blocks without WordPress, run
+`node tests/editorial-blocks-browser.mjs` with Playwright Chromium. This fixture
+checks 320px through desktop for three-column table scrolling, normal two-column
+tables, no page overflow, the collapsed mobile TOC, a bounded desktop TOC, and
+both callout styles. Set `TECHZEI_SCREENSHOT_DIR` to a temporary directory to
+save 375px and desktop screenshots for visual inspection. It models the theme
+CSS; verify a real post after deployment because saved Site Editor parts and
+plugin CSS can differ.
+
 Code-rendering compatibility fixtures can be run independently with
 `php tests/code-blocks-static.php`; Enlighter's active-plugin guard can be
 checked with `php tests/code-blocks-enlighter-active.php`. The fixture check

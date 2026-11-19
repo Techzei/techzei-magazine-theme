@@ -293,7 +293,7 @@ function techzei_tt5_render_block_settings( $block_content, $block ) {
 	 * template or duplicating a newer sidebar TOC part.
 	 */
 	if ( techzei_tt5_has_class_token( $class_name, 'tz-article-sidebar' ) && is_singular( 'post' ) && function_exists( 'techzei_tt5_should_show_article_toc' ) && techzei_tt5_should_show_article_toc( get_the_ID() ) && false === strpos( $block_content, 'tz-article-toc-sidebar-part' ) && function_exists( 'do_shortcode' ) ) {
-		$toc = do_shortcode( '[techzei_article_toc]' );
+		$toc = do_shortcode( '[techzei_article_toc expanded="1"]' );
 		if ( '' !== trim( $toc ) ) {
 			$block_content = '<div class="wp-block-group tz-article-toc-sidebar-part">' . $toc . '</div>' . $block_content;
 		}

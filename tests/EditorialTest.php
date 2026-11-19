@@ -111,6 +111,27 @@ class Techzei_Editorial_Test extends WP_UnitTestCase {
 		$this->assertSame( $ids, $matches[1] );
 	}
 
+	public function test_toc_is_collapsed_by_default_and_can_be_expanded_in_the_sidebar() {
+		$category = self::factory()->category->create( array( 'name' => 'How To', 'slug' => 'how-to' ) );
+		$post_id  = self::factory()->post->create(
+			array(
+				'post_category' => array( $category ),
+				'post_content'  => '<h2>First</h2><h2>Second</h2><h2>Third</h2>',
+			)
+		);
+		$this->go_to( get_permalink( $post_id ) );
+		$GLOBALS['post'] = get_post( $post_id );
+		setup_postdata( $GLOBALS['post'] );
+
+		try {
+			$this->assertStringContainsString( '<details><summary>', techzei_tt5_article_toc() );
+			$this->assertStringContainsString( '<details open><summary>', techzei_tt5_article_toc( array( 'expanded' => '1' ) ) );
+			$this->assertStringContainsString( '<details open><summary>', do_shortcode( '[techzei_article_toc expanded="yes"]' ) );
+		} finally {
+			wp_reset_postdata();
+		}
+	}
+
 	public function test_settings_update_invalidates_discovery_namespace() {
 		$before = techzei_tt5_editorial_cache_version();
 		update_option( TECHZEI_TT5_SETTINGS_OPTION, techzei_tt5_settings_defaults() );

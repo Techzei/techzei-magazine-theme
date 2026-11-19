@@ -137,9 +137,27 @@ interaction data. No translation plugin or remote service is required. The
 optional runtime suite in [tests/README.md](tests/README.md) exercises the
 cache, TOC, shortcode, settings-invalidation, and image-filter contracts.
 
+### Article blocks for guides
+
+The editor offers **Before You Start** and **Important Note** patterns under
+Text. They are small, editable callouts for actual prerequisites and consequential
+steps; replace the example body before publishing. They add no heading to the
+automatic table of contents and do not alter existing posts. Use them sparingly
+rather than turning every paragraph into a card.
+
+The automatic How To/Explainer TOC is collapsed by default, including in older
+saved Site Editor parts that still use `[techzei_article_toc]`. The shipped
+desktop sidebar part uses `[techzei_article_toc expanded="1"]`; long lists scroll
+inside that sidebar so the sticky module remains usable. Three-or-more-column
+WordPress table blocks scroll within their own figure on narrow screens rather
+than squeezing words into broken fragments. Two-column tables retain their
+normal width.
+
 ## Development and releases
 
-**Current release: 3.7.5.** Article sharing now includes Reddit, while WhatsApp remains first on the mobile dock. Existing sites with the former default four-network selection gain Reddit automatically; custom selections stay intact and Reddit can be deselected in Techzei Settings. The article footer now uses one divider between sections, and Previous/Next story links share a compact row on wider screens while stacking on phones. A local browser fixture checks the footer at 320px, 375px, 768px, and desktop widths; it is not a substitute for testing a rendered WordPress post after installation.
+**Current release: 3.7.6.** Multi-column article tables scroll inside their blocks on narrow screens without splitting words. Long TOCs no longer crowd the mobile article opening or overrun the sticky desktop sidebar. Two editable callout patterns support guide prerequisites and consequential warnings, and share links use decoded article titles. The local browser fixture checks article blocks at 320px through desktop; verify a rendered WordPress post after installation because saved Site Editor parts and plugin CSS can differ.
+
+**3.7.5** added Reddit sharing while keeping WhatsApp first on mobile, removed doubled article-footer dividers, and made Previous/Next story links compact on wider screens.
 
 **3.7.4** kept the full-bleed article featured image inside the mobile viewport. A WordPress constrained-layout margin had cancelled the theme's negative margin, making a 375px article 390px wide. The 3.7.4 browser regression covers sidebar and no-sidebar article layouts from 320px to 768px; it does not alter the article content or desktop layout.
 
@@ -165,7 +183,7 @@ Before publishing a release:
 
 Publishing a GitHub Release automatically runs the release workflow. It checks out the release tag, confirms that the tag matches the `Version` field in `style.css`, builds a clean WordPress upload ZIP, verifies its structure, and attaches it to the release.
 
-Use matching version tags, for example `v3.7.5` for theme version `3.7.5`. The resulting release asset is named `techzei-magazine-theme-3.7.5.zip` and contains exactly one top-level `techzei-magazine-theme/` folder.
+Use matching version tags, for example `v3.7.6` for theme version `3.7.6`. The resulting release asset is named `techzei-magazine-theme-3.7.6.zip` and contains exactly one top-level `techzei-magazine-theme/` folder.
 
 `Tested up to: 6.8` remains deliberate: the live site runs a newer WordPress version, but this repository does not have a repeatable test environment for it, so support beyond 6.8 is not claimed. The no-JavaScript menu was checked in a representative browser fixture; real WordPress checks at 320px and 375px remain part of deployment verification.
 

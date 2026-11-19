@@ -576,14 +576,25 @@ function techzei_tt5_should_show_article_toc( $post_id ) {
 	return false;
 }
 
-/** Render the no-JavaScript, mobile-collapsible article table of contents. */
-function techzei_tt5_article_toc() {
+/**
+ * Render the no-JavaScript article table of contents.
+ *
+ * The default is collapsed so saved Site Editor parts using the original
+ * shortcode cannot put a very long heading list ahead of mobile prose.
+ * Desktop sidebar parts can opt into an expanded list explicitly.
+ *
+ * @param array $atts Shortcode attributes.
+ * @return string
+ */
+function techzei_tt5_article_toc( $atts = array() ) {
 	$post_id = get_the_ID();
 	if ( ! techzei_tt5_should_show_article_toc( $post_id ) ) {
 		return '';
 	}
-	$items  = techzei_tt5_article_toc_items( $post_id );
-	$output = '<nav class="tz-article-toc" aria-label="' . esc_attr__( 'On this page', 'techzei-magazine-theme' ) . '"><details open><summary>' . esc_html__( 'On this page', 'techzei-magazine-theme' ) . '</summary><ol>';
+	$atts     = shortcode_atts( array( 'expanded' => '0' ), (array) $atts, 'techzei_article_toc' );
+	$expanded = in_array( strtolower( (string) $atts['expanded'] ), array( '1', 'true', 'yes' ), true );
+	$items    = techzei_tt5_article_toc_items( $post_id );
+	$output   = '<nav class="tz-article-toc" aria-label="' . esc_attr__( 'On this page', 'techzei-magazine-theme' ) . '"><details' . ( $expanded ? ' open' : '' ) . '><summary>' . esc_html__( 'On this page', 'techzei-magazine-theme' ) . '</summary><ol>';
 	foreach ( $items as $item ) {
 		$output .= '<li class="tz-toc-level-' . absint( $item['level'] ) . '"><a href="#' . esc_attr( $item['id'] ) . '">' . esc_html( $item['label'] ) . '</a></li>';
 	}

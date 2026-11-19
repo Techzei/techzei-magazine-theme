@@ -1,8 +1,11 @@
 # Changelog
 
-## Unreleased
+## 3.7.6 - 2026-11-19
 
 - Decode HTML entities in article titles before building X, WhatsApp, and Reddit share URLs, so shared text shows punctuation and ampersands correctly.
+- Let three-or-more-column article tables scroll on narrow screens without splitting words inside cells.
+- Collapse long article TOCs by default, keep the shipped desktop sidebar TOC expanded, and cap expanded TOC lists to the available viewport.
+- Add editable Before You Start and Important Note block patterns for restrained editorial callouts.
 
 ## 3.7.5 - 2026-11-07
 

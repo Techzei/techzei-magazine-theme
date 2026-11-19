@@ -2,7 +2,7 @@
 Requires at least: 6.7
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 3.7.5
+Stable tag: 3.7.6
 License: GPLv2 or later
 
 == Required Parent Theme ==
@@ -15,6 +15,13 @@ This is a child theme of Twenty Twenty-Five. Install the official Twenty Twenty-
 4. Review the Header, Footer, Topic navigation, and article template parts in the Site Editor.
 5. Regenerate thumbnails once for older Media Library images.
 6. Clear all WordPress, host, and CDN caches.
+
+== Version 3.7.6 ==
+
+* Keep ordinary words intact in three-or-more-column article tables by letting the tables scroll within their blocks on narrow screens.
+* Start the automatic table of contents collapsed in the article column; keep the shipped desktop sidebar version open and bounded to the available height.
+* Add editable Before You Start and Important Note patterns for guides and consequential steps.
+* Decode HTML entities in article titles before building X, WhatsApp, and Reddit share URLs.
 
 == Version 3.7.5 ==
 
